@@ -1,5 +1,6 @@
 package com.qrcodemall.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -515,52 +516,52 @@ public class OrderFormExample {
             return (Criteria) this;
         }
 
-        public Criteria andOrderFormPriceEqualTo(Long value) {
+        public Criteria andOrderFormPriceEqualTo(BigDecimal value) {
             addCriterion("order_form_price =", value, "orderFormPrice");
             return (Criteria) this;
         }
 
-        public Criteria andOrderFormPriceNotEqualTo(Long value) {
+        public Criteria andOrderFormPriceNotEqualTo(BigDecimal value) {
             addCriterion("order_form_price <>", value, "orderFormPrice");
             return (Criteria) this;
         }
 
-        public Criteria andOrderFormPriceGreaterThan(Long value) {
+        public Criteria andOrderFormPriceGreaterThan(BigDecimal value) {
             addCriterion("order_form_price >", value, "orderFormPrice");
             return (Criteria) this;
         }
 
-        public Criteria andOrderFormPriceGreaterThanOrEqualTo(Long value) {
+        public Criteria andOrderFormPriceGreaterThanOrEqualTo(BigDecimal value) {
             addCriterion("order_form_price >=", value, "orderFormPrice");
             return (Criteria) this;
         }
 
-        public Criteria andOrderFormPriceLessThan(Long value) {
+        public Criteria andOrderFormPriceLessThan(BigDecimal value) {
             addCriterion("order_form_price <", value, "orderFormPrice");
             return (Criteria) this;
         }
 
-        public Criteria andOrderFormPriceLessThanOrEqualTo(Long value) {
+        public Criteria andOrderFormPriceLessThanOrEqualTo(BigDecimal value) {
             addCriterion("order_form_price <=", value, "orderFormPrice");
             return (Criteria) this;
         }
 
-        public Criteria andOrderFormPriceIn(List<Long> values) {
+        public Criteria andOrderFormPriceIn(List<BigDecimal> values) {
             addCriterion("order_form_price in", values, "orderFormPrice");
             return (Criteria) this;
         }
 
-        public Criteria andOrderFormPriceNotIn(List<Long> values) {
+        public Criteria andOrderFormPriceNotIn(List<BigDecimal> values) {
             addCriterion("order_form_price not in", values, "orderFormPrice");
             return (Criteria) this;
         }
 
-        public Criteria andOrderFormPriceBetween(Long value1, Long value2) {
+        public Criteria andOrderFormPriceBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("order_form_price between", value1, value2, "orderFormPrice");
             return (Criteria) this;
         }
 
-        public Criteria andOrderFormPriceNotBetween(Long value1, Long value2) {
+        public Criteria andOrderFormPriceNotBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("order_form_price not between", value1, value2, "orderFormPrice");
             return (Criteria) this;
         }

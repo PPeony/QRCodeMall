@@ -1,6 +1,7 @@
 package com.qrcodemall.entity;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 public class Goods implements Serializable {
@@ -38,7 +39,7 @@ public class Goods implements Serializable {
      *
      * @mbg.generated
      */
-    private Long goodsPrice;
+    private BigDecimal goodsPrice;
 
     /**
      *
@@ -209,7 +210,7 @@ public class Goods implements Serializable {
      *
      * @mbg.generated
      */
-    public Long getGoodsPrice() {
+    public BigDecimal getGoodsPrice() {
         return goodsPrice;
     }
 
@@ -221,7 +222,7 @@ public class Goods implements Serializable {
      *
      * @mbg.generated
      */
-    public void setGoodsPrice(Long goodsPrice) {
+    public void setGoodsPrice(BigDecimal goodsPrice) {
         this.goodsPrice = goodsPrice;
     }
 

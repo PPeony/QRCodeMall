@@ -1,5 +1,6 @@
 package com.qrcodemall.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -395,52 +396,52 @@ public class GoodsExample {
             return (Criteria) this;
         }
 
-        public Criteria andGoodsPriceEqualTo(Long value) {
+        public Criteria andGoodsPriceEqualTo(BigDecimal value) {
             addCriterion("goods_price =", value, "goodsPrice");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsPriceNotEqualTo(Long value) {
+        public Criteria andGoodsPriceNotEqualTo(BigDecimal value) {
             addCriterion("goods_price <>", value, "goodsPrice");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsPriceGreaterThan(Long value) {
+        public Criteria andGoodsPriceGreaterThan(BigDecimal value) {
             addCriterion("goods_price >", value, "goodsPrice");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsPriceGreaterThanOrEqualTo(Long value) {
+        public Criteria andGoodsPriceGreaterThanOrEqualTo(BigDecimal value) {
             addCriterion("goods_price >=", value, "goodsPrice");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsPriceLessThan(Long value) {
+        public Criteria andGoodsPriceLessThan(BigDecimal value) {
             addCriterion("goods_price <", value, "goodsPrice");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsPriceLessThanOrEqualTo(Long value) {
+        public Criteria andGoodsPriceLessThanOrEqualTo(BigDecimal value) {
             addCriterion("goods_price <=", value, "goodsPrice");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsPriceIn(List<Long> values) {
+        public Criteria andGoodsPriceIn(List<BigDecimal> values) {
             addCriterion("goods_price in", values, "goodsPrice");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsPriceNotIn(List<Long> values) {
+        public Criteria andGoodsPriceNotIn(List<BigDecimal> values) {
             addCriterion("goods_price not in", values, "goodsPrice");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsPriceBetween(Long value1, Long value2) {
+        public Criteria andGoodsPriceBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("goods_price between", value1, value2, "goodsPrice");
             return (Criteria) this;
         }
 
-        public Criteria andGoodsPriceNotBetween(Long value1, Long value2) {
+        public Criteria andGoodsPriceNotBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("goods_price not between", value1, value2, "goodsPrice");
             return (Criteria) this;
         }

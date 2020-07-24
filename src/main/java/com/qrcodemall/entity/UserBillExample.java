@@ -1,5 +1,6 @@
 package com.qrcodemall.entity;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -325,52 +326,52 @@ public class UserBillExample {
             return (Criteria) this;
         }
 
-        public Criteria andUserBillMoneyEqualTo(Long value) {
+        public Criteria andUserBillMoneyEqualTo(BigDecimal value) {
             addCriterion("user_bill_money =", value, "userBillMoney");
             return (Criteria) this;
         }
 
-        public Criteria andUserBillMoneyNotEqualTo(Long value) {
+        public Criteria andUserBillMoneyNotEqualTo(BigDecimal value) {
             addCriterion("user_bill_money <>", value, "userBillMoney");
             return (Criteria) this;
         }
 
-        public Criteria andUserBillMoneyGreaterThan(Long value) {
+        public Criteria andUserBillMoneyGreaterThan(BigDecimal value) {
             addCriterion("user_bill_money >", value, "userBillMoney");
             return (Criteria) this;
         }
 
-        public Criteria andUserBillMoneyGreaterThanOrEqualTo(Long value) {
+        public Criteria andUserBillMoneyGreaterThanOrEqualTo(BigDecimal value) {
             addCriterion("user_bill_money >=", value, "userBillMoney");
             return (Criteria) this;
         }
 
-        public Criteria andUserBillMoneyLessThan(Long value) {
+        public Criteria andUserBillMoneyLessThan(BigDecimal value) {
             addCriterion("user_bill_money <", value, "userBillMoney");
             return (Criteria) this;
         }
 
-        public Criteria andUserBillMoneyLessThanOrEqualTo(Long value) {
+        public Criteria andUserBillMoneyLessThanOrEqualTo(BigDecimal value) {
             addCriterion("user_bill_money <=", value, "userBillMoney");
             return (Criteria) this;
         }
 
-        public Criteria andUserBillMoneyIn(List<Long> values) {
+        public Criteria andUserBillMoneyIn(List<BigDecimal> values) {
             addCriterion("user_bill_money in", values, "userBillMoney");
             return (Criteria) this;
         }
 
-        public Criteria andUserBillMoneyNotIn(List<Long> values) {
+        public Criteria andUserBillMoneyNotIn(List<BigDecimal> values) {
             addCriterion("user_bill_money not in", values, "userBillMoney");
             return (Criteria) this;
         }
 
-        public Criteria andUserBillMoneyBetween(Long value1, Long value2) {
+        public Criteria andUserBillMoneyBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("user_bill_money between", value1, value2, "userBillMoney");
             return (Criteria) this;
         }
 
-        public Criteria andUserBillMoneyNotBetween(Long value1, Long value2) {
+        public Criteria andUserBillMoneyNotBetween(BigDecimal value1, BigDecimal value2) {
             addCriterion("user_bill_money not between", value1, value2, "userBillMoney");
             return (Criteria) this;
         }

@@ -87,11 +87,12 @@
             <property name="useActualColumnNames" value="false" />
             <!-- 数据库表主键 -->
             <generatedKey column="order_form_id" sqlStatement="Mysql" identity="true" />
-        </table><table tableName="order_form_detail" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+        </table>
+        <table tableName="order_form_detail" domainObjectName="OrderFormDetail" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
         <property name="useActualColumnNames" value="false" />
         <!-- 数据库表主键 -->
         <generatedKey column="order_form_detail_id" sqlStatement="Mysql" identity="true" />
-    </table>
+        </table>
         <table tableName="user_address" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
             <property name="useActualColumnNames" value="false" />
             <!-- 数据库表主键 -->
@@ -107,6 +108,7 @@
             <!-- 数据库表主键 -->
             <generatedKey column="user_bill_id" sqlStatement="Mysql" identity="true" />
         </table>
+
 
 
     </context>
