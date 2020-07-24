@@ -1,5 +1,7 @@
 package com.qrcodemall.entity;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -21,6 +23,7 @@ public class Goods implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请选择种类")
     private Integer goodsTypeId;
 
     /**
@@ -30,6 +33,7 @@ public class Goods implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "请填写名称")
     private String goodsName;
 
     /**
@@ -39,6 +43,7 @@ public class Goods implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请输入价格")
     private BigDecimal goodsPrice;
 
     /**
@@ -48,6 +53,7 @@ public class Goods implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请输入种类名称")
     private String goodsTypeName;
 
     /**
@@ -57,6 +63,7 @@ public class Goods implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请输入数量")
     private Integer goodsQrcodeQuantity;
 
     /**

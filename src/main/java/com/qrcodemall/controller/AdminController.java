@@ -6,9 +6,11 @@ import com.qrcodemall.entity.*;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.Result;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
@@ -67,18 +69,12 @@ public class AdminController {
         return result;
     }
 
-    @PostMapping("/signin")//手机验证码登录
-    public Result signin(String phone, HttpSession session) {
-        Result result = new Result();
-        result.setCode(HttpStatus.OK.value());
-        result.setMessage("登录成功");
-        return result;
-    }
-
-//    @GetMapping("/test")
-//    public String test(Admin admin) {
-//        System.out.println(admin);
-//        return "success";
+//    @PostMapping("/signin")//手机验证码登录,admin不需要
+//    public Result signin(String phone, HttpSession session) {
+//        Result result = new Result();
+//        result.setCode(HttpStatus.OK.value());
+//        result.setMessage("登录成功");
+//        return result;
 //    }
 
     @GetMapping("/goods")
@@ -100,6 +96,40 @@ public class AdminController {
         return result;
     }
 
+    @PostMapping("/addGoods")//添加商品
+    public Result insertGoods(@Valid @RequestBody Goods goods, Errors errors) {
+        //System.out.println(goods);
+        // decimal的json直接写12.6就行，不用引号
+        Result result = new Result();
+        if (errors.hasErrors()) {
+            result.setCode(HttpStatus.BAD_REQUEST.value());
+            result.setMessage(errors.getAllErrors().get(0).getDefaultMessage());
+            return result;
+        }
+        //insert
+        result.setCode(HttpStatus.CREATED.value());
+        result.setMessage("success");
+        return result;
+    }
+
+    @PutMapping("/updateGoods")//所有的update都是根据id来的
+    public Result updateGoods(@RequestBody Goods goods) {
+        Result result = new Result();
+        //update
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        return result;
+    }
+
+    @DeleteMapping("/deleteGoods")
+    public Result deleteGoods(Integer goodsId) {
+        //delete
+        Result result = new Result();
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("delete success");
+        return result;
+    }
+
     @GetMapping("/notice")
     public Result selectNotice(Notice notice,
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
@@ -118,6 +148,7 @@ public class AdminController {
         result.setData(list);
         return result;
     }
+    //20200724,down no delete,update,insert
 
     @GetMapping("/orderForm")
     public Result selectOrderForm(OrderForm orderForm,
@@ -192,4 +223,30 @@ public class AdminController {
         result.setMessage("成功");
         return result;
     }
+
+
+
+    @PutMapping("/outputMoney")//给用户打钱,money是打多少
+    public Result outputMoney(@RequestBody UserBill orign) {
+        System.out.println(orign);
+        Result result = new Result();
+        Integer userId = orign.getUserId();
+        BigDecimal money = orign.getUserBillMoney();
+        if (userId == null || money == null || money.equals(new BigDecimal("0"))) {
+            result.setCode(HttpStatus.BAD_REQUEST.value());
+            result.setMessage("请输入正确的参数");
+            return result;
+        }
+        UserBill userBill = new UserBill();
+        userBill.setUserId(userId);
+        userBill.setUserBillMoney(new BigDecimal("0"));
+        BigDecimal userMoney = userBill.getUserBillMoney();
+        userMoney = userMoney.add(money);
+        userBill.setUserBillMoney(userMoney);
+        System.out.println(userBill);
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("成功");
+        return result;
+    }
+
 }

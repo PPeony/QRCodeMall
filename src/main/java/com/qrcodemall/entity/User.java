@@ -1,5 +1,9 @@
 package com.qrcodemall.entity;
 
+import org.hibernate.validator.constraints.Length;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 
 public class User implements Serializable {
@@ -19,6 +23,7 @@ public class User implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "请输入名字")
     private String userName;
 
     /**
@@ -28,6 +33,9 @@ public class User implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "请输入手机号")
+    @Pattern(regexp = "^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$",
+    message = "请输入正确的电话号")
     private String userPhone;
 
     /**
@@ -37,6 +45,8 @@ public class User implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "请输入密码")
+    @Length(min = 8,max = 16)
     private String userPassword;
 
     /**
@@ -46,6 +56,9 @@ public class User implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "请输入邮箱")
+    @Pattern(regexp = "[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?",
+    message = "邮箱不合法")
     private String userEmail;
 
     /**
