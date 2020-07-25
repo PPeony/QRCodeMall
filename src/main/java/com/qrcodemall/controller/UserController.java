@@ -1,5 +1,6 @@
 package com.qrcodemall.controller;
 
+import com.qrcodemall.controller.vo.UserLoginVO;
 import com.qrcodemall.entity.User;
 import com.qrcodemall.entity.UserAddress;
 import com.qrcodemall.entity.UserBill;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: Peony
@@ -23,7 +25,10 @@ import java.util.List;
 public class UserController {
 
     @PostMapping("/login")//密码登录
-    public Result login(String account, String password,HttpSession session) {
+    public Result login(@RequestBody UserLoginVO user,
+                        HttpSession session,Errors errors) {
+        String account = user.getAccount();
+        String password = user.getPassword();
         System.out.println(account+" *** "+password);
         Result result = new Result();
         //登陆完之后id存入session
@@ -69,7 +74,9 @@ public class UserController {
     }
 
     @PostMapping("/signin")//手机验证码登录,admin不需要
-    public Result signin(String phone, HttpSession session) {
+    public Result signin(@RequestBody Map<String,Object> json, HttpSession session) {
+        String phone = json.get("phone").toString();
+        System.out.println("###:= "+phone);
         Result result = new Result();
         result.setCode(HttpStatus.OK.value());
         result.setMessage("登录成功");

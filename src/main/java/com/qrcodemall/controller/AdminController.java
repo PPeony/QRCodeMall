@@ -1,5 +1,6 @@
 package com.qrcodemall.controller;
 
+import com.qrcodemall.controller.vo.AdminLoginVO;
 import com.qrcodemall.controller.vo.GoodsVO;
 import com.qrcodemall.controller.vo.NoticeVO;
 import com.qrcodemall.entity.*;
@@ -25,7 +26,10 @@ import java.util.List;
 public class AdminController {
 
     @PostMapping("/login")//密码登录
-    public Result login(String account, String password) {
+    public Result login(@RequestBody @Valid AdminLoginVO admin,Errors errors) {
+        String account = admin.getAccount();
+        String password = admin.getPassword();
+        System.out.println(account+" *** "+password);
         Result result = new Result();
         //
         if (account == null || password == null) {
