@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -27,10 +28,28 @@ public class OrderFormController {
         return result;
     }
 
+    //user用的
+    @GetMapping("/myOrderForm")
+    public Result selectOneOrderForms(HttpSession session,
+            @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
+            @RequestParam(required = false,value = "beginTime") Date beginTime,
+            @RequestParam(required = false,value = "endTime") Date endTime) {
+        //判断session为不为空，分页
+        Result<List<OrderForm>> result = new Result();
+        List<OrderForm> list = new LinkedList<>();
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        result.setData(list);
+        return result;
+    }
+
+    //admin用的
     @GetMapping("/allOrderForms")
-    public Result selectAllOrderForms(HttpSession session,
-                                      @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
-        //判断session,分页
+    public Result selectAllOrderForms(
+                                      @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
+                                      @RequestParam(required = false,value = "beginTime") Date beginTime,
+                                      @RequestParam(required = false,value = "endTime") Date endTime) {
+        //分页
         Result<List<OrderForm>> result = new Result();
         List<OrderForm> list = new LinkedList<>();
         result.setCode(HttpStatus.OK.value());
@@ -50,5 +69,20 @@ public class OrderFormController {
         result.setData(list);
         return result;
 
+    }
+    @PutMapping("/updateOrderForm")
+    public Result updateOrderForm(@RequestBody OrderForm orderForm) {
+        Result result = new Result();
+        ///
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("update success");
+        return result;
+    }
+    @DeleteMapping("/deleteOrderForm")
+    public Result deleteOrderForm(Integer orderFormId) {
+        Result result = new Result();
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("delete success");
+        return result;
     }
 }

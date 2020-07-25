@@ -1,5 +1,7 @@
 package com.qrcodemall.entity;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -20,6 +22,7 @@ public class Qrcode implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请输入userId")
     private Integer userId;
 
     /**
@@ -29,6 +32,7 @@ public class Qrcode implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请输入goodsId")
     private Integer goodsId;
 
     /**
@@ -38,6 +42,7 @@ public class Qrcode implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请输入goodsTypeId")
     private Integer goodsTypeId;
 
     /**
@@ -47,6 +52,7 @@ public class Qrcode implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请输入goodsTypeName")
     private String goodsTypeName;
 
     /**
@@ -56,6 +62,7 @@ public class Qrcode implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "请输入二维码地址")
     private String qrcodeLink;
 
     /**

@@ -5,6 +5,7 @@ import com.qrcodemall.entity.UserAddress;
 import com.qrcodemall.entity.UserBill;
 import com.qrcodemall.util.Result;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class UserController {
 
     @PostMapping("/login")//密码登录
     public Result login(String account, String password,HttpSession session) {
+        System.out.println(account+" *** "+password);
         Result result = new Result();
         //登陆完之后id存入session
         if (account == null || password == null) {
@@ -132,16 +134,19 @@ public class UserController {
     @DeleteMapping("/deleteAddress")
     public Result deleteUserAddress(Integer userAddressId) {
         //url 传参
+        //System.out.println(userAddressId);
         Result result = new Result();
         result.setCode(HttpStatus.OK.value());
         result.setMessage("删除成功");
         return result;
     }
 
+
     @GetMapping("/myAddress")
     public Result selectUserAddress(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
                                     HttpSession session) {
         //判断session不为空,根据id看地址
+
         Result<List<UserAddress>> result = new Result();
         //分页查询
         List<UserAddress> list = new LinkedList<>();

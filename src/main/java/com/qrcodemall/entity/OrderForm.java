@@ -1,5 +1,7 @@
 package com.qrcodemall.entity;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
@@ -21,6 +23,7 @@ public class OrderForm implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请填写userId")
     private Integer userId;
 
     /**
@@ -30,6 +33,7 @@ public class OrderForm implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请填写addressId")
     private Integer userAddressId;
 
     /**
@@ -48,6 +52,7 @@ public class OrderForm implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请填写支付状态")
     private Integer orderFormStatus;
 
     /**
@@ -57,6 +62,7 @@ public class OrderForm implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "请填写订单总价格")
     private BigDecimal orderFormPrice;
 
     /**
@@ -66,6 +72,7 @@ public class OrderForm implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "请填写支付方式")
     private Integer orderFormPayType;
 
     /**

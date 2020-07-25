@@ -1,5 +1,6 @@
 package com.qrcodemall.entity;
 
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -20,6 +21,7 @@ public class Notice implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "tittle不能为空")
     private String noticeTittleName;
 
     /**
@@ -56,6 +58,7 @@ public class Notice implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "主体信息不能为空")
     private String noticeMessage;
 
     /**
