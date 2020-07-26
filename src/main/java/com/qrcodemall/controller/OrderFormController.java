@@ -30,7 +30,7 @@ public class OrderFormController {
 
     //user用的
     @GetMapping("/myOrderForm")
-    public Result selectOneOrderForms(HttpSession session,
+    public Result selectOneOrderForm(HttpSession session,
             @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
             @RequestParam(required = false,value = "beginTime") Date beginTime,
             @RequestParam(required = false,value = "endTime") Date endTime) {

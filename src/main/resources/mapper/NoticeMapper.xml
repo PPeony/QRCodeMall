@@ -99,6 +99,30 @@
     -->
     notice_message
   </sql>
+
+  <select id="selectByEntityAndTime" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    ,
+    <include refid="Blob_Column_List"></include>
+    from notice
+    <where>
+      <if test="param1.noticeId != null">
+        and notice_id = #{param1.noticeId}
+      </if>
+      <if test="param1.noticeTittleName != null">
+        and notice_tittle_name like concat('%',#{param1.noticeTittleName},'%')
+      </if>
+      <if test="beginTime != null">
+        and gmt_modified >= #{beginTime}
+      </if>
+      <if test="endTime != null">
+        and gmt_modified &lt;= #{endTime}
+      </if>
+      and is_deleted = #{param1.isDeleted}
+    </where>
+  </select>
+
   <select id="selectByExampleWithBLOBs" parameterType="com.qrcodemall.entity.NoticeExample" resultMap="ResultMapWithBLOBs">
     <!--
       WARNING - @mbg.generated

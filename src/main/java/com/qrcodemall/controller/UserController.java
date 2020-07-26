@@ -84,6 +84,14 @@ public class UserController {
         return result;
     }
 
+    @GetMapping("/logout")//退出登录
+    public Result logout(HttpSession session) {
+        session.removeAttribute("adminId");
+        Result result = new Result();
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        return result;
+    }
 
     @PostMapping("/register")
     public Result register(@Valid User user, Errors errors) {
@@ -166,8 +174,9 @@ public class UserController {
         return result;
     }
 
-    @GetMapping("/my/{userId}")//查看自己的所有信息
-    public Result selectUser(@PathVariable Integer userId) {
+    @GetMapping("/my")//查看自己的所有信息
+    public Result selectUser(HttpSession session) {
+        //不暴露id
         Result<User> result = new Result();
         User user = new User();
         user.setUserName("ZhangMaZi");

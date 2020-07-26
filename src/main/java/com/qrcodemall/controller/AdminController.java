@@ -1,11 +1,14 @@
 package com.qrcodemall.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.qrcodemall.controller.vo.AdminLoginVO;
 import com.qrcodemall.controller.vo.GoodsVO;
 import com.qrcodemall.controller.vo.NoticeVO;
 import com.qrcodemall.entity.*;
+import com.qrcodemall.service.AdminService;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.Result;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +27,9 @@ import java.util.List;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+
+    @Autowired
+    AdminService adminService;
 
     @PostMapping("/login")//密码登录
     public Result login(@RequestBody @Valid AdminLoginVO admin,Errors errors) {
@@ -73,6 +79,16 @@ public class AdminController {
         return result;
     }
 
+
+    @GetMapping("/logout")//退出登录
+    public Result logout(HttpSession session) {
+        session.removeAttribute("adminId");
+        Result result = new Result();
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        return result;
+    }
+
 //    @PostMapping("/signin")//手机验证码登录,admin不需要
 //    public Result signin(String phone, HttpSession session) {
 //        Result result = new Result();
@@ -86,14 +102,18 @@ public class AdminController {
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
     @RequestParam(required = false,value = "beginTime") Date beginTime,
     @RequestParam(required = false,value = "endTime") Date endTime) {
-        Result<List<Goods>> result = new Result();
+        Result<PageInfo<Goods>> result = new Result();
+        System.out.println(goods);
         //全空查询所有
         //分页查询,一页十个，返回
+        /*
         List<Goods> list = new LinkedList<>();
         Goods findGoods = new Goods();
         findGoods.setGoodsId(1);
         findGoods.setGoodsName("testGoodsA");
         list.add(findGoods);
+         */
+        PageInfo<Goods> list = adminService.selectGoods(goods, pageNum, beginTime, endTime);
         result.setCode(HttpStatus.OK.value());
         result.setData(list);
         result.setMessage("成功");
@@ -111,6 +131,7 @@ public class AdminController {
             return result;
         }
         //insert
+        Integer r = adminService.insertGoods(goods);
         result.setCode(HttpStatus.CREATED.value());
         result.setMessage("success");
         return result;
@@ -169,7 +190,7 @@ public class AdminController {
     }
 
     @PutMapping("/updateNotice")//所有的update都是根据id来的
-    public Result updateGoods(@RequestBody Notice notice) {
+    public Result updateNotice(@RequestBody Notice notice) {
         Result result = new Result();
         //update
         result.setCode(HttpStatus.OK.value());
@@ -178,7 +199,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/deleteNotice")
-    public Result deleteNotice(Integer goodsId) {
+    public Result deleteNotice(Integer noticeId) {
         //delete
         Result result = new Result();
         result.setCode(HttpStatus.OK.value());

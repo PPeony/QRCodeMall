@@ -107,6 +107,36 @@
     -->
     goods_introduction
   </sql>
+
+  <select id="selectByEntityAndTime" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from goods
+    <where>
+      <if test="param1.goodsId != null">
+        and goods_id = #{param1.goodsId}
+      </if>
+      <if test="param1.goodsTypeId != null">
+        and goods_type_id = #{param1.goodsTypeId}
+      </if>
+      <if test="param1.goodsName != null">
+        and goods_name like concat('%',#{param1.goodsName},'%')
+      </if>
+      <if test="param1.goodsPrice != null">
+        and goods_price = #{param1.goodsPrice}
+      </if>
+      <if test="beginTime != null">
+        and gmt_modified >= #{beginTime}
+      </if>
+      <if test="endTime != null">
+        and gmt_modified &lt;= #{endTime}
+      </if>
+       and is_deleted = #{param1.isDeleted}
+    </where>
+  </select>
+
   <select id="selectByExampleWithBLOBs" parameterType="com.qrcodemall.entity.GoodsExample" resultMap="ResultMapWithBLOBs">
     <!--
       WARNING - @mbg.generated

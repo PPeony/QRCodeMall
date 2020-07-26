@@ -59,7 +59,7 @@ public class GoodsController {
     }
 
     @PostMapping("/addToShoppingCart")
-    public Result insertToShoppingCart(@RequestBody Goods goods) {
+    public Result insertToShoppingCart(@RequestBody Goods goods,HttpSession session) {
         Result result = new Result();
         //查数据库，下架不能买
         //update或者insert到orderFormDetail表
