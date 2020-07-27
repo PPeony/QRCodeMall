@@ -7,6 +7,7 @@ import com.qrcodemall.util.Result;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,6 +62,7 @@ public class GoodsController {
     @PostMapping("/addToShoppingCart")
     public Result insertToShoppingCart(@RequestBody Goods goods,HttpSession session) {
         Result result = new Result();
+        //Cookie cookie = new Cookie();
         //查数据库，下架不能买
         //update或者insert到orderFormDetail表
         result.setCode(HttpStatus.OK.value());

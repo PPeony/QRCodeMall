@@ -1,6 +1,7 @@
 package com.qrcodemall.entity;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -21,6 +22,7 @@ public class UserAddress implements Serializable {
      *
      * @mbg.generated
      */
+    @NotNull(message = "userId不能为空")
     private Integer userId;
 
     /**

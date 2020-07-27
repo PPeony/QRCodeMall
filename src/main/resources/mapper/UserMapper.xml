@@ -93,6 +93,48 @@
     user_id, user_name, user_phone, user_password, user_email, is_vip, user_point, is_deleted, 
     user_father_proxy_id, user_father_proxy_name, user_grandfather_proxy_id, user_grandfather_proxy_name
   </sql>
+
+  <select id="selectBySelective" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List"></include>
+    from user
+    <where>
+      <if test="userId != null">
+        and user_id = #{userId}
+      </if>
+      <if test="userName != null">
+        and user_name = #{userName}
+      </if>
+      <if test="userPhone != null">
+        and user_phone = #{userPhone}
+      </if>
+      <if test="userEmail != null">
+        and user_email = #{userEmail}
+      </if>
+      <if test="isVip != null">
+        and is_vip = #{isVip}
+      </if>
+      <if test="userPoint != null">
+        and user_point = #{userPoint}
+      </if>
+      <if test="isDeleted != null">
+        and is_deleted = #{isDeleted}
+      </if>
+      <if test="userFatherProxyId != null">
+        and user_father_proxy_id = #{userFatherProxyId}
+      </if>
+      <if test="userFatherProxyName != null">
+        and user_father_proxy_name = #{userFatherProxyName}
+      </if>
+      <if test="userGrandfatherProxyId != null">
+        and user_grandfather_proxy_id = #{userGrandfatherProxyId}
+      </if>
+      <if test="userGrandfatherProxyName != null">
+        and user_grandfather_proxy_name = #{userGrandfatherProxyName}
+      </if>
+    </where>
+  </select>
+
   <select id="selectByExample" parameterType="com.qrcodemall.entity.UserExample" resultMap="BaseResultMap">
     <!--
       WARNING - @mbg.generated
@@ -120,7 +162,7 @@
     select 
     <include refid="Base_Column_List" />
     from user
-    where user_id = #{userId,jdbcType=INTEGER}
+    where user_id = #{userId,jdbcType=INTEGER} and is_deleted = 0
   </select>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--

@@ -1,8 +1,11 @@
 package com.qrcodemall.service;
 
+import com.github.pagehelper.PageInfo;
 import com.qrcodemall.entity.Goods;
 import com.qrcodemall.entity.GoodsType;
 
+import javax.servlet.http.Cookie;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -11,15 +14,19 @@ import java.util.List;
  */
 public interface GoodsService {
 
-    List<Goods> selectAllGoods(Integer pageNum);
-
-    List<GoodsType> selectAllGoodsType(Integer pageNum);
+    PageInfo<Goods> selectAllGoods(Integer pageNum);
 
     Goods selectGoods(Integer goodsId);
 
     Integer insertToShoppingCart(Goods goods,Integer userId);
 
-    List<Goods> selectShoppingCart(Integer userId, Integer pageNum);
+    List<Goods> selectShoppingCart(Cookie[] cookies);
 
+    Integer deleteGoods(Integer goodsId);
 
+    Integer updateGoods(Goods goods);
+
+    Integer insertGoods(Goods goods);
+
+    PageInfo<Goods> selectGoods(Goods goods, Integer pageNum, Date beginTime, Date endTime);
 }

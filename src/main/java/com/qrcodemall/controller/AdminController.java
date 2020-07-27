@@ -5,7 +5,7 @@ import com.qrcodemall.controller.vo.AdminLoginVO;
 import com.qrcodemall.controller.vo.GoodsVO;
 import com.qrcodemall.controller.vo.NoticeVO;
 import com.qrcodemall.entity.*;
-import com.qrcodemall.service.AdminService;
+import com.qrcodemall.service.*;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,50 +31,53 @@ public class AdminController {
     @Autowired
     AdminService adminService;
 
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    GoodsService goodsService;
+
+    @Autowired
+    UserBillService userBillService;
+
+    @Autowired
+    QrcodeService qrcodeService;
+
+    @Autowired
+    UserAddressService userAddressService;
+
+    @Autowired
+    GoodsTypeService goodsTypeService;
+
+    @Autowired
+    NoticeService noticeService;
+
+    @Autowired
+    OrderFormService orderFormService;
+
+
+    @Autowired
+    HttpSession session;
+
     @PostMapping("/login")//密码登录
     public Result login(@RequestBody @Valid AdminLoginVO admin,Errors errors) {
+        Result result = new Result();
+        if (errors.hasErrors()) {
+            return Result.generateBadRequestResult(errors);
+        }
+
         String account = admin.getAccount();
         String password = admin.getPassword();
         System.out.println(account+" *** "+password);
-        Result result = new Result();
-        //
-        if (account == null || password == null) {
-            result.setCode(HttpStatus.BAD_REQUEST.value());
-            result.setMessage("输入字段不能为空");
+
+
+        Integer r = adminService.login(account,password);
+        if (r == 1) {
+            result.setCode(HttpStatus.OK.value());
+            result.setMessage("登录成功");
             return result;
         }
-        if (account.equals("123@qq.com")) {//email
-            if (password.equals("123456")) {
-                result.setCode(HttpStatus.OK.value());
-                result.setMessage("登录成功");
-                return result;
-            } else {
-                result.setCode(HttpStatus.UNAUTHORIZED.value());
-                result.setMessage("用户名或者密码不正确");
-                return result;
-            }
-        } else if (account.equals("18845678900")) {//phone
-            if (password.equals("123")) {
-                result.setCode(HttpStatus.OK.value());
-                result.setMessage("登录成功");
-                return result;
-            } else {
-                result.setCode(HttpStatus.UNAUTHORIZED.value());
-                result.setMessage("用户名或者密码不正确");
-                return result;
-            }
-        } else if (account.equals("zhangsan")) {//name
-            if (password.equals("123456789")) {
-                result.setCode(HttpStatus.OK.value());
-                result.setMessage("登录成功");
-                return result;
-            } else {
-                result.setCode(HttpStatus.UNAUTHORIZED.value());
-                result.setMessage("用户名或者密码不正确");
-                return result;
-            }
-        }
-        result.setCode(HttpStatus.BAD_REQUEST.value());
+        result.setCode(HttpStatus.UNAUTHORIZED.value());
         result.setMessage("该用户未注册");
         return result;
     }
@@ -113,7 +116,7 @@ public class AdminController {
         findGoods.setGoodsName("testGoodsA");
         list.add(findGoods);
          */
-        PageInfo<Goods> list = adminService.selectGoods(goods, pageNum, beginTime, endTime);
+        PageInfo<Goods> list = goodsService.selectGoods(goods, pageNum, beginTime, endTime);
         result.setCode(HttpStatus.OK.value());
         result.setData(list);
         result.setMessage("成功");
@@ -121,6 +124,7 @@ public class AdminController {
     }
 
     @PostMapping("/addGoods")//添加商品
+    //todo,传图片
     public Result insertGoods(@Valid @RequestBody Goods goods, Errors errors) {
         //System.out.println(goods);
         // decimal的json直接写12.6就行，不用引号
@@ -131,7 +135,7 @@ public class AdminController {
             return result;
         }
         //insert
-        Integer r = adminService.insertGoods(goods);
+        Integer r = goodsService.insertGoods(goods);
         result.setCode(HttpStatus.CREATED.value());
         result.setMessage("success");
         return result;
@@ -140,6 +144,7 @@ public class AdminController {
     @PutMapping("/updateGoods")//所有的update都是根据id来的
     public Result updateGoods(@RequestBody Goods goods) {
         Result result = new Result();
+        goodsService.updateGoods(goods);
         //update
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
@@ -150,6 +155,7 @@ public class AdminController {
     public Result deleteGoods(Integer goodsId) {
         //delete
         Result result = new Result();
+        goodsService.deleteGoods(goodsId);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("delete success");
         return result;
@@ -160,14 +166,8 @@ public class AdminController {
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
     @RequestParam(required = false,value = "beginTime") Date beginTime,
     @RequestParam(required = false,value = "endTime") Date endTime) {
-        Result<List<Notice>> result = new Result<>();
-        List<Notice> list = new LinkedList<>();
-        Notice findNotice = new Notice();
-        //查询，分页
-        findNotice.setNoticeId(123);
-        findNotice.setNoticeMessage("testNoticeMessage");
-        findNotice.setNoticeTittleName("testNoticeTittleName");
-        list.add(findNotice);
+        Result<PageInfo<Notice>> result = new Result<>();
+        PageInfo<Notice> list = noticeService.selectNotice(notice, pageNum, beginTime, endTime);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("成功");
         result.setData(list);
@@ -184,6 +184,7 @@ public class AdminController {
             return result;
         }
         //insert
+        noticeService.insertNotice(notice);
         result.setCode(HttpStatus.CREATED.value());
         result.setMessage("success");
         return result;
@@ -193,6 +194,7 @@ public class AdminController {
     public Result updateNotice(@RequestBody Notice notice) {
         Result result = new Result();
         //update
+        noticeService.updateNotice(notice);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         return result;
@@ -202,6 +204,7 @@ public class AdminController {
     public Result deleteNotice(Integer noticeId) {
         //delete
         Result result = new Result();
+        noticeService.deleteNotice(noticeId);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("delete success");
         return result;
@@ -277,18 +280,14 @@ public class AdminController {
     @GetMapping("/QRCode")
     public Result selectQRCode(String userName,
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
-        Result<List<Qrcode>> result = new Result<>();
+        Result<PageInfo<Qrcode>> result = new Result<>();
         if (userName == null || userName.length() == 0) {
             result.setCode(HttpStatus.BAD_REQUEST.value());
             result.setMessage("请输入用户名");
             return result;
         }
 
-        List<Qrcode> list = new LinkedList<>();
-        Qrcode qrcode = new Qrcode();
-        //用户名找id
-        qrcode.setUserId(123);
-        list.add(qrcode);
+        PageInfo<Qrcode> list = qrcodeService.selectQrcode(userName, pageNum);
         result.setCode(HttpStatus.OK.value());
         result.setData(list);
         result.setMessage("成功");
@@ -304,6 +303,7 @@ public class AdminController {
             return result;
         }
         //存数据库
+        qrcodeService.insertQrcode(qrcode);
         result.setCode(HttpStatus.CREATED.value());
         result.setMessage("add success");
         return result;
@@ -313,6 +313,7 @@ public class AdminController {
     public Result updateQrcode(@RequestBody Qrcode qrcode) {
         Result result = new Result();
         ///
+        qrcodeService.updateQrcode(qrcode);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("update success");
         return result;
@@ -322,6 +323,7 @@ public class AdminController {
     public Result deleteQrcode(Integer qrcodeId) {
         Result result = new Result();
         ///
+        qrcodeService.deleteQrcode(qrcodeId);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("delete success");
         return result;
@@ -330,11 +332,8 @@ public class AdminController {
     @GetMapping("/user")
     public Result selectUser(User user,
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
-        Result<List<User>> result = new Result();
-        List<User> list = new LinkedList<>();
-        User findUser = new User();
-        findUser.setIsVip(1);
-        findUser.setUserName("zhangsan");
+        Result<PageInfo<User>> result = new Result();
+        PageInfo<User> list = userService.selectUser(user,pageNum);
         result.setCode(HttpStatus.OK.value());
         result.setData(list);
         result.setMessage("成功");
@@ -349,6 +348,17 @@ public class AdminController {
             return result;
         }
         //存数据库
+        Integer r = userService.addUser(user);
+        if (r < 0) {
+            result.setCode(HttpStatus.OK.value());
+            switch (r) {
+                case -1:result.setMessage("没有父级代理名字");break;
+                case -2:result.setMessage("名字重复");break;
+                case -3:result.setMessage("手机号重复");break;
+                case -4:result.setMessage("邮箱重复");break;
+            }
+            return result;
+        }
         result.setCode(HttpStatus.CREATED.value());
         result.setMessage("add success");
         return result;
@@ -357,6 +367,7 @@ public class AdminController {
     @PutMapping("/updateUser")
     public Result updateUser(@RequestBody User user) {
         Result result = new Result();
+        Integer r = userService.updateUser(user);
         ///
         result.setCode(HttpStatus.OK.value());
         result.setMessage("update success");
@@ -367,6 +378,7 @@ public class AdminController {
     public Result deleteUser(Integer userId) {
         Result result = new Result();
         ///
+        userService.deleteUser(userId);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("delete success");
         return result;
@@ -378,15 +390,10 @@ public class AdminController {
     @RequestParam(required = false,value = "endTime") Date endTime,
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
 
-        Result<List<UserBill>> result = new Result();
-        List<UserBill> list = new LinkedList<>();
+        Result<PageInfo<UserBill>> result = new Result();
+        PageInfo<UserBill> list = userBillService.selectUserBill(beginTime, endTime, pageNum);
 
-        UserBill userBill = new UserBill();
-        list.add(userBill);
-        userBill.setUserId(1);
         //一定要用string构造
-        userBill.setUserBillMoney(new BigDecimal("1.2"));
-        userBill.setUserBillRemark("testRemark");
         result.setCode(HttpStatus.OK.value());
         result.setData(list);
         result.setMessage("成功");
@@ -396,6 +403,7 @@ public class AdminController {
 
 
     @PutMapping("/outputMoney")//给用户打钱,money是打多少
+    //没懂啥功能，放着,todo
     public Result outputMoney(@RequestBody UserBill orign) {
         System.out.println(orign);
         Result result = new Result();
@@ -421,13 +429,13 @@ public class AdminController {
 /**销售情况总览**/
     @GetMapping("/sales")
     public Result selectSales(
-            @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
             @RequestParam(required = false,value = "beginTime") Date beginTime,
             @RequestParam(required = false,value = "endTime") Date endTime
     ) {
+
         Result<BigDecimal> result = new Result();
         //从orderForm里面查询符合日期的，在把和相加
-        BigDecimal decimal = new BigDecimal("152.45");
+        BigDecimal decimal = orderFormService.getSalesSituation(beginTime,endTime);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         result.setData(decimal);

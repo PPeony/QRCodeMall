@@ -16,9 +16,7 @@ public class DesUtils {
     private static Cipher encryptCipher = null; //加密器
     private static Cipher decryptCipher = null; //解密器
 
-    public DesUtils() throws Exception {
-        this(defaultSecretKey);
-    }
+
 
     static {
         Key key;

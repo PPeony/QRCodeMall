@@ -230,6 +230,36 @@
       </if>
     </trim>
   </insert>
+
+  <select id="selectByEntityAndTime" resultMap="BaseResultMap">
+    select <include refid="Base_Column_List"></include> from order_form
+    <where>
+        <if test="param1.orderFormId != null">
+          and order_form_id = #{param1.orderFormId}
+        </if>
+      <if test="param1.userId != null">
+        and user_id = #{param1.userId}
+      </if>
+      <if test="param1.isDeleted != null">
+        and is_deleted = #{param1.isDeleted}
+      </if>
+      <if test="param1.orderFormPayType != null">
+        and order_form_pay_type = #{param1.orderFormPayType}
+      </if>
+      <if test="param1.orderFormStatus != null">
+        and order_form_status = #{param1.orderFormStatus}
+      </if>
+      <if test="param2 != null">
+        and gmt_modified >= #{param2}
+      </if>
+      <if test="param3 != null">
+        and gmt_modified &lt;= #{param3}
+      </if>
+    </where>
+    order by order_form_id desc
+
+  </select>
+
   <select id="countByExample" parameterType="com.qrcodemall.entity.OrderFormExample" resultType="java.lang.Long">
     <!--
       WARNING - @mbg.generated
