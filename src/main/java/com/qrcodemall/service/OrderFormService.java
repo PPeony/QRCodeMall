@@ -29,6 +29,8 @@ public interface OrderFormService {
     BigDecimal getSalesSituation(Date beginTime,Date endtime);
 
 
+    List<OrderFormDetail> selectOrderFormDetailWithoutPage(Integer orderFormId);
+
     PageInfo<OrderFormDetail> selectOrderFormDetails(Integer orderFormId,Integer pageNum);
 
     Integer insertOrderFormDetail(OrderFormDetail orderFormDetail);

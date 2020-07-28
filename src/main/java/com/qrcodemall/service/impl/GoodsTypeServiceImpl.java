@@ -28,11 +28,19 @@ public class GoodsTypeServiceImpl implements GoodsTypeService {
 
     @Override
     public Integer insertGoodsType(GoodsType goodsType) {
+        List<GoodsType> list = goodsTypeMapper.selectByName(goodsType.getGoodsTypeName());
+        if (list.size() > 0) {
+            return -1;
+        }
         return goodsTypeMapper.insertSelective(goodsType);
     }
 
     @Override
     public Integer updateGoodsType(GoodsType goodsType) {
+        List<GoodsType> list = goodsTypeMapper.selectByName(goodsType.getGoodsTypeName());
+        if (list.size() > 0) {
+            return -1;
+        }
         return goodsTypeMapper.updateByPrimaryKeySelective(goodsType);
     }
 

@@ -83,6 +83,12 @@
     -->
     goods_type_id, goods_type_name, is_deleted
   </sql>
+  <select id="selectByName">
+    select
+    <include refid="Base_Column_List"></include>
+    from goods_type where goods_type_name = #{goodsTypeName}
+  </select>
+
   <select id="selectByExample" parameterType="com.qrcodemall.entity.GoodsTypeExample" resultMap="BaseResultMap">
     <!--
       WARNING - @mbg.generated

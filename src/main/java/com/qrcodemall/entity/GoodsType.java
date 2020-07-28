@@ -1,6 +1,11 @@
 package com.qrcodemall.entity;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
+
 
 public class GoodsType implements Serializable {
     /**
@@ -10,6 +15,7 @@ public class GoodsType implements Serializable {
      *
      * @mbg.generated
      */
+
     private Integer goodsTypeId;
 
     /**
@@ -19,6 +25,8 @@ public class GoodsType implements Serializable {
      *
      * @mbg.generated
      */
+
+    @NotEmpty(message = "name不能为空")
     private String goodsTypeName;
 
     /**
@@ -28,6 +36,7 @@ public class GoodsType implements Serializable {
      *
      * @mbg.generated
      */
+
     private Integer isDeleted;
 
     /**

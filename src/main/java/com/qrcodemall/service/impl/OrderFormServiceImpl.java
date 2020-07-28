@@ -58,6 +58,15 @@ public class OrderFormServiceImpl implements OrderFormService {
     }
 
     @Override
+    public List<OrderFormDetail> selectOrderFormDetailWithoutPage(Integer orderFormId) {
+        OrderFormDetailExample example = new OrderFormDetailExample();
+        OrderFormDetailExample.Criteria criteria = example.createCriteria();
+        criteria.andOrderFormIdEqualTo(orderFormId);
+        return orderFormDetailMapper.selectByExample(example);
+
+    }
+
+    @Override
     public Integer updateOrderForm(OrderForm orderForm) {
         orderForm.setGmtModified(new Date());
         return orderFormMapper.updateByPrimaryKeySelective(orderForm);
@@ -73,12 +82,22 @@ public class OrderFormServiceImpl implements OrderFormService {
 
     @Override
     public Integer deleteOrderForm(Integer orderFormId) {
+        //同时删除detail
         OrderForm orderForm = new OrderForm();
         orderForm.setIsDeleted(1);
         orderForm.setOrderFormId(orderFormId);
         orderForm.setGmtModified(new Date());
-        return orderFormMapper.updateByPrimaryKeySelective(orderForm);
+        orderFormMapper.updateByPrimaryKeySelective(orderForm);
+        OrderFormDetailExample example = new OrderFormDetailExample();
+        OrderFormDetailExample.Criteria criteria = example.createCriteria();
+        criteria.andOrderFormIdEqualTo(orderFormId);
+        OrderFormDetail orderFormDetail = new OrderFormDetail();
+        orderFormDetail.setIsDeleted(1);
+        orderFormDetail.setGmtModified(new Date());
+        orderFormDetailMapper.updateByExampleSelective(orderFormDetail,example);
+        return 1;
     }
+
 
     @Override
     public PageInfo<OrderFormDetail> selectOrderFormDetails(Integer orderFormId, Integer pageNum) {
