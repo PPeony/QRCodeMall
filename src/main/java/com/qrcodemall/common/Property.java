@@ -6,5 +6,19 @@ package com.qrcodemall.common;
  */
 public class Property {
     //图片存储地址
-    public static final String fileAddress = "D:/images";
+    //示例：/usr/developmentTool/myproject/bookstoreAPI/files/images/
+    public static final String fileAddress = "/usr/QRCodeMall/images/";
+
+    //支付宝配置
+    public static final String alipayAppid = "2021000116697527";
+    //私钥
+    public static final String APP_PRIVATE_KEY = "MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDC7uS78DGsHZKeGCLib6taBnHIcrIu8cdORGA88SCABnMAkGiiz9xMwIks0YWVG/iYWWG0KykIChokWzgtLd7lCrwzWyuTXVXAu3AQ7ZxFdEkwXHEJ8KfcDUoR3KkfBhsaPdrNvd2e7yam6dj9RGilsc1F8vs4RIPlBFlVXrppdQjZevoduxPMF99rYB+fGQunz1qgIZoOdO1cCUIbUsSXYuQyHloOnIlsklxZKyW4F5EnmBdknUi4XVSl1mM6KbnvbqasglZy0TFsQKjqTdnJc5YEpI9Fwq/NXrz08YE66RxtFNbqyIJblvBOm+FNRH9GxuFEbFnTEFiCIZkro9+1AgMBAAECggEBAMAKAaV0+DqL18mQFa3mPXUvLCFBfXDqGGNu0TC4jEAUGm/P1IWxKWMjuwBAWc2QBNRyGeMZMg8NhLuUcj9wFUqnzMj7ZG6FYNnCzqCetXlnGkNejq4wO+552SLHtIUvyruLfGd8ST0udXGyp2a7Yiz6gTQMMJo6RYX1RtznudXxEmDIQKWIrZdm2EfPhDS7PH4oZQ+54ToaCRqxSZXUqoWINe78Q4CroTdvdrnXHxe5hudfWu7vaLatCMj+V9cJtLFsb5yg1zLULn3KEG0LBI7ucP3gO9yXgG8O3lZHe92J155Yf7Ioorv/rovdkCNcKzAFgwDJ8wmUg/Z4V5yEhIECgYEA4QIuQGBZibEz9yGV6kPtLRjCQzoJjLfA7khG6IXSo6osEXYsr4bzxylds1geOl7QagNrFDZHT9/+aqX8y0nMGhMxwMT3XhWoG8bNGEf0hP96+lK2sBy03EWRGSzlO3hx5QKFo+CpJP0Sj2RYytju3Coh85R5P3kO6F0A8x1tWn0CgYEA3chA96q5YHzLMsoBOj13pQtH42yh7+sD2xZh6ysmEqTJFp5/qzVM661jI1AjW5yudL3qfEfYfL8ZNeHw552BeDqiLWn90JZ3ST9njMyunwXhEmhZRTOqwlwMM+43X0JCuvnjSD//l9fm2DvAYi7x3b8U/CB5ZGelrjXLoSrK55kCgYEAuZj84akX8hWy0YRojkXdWzdy9dTnj6T6hRIlOyM3bjyuAPFDRr3AU2Vxnr9un6MZsniDWLa099PBneKwtFZ4/oEapvFRQdAHTHIdNowTy6iYneagPoBPRuozF1sK8pUVDVuZNGXZ32LIbnLNMvThgcVXH/42TP7kJxKf9+ksDFkCgYEA1JrItONDjBx1in2diaAtFtlmk7yqzFyFuLuPKKqXd93iKz3L82tIDtGLLOoAyyy7DIyWwYb6IDPtTfsHPnF+EKxclZ56wz/KoDwY3x/D8gvnxAamNTGfa2xkAlBFYpsZbzZny/YV5hEBaZ52AWkxUTqBOmVDGZ5GdGd7ikeEdVkCgYA4GJb3EA36Sy36xSJBu0dPLaimpGVoQSVhjwm1Yvmpn93HlyQ+xa1ivqhbe7Yf59/oyg5N6LzuhxWI5praLtJ6LsbEfedX3qRreyEDU8sOIwzjlGDxXtcJB3kQGrILjhQaRG4kLl/DzjadINFjZ94/tO+QhsgPkpJN58danW9JJA==";//私钥
+    //公钥
+    public static final String AliPayPublicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAr1nFz1+QFfaDOJY1Vm5xP4s9vQ2t79c4ruNEuHlcWaRKCjhx4SO4Ls278Y3FyMBSRwPsf4fvA5p54Cp9YfSTOI8W0KzTfSDI5YIe8A5qPXjhhSbTI+E/SxnuTrQctDNSrDvK31jw7eDuzVtDEsRtwHcZAQxBlkOUEtD9EcVT+rzqKmVQMiY95Wo0sc3aqrO/XpE99r8WRn+LFzqcfzskbLa5KHtHZmwWlVauggFfQtL5GaLbERDvyp4Y0dTILLE79Z/BKUs7DwGQnr2f7rqZQMIJSwrxOn0gbZjgFkSYX9X9skt1L/lThwCN9wBofFx71qOxgzjMFQWi1jkr4Nvp7wIDAQAB";
+
+    public static final String notify_url = "http://localhost:8080/alipay.trade.page.pay-JAVA-UTF-8/notify_url.jsp";
+
+    public static final String return_url = "http://localhost:8080/alipay.trade.page.pay-JAVA-UTF-8/return_url.jsp";
+
+
 }

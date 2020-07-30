@@ -834,6 +834,76 @@ public class UserAddressExample {
             addCriterion("is_deleted not between", value1, value2, "isDeleted");
             return (Criteria) this;
         }
+
+        public Criteria andReceiveNameIsNull() {
+            addCriterion("receive_name is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameIsNotNull() {
+            addCriterion("receive_name is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameEqualTo(String value) {
+            addCriterion("receive_name =", value, "receiveName");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameNotEqualTo(String value) {
+            addCriterion("receive_name <>", value, "receiveName");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameGreaterThan(String value) {
+            addCriterion("receive_name >", value, "receiveName");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameGreaterThanOrEqualTo(String value) {
+            addCriterion("receive_name >=", value, "receiveName");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameLessThan(String value) {
+            addCriterion("receive_name <", value, "receiveName");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameLessThanOrEqualTo(String value) {
+            addCriterion("receive_name <=", value, "receiveName");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameLike(String value) {
+            addCriterion("receive_name like", value, "receiveName");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameNotLike(String value) {
+            addCriterion("receive_name not like", value, "receiveName");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameIn(List<String> values) {
+            addCriterion("receive_name in", values, "receiveName");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameNotIn(List<String> values) {
+            addCriterion("receive_name not in", values, "receiveName");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameBetween(String value1, String value2) {
+            addCriterion("receive_name between", value1, value2, "receiveName");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceiveNameNotBetween(String value1, String value2) {
+            addCriterion("receive_name not between", value1, value2, "receiveName");
+            return (Criteria) this;
+        }
     }
 
     /**

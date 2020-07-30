@@ -23,7 +23,7 @@ public class GoodsTypeController {
     GoodsTypeService goodsTypeService;
 
     @GetMapping("/all")
-    public Result selectAllGoodsType() {
+    public Result<List<GoodsType>> selectAllGoodsType() {
         Result<List<GoodsType>> result = new Result<>();
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");

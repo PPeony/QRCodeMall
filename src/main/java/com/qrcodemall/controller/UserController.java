@@ -161,7 +161,7 @@ public class UserController {
 
 
     @GetMapping("/myAddress")
-    public Result selectUserAddress(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
+    public Result<List<UserAddress>> selectUserAddress(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
                                     HttpSession session) {
         //判断session不为空,根据id看地址
 
@@ -178,7 +178,7 @@ public class UserController {
     }
 
     @GetMapping("/my")//查看自己的所有信息
-    public Result selectUser(HttpSession session) {
+    public Result<User> selectUser(HttpSession session) {
         //不暴露id
         Result<User> result = new Result();
         User user = new User();
@@ -190,7 +190,7 @@ public class UserController {
     }
 
     @GetMapping("/myBill")
-    public Result selectUserBill(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
+    public Result<List<UserBill>> selectUserBill(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
                                  HttpSession session) {
         //判断session不为空，分页
         Result<List<UserBill>> result = new Result<>();

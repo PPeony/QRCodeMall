@@ -1,9 +1,14 @@
 package com.qrcodemall.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.qrcodemall.entity.Goods;
 import com.qrcodemall.entity.GoodsType;
 import com.qrcodemall.entity.OrderFormDetail;
+import com.qrcodemall.service.GoodsService;
+import com.qrcodemall.service.GoodsTypeService;
 import com.qrcodemall.util.Result;
+import io.swagger.annotations.ApiOperation;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,14 +25,17 @@ import java.util.List;
 @RequestMapping("/goods")
 public class GoodsController {
 
+    @Autowired
+    GoodsService goodsService;
+
+    @Autowired
+    GoodsTypeService goodsTypeService;
+
     @GetMapping("/allGoods")
-    public Result selectAllGoods(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
-        Result<List<Goods>> result = new Result<>();
+    public Result<PageInfo<Goods>> selectAllGoods(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
+        Result<PageInfo<Goods>> result = new Result<>();
         //分页
-        List<Goods> list = new LinkedList<>();
-        Goods goods = new Goods();
-        goods.setGoodsName("testA");
-        list.add(goods);
+        PageInfo<Goods> list = goodsService.selectAllGoods(pageNum);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("成功获取所有商品信息");
         result.setData(list);
@@ -35,13 +43,10 @@ public class GoodsController {
     }
 
     @GetMapping("/goodsType")
-    public Result selectAllGoodsType(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
+    public Result<List<GoodsType>> selectAllGoodsType(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
         Result<List<GoodsType>> result = new Result<>();
-        //分页
-        List<GoodsType> list = new LinkedList<>();
-        GoodsType gt = new GoodsType();
-        gt.setGoodsTypeName("testA");
-        list.add(gt);
+        //不分页
+        List<GoodsType> list = goodsTypeService.selectAllGoodsType();
         result.setCode(HttpStatus.OK.value());
         result.setMessage("成功获取所有种类信息");
         result.setData(list);
@@ -49,10 +54,9 @@ public class GoodsController {
     }
 
     @GetMapping("/{goodsId}")
-    public Result selectGoods(@PathVariable Integer goodsId) {
+    public Result<Goods> selectGoods(@PathVariable Integer goodsId) {
         Result<Goods> result = new Result();
-        Goods goods = new Goods();
-        goods.setGoodsName("testName");
+        Goods goods = goodsService.selectGoods(goodsId);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("成功获取信息");
         result.setData(goods);
@@ -71,7 +75,8 @@ public class GoodsController {
     }
 
     @GetMapping("/shoppingCart")//查看购物车所有东西
-    public Result selectOrderFormDetail(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum
+    //@ApiOperation()
+    public Result<List<OrderFormDetail>> selectOrderFormDetail(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum
                                         ,HttpSession session) {
         //判断session不为空，注意分页
         Result<List<OrderFormDetail>> result = new Result<>();

@@ -58,56 +58,56 @@
             <property name="enableSubPackages" value="false" />
         </javaClientGenerator>
         <!-- table可以有多个,每个数据库中的表都可以写一个table，tableName表示要匹配的数据库表,也可以在tableName属性中通过使用%通配符来匹配所有数据库表,只有匹配的表才会自动生成文件 -->
-        <table tableName="user" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-            <property name="useActualColumnNames" value="false" />
-            <!-- 数据库表主键 -->
-            <generatedKey column="user_id" sqlStatement="Mysql" identity="true" />
-        </table>
-        <table tableName="admin" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-            <property name="useActualColumnNames" value="false" />
-            <!-- 数据库表主键 -->
-            <generatedKey column="admin_id" sqlStatement="Mysql" identity="true" />
-        </table>
-        <table tableName="goods" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-            <property name="useActualColumnNames" value="false" />
-            <!-- 数据库表主键 -->
-            <generatedKey column="goods_id" sqlStatement="Mysql" identity="true" />
-        </table>
-        <table tableName="goods_type" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-            <property name="useActualColumnNames" value="false" />
-            <!-- 数据库表主键 -->
-            <generatedKey column="goods_type_id" sqlStatement="Mysql" identity="true" />
-        </table>
-        <table tableName="notice" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-            <property name="useActualColumnNames" value="false" />
-            <!-- 数据库表主键 -->
-            <generatedKey column="notice_id" sqlStatement="Mysql" identity="true" />
-        </table>
-        <table tableName="order_form" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-            <property name="useActualColumnNames" value="false" />
-            <!-- 数据库表主键 -->
-            <generatedKey column="order_form_id" sqlStatement="Mysql" identity="true" />
-        </table>
-        <table tableName="order_form_detail" domainObjectName="OrderFormDetail" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-        <property name="useActualColumnNames" value="false" />
-        <!-- 数据库表主键 -->
-        <generatedKey column="order_form_detail_id" sqlStatement="Mysql" identity="true" />
-        </table>
+<!--        <table tableName="user" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
+<!--            <property name="useActualColumnNames" value="false" />-->
+<!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
+<!--            <generatedKey column="user_id" sqlStatement="Mysql" identity="true" />-->
+<!--        </table>-->
+<!--        <table tableName="admin" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
+<!--            <property name="useActualColumnNames" value="false" />-->
+<!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
+<!--            <generatedKey column="admin_id" sqlStatement="Mysql" identity="true" />-->
+<!--        </table>-->
+<!--        <table tableName="goods" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
+<!--            <property name="useActualColumnNames" value="false" />-->
+<!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
+<!--            <generatedKey column="goods_id" sqlStatement="Mysql" identity="true" />-->
+<!--        </table>-->
+<!--        <table tableName="goods_type" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
+<!--            <property name="useActualColumnNames" value="false" />-->
+<!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
+<!--            <generatedKey column="goods_type_id" sqlStatement="Mysql" identity="true" />-->
+<!--        </table>-->
+<!--        <table tableName="notice" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
+<!--            <property name="useActualColumnNames" value="false" />-->
+<!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
+<!--            <generatedKey column="notice_id" sqlStatement="Mysql" identity="true" />-->
+<!--        </table>-->
+<!--        <table tableName="order_form" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
+<!--            <property name="useActualColumnNames" value="false" />-->
+<!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
+<!--            <generatedKey column="order_form_id" sqlStatement="Mysql" identity="true" />-->
+<!--        </table>-->
+<!--        <table tableName="order_form_detail" domainObjectName="OrderFormDetail" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
+<!--        <property name="useActualColumnNames" value="false" />-->
+<!--        &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
+<!--        <generatedKey column="order_form_detail_id" sqlStatement="Mysql" identity="true" />-->
+<!--        </table>-->
         <table tableName="user_address" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
             <property name="useActualColumnNames" value="false" />
             <!-- 数据库表主键 -->
             <generatedKey column="user_address_id" sqlStatement="Mysql" identity="true" />
         </table>
-        <table tableName="qrcode" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-            <property name="useActualColumnNames" value="false" />
-            <!-- 数据库表主键 -->
-            <generatedKey column="qrcode_id" sqlStatement="Mysql" identity="true" />
-        </table>
-        <table tableName="user_bill" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-            <property name="useActualColumnNames" value="false" />
-            <!-- 数据库表主键 -->
-            <generatedKey column="user_bill_id" sqlStatement="Mysql" identity="true" />
-        </table>
+<!--        <table tableName="qrcode" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
+<!--            <property name="useActualColumnNames" value="false" />-->
+<!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
+<!--            <generatedKey column="qrcode_id" sqlStatement="Mysql" identity="true" />-->
+<!--        </table>-->
+<!--        <table tableName="user_bill" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
+<!--            <property name="useActualColumnNames" value="false" />-->
+<!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
+<!--            <generatedKey column="user_bill_id" sqlStatement="Mysql" identity="true" />-->
+<!--        </table>-->
 
 
 

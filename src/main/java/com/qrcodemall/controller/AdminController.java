@@ -107,7 +107,7 @@ public class AdminController {
 //    }
 /**goods**/
     @GetMapping("/goods")
-    public Result selectGoods(Goods goods,
+    public Result<PageInfo<Goods>> selectGoods(Goods goods,
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
     @RequestParam(required = false,value = "beginTime") Date beginTime,
     @RequestParam(required = false,value = "endTime") Date endTime) {
@@ -139,7 +139,17 @@ public class AdminController {
     Integer goodsQrcodeQuantity,
     MultipartFile goodsPicture,
     MultipartFile goodsDetail,
+    String goodsIntroduction,
     Integer goodsStatus) {
+        Result result = new Result();
+        if (goodsTypeId == null || goodsName == null || goodsPicture == null ||
+        goodsPicture == null || goodsDetail == null || goodsIntroduction == null
+                || goodsQrcodeQuantity == null || goodsTypeName == null
+        ) {
+            result.setMessage("缺少参数");
+            result.setCode(HttpStatus.BAD_REQUEST.value());
+            return result;
+        }
         Goods goods = new Goods();
         //System.out.println(goods);
         // decimal的json直接写12.6就行，不用引号
@@ -153,9 +163,10 @@ public class AdminController {
         goods.setGoodsStatus(goodsStatus);
         String goodsPictureName = PictureUtil.uploadFile(goodsPicture,httpServletRequest);
         goods.setGoodsPicture(goodsPictureName);
+        goods.setGoodsIntroduction(goodsIntroduction);
         System.out.println(goods);
         //insert
-        Result result = new Result();
+
         Integer r = goodsService.insertGoods(goods);
         result.setCode(HttpStatus.CREATED.value());
         result.setMessage("success");
@@ -171,6 +182,7 @@ public class AdminController {
       Integer goodsQrcodeQuantity,
       MultipartFile goodsPicture,
       MultipartFile goodsDetail,
+      String goodsIntroduction,
       Integer goodsStatus
 
     ) {
@@ -190,6 +202,7 @@ public class AdminController {
         goods.setGoodsTypeName(goodsTypeName);
         goods.setGoodsQrcodeQuantity(goodsQrcodeQuantity);
         goods.setGoodsStatus(goodsStatus);
+        goods.setGoodsIntroduction(goodsIntroduction);
         goodsService.updateGoods(goods);
         //update
         result.setCode(HttpStatus.OK.value());
@@ -208,7 +221,7 @@ public class AdminController {
     }
 /**notice**/
     @GetMapping("/notice")
-    public Result selectNotice(Notice notice,
+    public Result<PageInfo<Notice>> selectNotice(Notice notice,
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
     @RequestParam(required = false,value = "beginTime") Date beginTime,
     @RequestParam(required = false,value = "endTime") Date endTime) {
@@ -324,7 +337,7 @@ public class AdminController {
 
 /**qrcode**/
     @GetMapping("/QRCode")
-    public Result selectQRCode(String userName,
+    public Result<PageInfo<Qrcode>> selectQRCode(String userName,
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
         Result<PageInfo<Qrcode>> result = new Result<>();
         if (userName == null || userName.length() == 0) {
@@ -376,7 +389,7 @@ public class AdminController {
     }
 /**user**/
     @GetMapping("/user")
-    public Result selectUser(User user,
+    public Result<PageInfo<User>> selectUser(User user,
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
         Result<PageInfo<User>> result = new Result();
         PageInfo<User> list = userService.selectUser(user,pageNum);
@@ -432,7 +445,7 @@ public class AdminController {
    /**userBill**/
 
     @GetMapping("/userBill")
-    public Result selectUserBill(@RequestParam(required = false,value = "beginTime") Date beginTime,
+    public Result<PageInfo<UserBill>> selectUserBill(@RequestParam(required = false,value = "beginTime") Date beginTime,
     @RequestParam(required = false,value = "endTime") Date endTime,
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
 
@@ -474,7 +487,7 @@ public class AdminController {
 
 /**销售情况总览**/
     @GetMapping("/sales")
-    public Result selectSales(
+    public Result<BigDecimal> selectSales(
             @RequestParam(required = false,value = "beginTime") Date beginTime,
             @RequestParam(required = false,value = "endTime") Date endTime
     ) {

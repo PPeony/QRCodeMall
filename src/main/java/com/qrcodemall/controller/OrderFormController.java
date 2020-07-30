@@ -1,12 +1,15 @@
 package com.qrcodemall.controller;
 
+import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import com.qrcodemall.controller.vo.AdminOrderFormVO;
 import com.qrcodemall.entity.OrderForm;
 import com.qrcodemall.entity.OrderFormDetail;
+import com.qrcodemall.entity.User;
 import com.qrcodemall.service.OrderFormService;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.Result;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -28,6 +31,7 @@ public class OrderFormController {
     OrderFormService orderFormService;
 
     @PutMapping("/buyGoods")
+    @ApiOperation(value = "不知道咋写业务，不知道咋返回，先起个名字，这是买东西用的")
     public Result buyGoods(@RequestBody OrderForm orderForm) {
         Result result = new Result();
         //应该唤醒支付方式在跳转，不会写，先放着
@@ -38,13 +42,14 @@ public class OrderFormController {
 
     //user用的
     @GetMapping("/myOrderForm")
-    public Result selectOneOrderForm(HttpSession session,
+    public Result<PageInfo<OrderForm>> selectOneOrderForm(HttpSession session,
             @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
             @RequestParam(required = false,value = "beginTime") Date beginTime,
             @RequestParam(required = false,value = "endTime") Date endTime) {
         //判断session为不为空，分页
-        Result<List<OrderForm>> result = new Result();
-        List<OrderForm> list = new LinkedList<>();
+        Result<PageInfo<OrderForm>> result = new Result();
+        User u = (User)session.getAttribute("user");
+        PageInfo<OrderForm> list = orderFormService.selectOrderForm(u.getUserId(),beginTime,endTime,pageNum);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         result.setData(list);
@@ -53,7 +58,7 @@ public class OrderFormController {
 
     //admin用的
     @GetMapping("/allOrderForms")
-    public Result selectAllOrderForms(
+    public Result<PageInfo<AdminOrderFormVO>> selectAllOrderForms(
                                       @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
                                       @RequestParam(required = false,value = "beginTime") Date beginTime,
                                       @RequestParam(required = false,value = "endTime") Date endTime) {
@@ -89,11 +94,11 @@ public class OrderFormController {
         return pres;
     }
     @GetMapping("/{orderFormId}")//查看订单详情
-    public Result selectOrderDetails(@PathVariable Integer orderFormId,
+    public Result<List<OrderFormDetail>> selectOrderDetails(@PathVariable Integer orderFormId,
                                      @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
         //orderDetail表照着id查
         Result<List<OrderFormDetail>> result = new Result<>();
-        List<OrderFormDetail> list = new LinkedList<>();
+        List<OrderFormDetail> list = orderFormService.selectOrderFormDetailWithoutPage(orderFormId);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         result.setData(list);
@@ -103,6 +108,7 @@ public class OrderFormController {
     @PutMapping("/updateOrderForm")
     public Result updateOrderForm(@RequestBody OrderForm orderForm) {
         Result result = new Result();
+        orderFormService.updateOrderForm(orderForm);
         ///
         result.setCode(HttpStatus.OK.value());
         result.setMessage("update success");
