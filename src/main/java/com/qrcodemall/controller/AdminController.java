@@ -7,12 +7,15 @@ import com.qrcodemall.controller.vo.NoticeVO;
 import com.qrcodemall.entity.*;
 import com.qrcodemall.service.*;
 import com.qrcodemall.util.BeanUtil;
+import com.qrcodemall.util.PictureUtil;
 import com.qrcodemall.util.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.math.BigDecimal;
@@ -58,6 +61,9 @@ public class AdminController {
 
     @Autowired
     HttpSession session;
+
+    @Autowired
+    HttpServletRequest httpServletRequest;
 
     @PostMapping("/login")//密码登录
     public Result login(@RequestBody @Valid AdminLoginVO admin,Errors errors) {
@@ -125,16 +131,31 @@ public class AdminController {
 
     @PostMapping("/addGoods")//添加商品
     //todo,传图片
-    public Result insertGoods(@Valid @RequestBody Goods goods, Errors errors) {
+    public Result insertGoods(/** @Valid @RequestBody Goods goods **/
+    Integer goodsTypeId,
+    String goodsName,
+    BigDecimal goodsPrice,
+    String goodsTypeName,
+    Integer goodsQrcodeQuantity,
+    MultipartFile goodsPicture,
+    MultipartFile goodsDetail,
+    Integer goodsStatus) {
+        Goods goods = new Goods();
         //System.out.println(goods);
         // decimal的json直接写12.6就行，不用引号
-        Result result = new Result();
-        if (errors.hasErrors()) {
-            result.setCode(HttpStatus.BAD_REQUEST.value());
-            result.setMessage(errors.getAllErrors().get(0).getDefaultMessage());
-            return result;
-        }
+        goods.setGoodsName(goodsName);
+        goods.setGoodsTypeId(goodsTypeId);
+        goods.setGoodsTypeName(goodsTypeName);
+        goods.setGoodsPrice(goodsPrice);
+        goods.setGoodsQrcodeQuantity(goodsQrcodeQuantity);
+        String goodsDetailName = PictureUtil.uploadFile(goodsDetail,httpServletRequest);
+        goods.setGoodsDetail(goodsDetailName);
+        goods.setGoodsStatus(goodsStatus);
+        String goodsPictureName = PictureUtil.uploadFile(goodsPicture,httpServletRequest);
+        goods.setGoodsPicture(goodsPictureName);
+        System.out.println(goods);
         //insert
+        Result result = new Result();
         Integer r = goodsService.insertGoods(goods);
         result.setCode(HttpStatus.CREATED.value());
         result.setMessage("success");
@@ -142,8 +163,33 @@ public class AdminController {
     }
 
     @PutMapping("/updateGoods")//所有的update都是根据id来的
-    public Result updateGoods(@RequestBody Goods goods) {
+    public Result updateGoods(/** @RequestBody Goods goods **/
+      Integer goodsTypeId,
+      String goodsName,
+      BigDecimal goodsPrice,
+      String goodsTypeName,
+      Integer goodsQrcodeQuantity,
+      MultipartFile goodsPicture,
+      MultipartFile goodsDetail,
+      Integer goodsStatus
+
+    ) {
+        Goods goods = new Goods();
         Result result = new Result();
+        if (goodsPicture != null) {
+            String name = PictureUtil.uploadFile(goodsPicture,httpServletRequest);
+            goods.setGoodsPicture(name);
+        }
+        if (goodsDetail != null) {
+            String name = PictureUtil.uploadFile(goodsDetail,httpServletRequest);
+            goods.setGoodsDetail(name);
+        }
+        goods.setGoodsTypeId(goodsTypeId);
+        goods.setGoodsName(goodsName);
+        goods.setGoodsPrice(goodsPrice);
+        goods.setGoodsTypeName(goodsTypeName);
+        goods.setGoodsQrcodeQuantity(goodsQrcodeQuantity);
+        goods.setGoodsStatus(goodsStatus);
         goodsService.updateGoods(goods);
         //update
         result.setCode(HttpStatus.OK.value());
