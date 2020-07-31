@@ -5,5 +5,5 @@ package com.qrcodemall.common;
  * @Date: 2020/7/27 10:10
  */
 public class PageProperty {
-    public static final Integer PAGESIZE = 10;
+    public static final Integer PAGESIZE = 9;
 }
