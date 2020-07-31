@@ -13,7 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,11 +67,30 @@ public class GoodsController {
     }
 
     @PostMapping("/addToShoppingCart")
-    public Result insertToShoppingCart(@RequestBody Goods goods,HttpSession session) {
+    public Result insertToShoppingCart(Integer goodsId, HttpSession session, HttpServletResponse response, HttpServletRequest request) {
         Result result = new Result();
+        Goods sg = goodsService.selectGoods(goodsId);
+        if (sg.getIsDeleted() == 1) {
+            //已下架，不让买
+            result.setCode(HttpStatus.NOT_FOUND.value());
+            result.setMessage("商品已下架");
+            return result;
+        }
         //Cookie cookie = new Cookie();
+        Cookie[] cookies = request.getCookies();
+        for (Cookie c : cookies) {
+            if (c.getName().equals(goodsId.toString())) {
+                int v = Integer.valueOf(c.getValue()) + 1;
+                c.setValue(String.valueOf(v));
+                result.setCode(HttpStatus.OK.value());
+                result.setMessage("添加成功");
+                return result;
+            }
+        }
+        Cookie c = new Cookie(String.valueOf(goodsId),"1");
+        response.addCookie(c);
         //查数据库，下架不能买
-        //update或者insert到orderFormDetail表
+
         result.setCode(HttpStatus.OK.value());
         result.setMessage("添加成功");
         return result;
@@ -76,14 +98,21 @@ public class GoodsController {
 
     @GetMapping("/shoppingCart")//查看购物车所有东西
     //@ApiOperation()
-    public Result<List<OrderFormDetail>> selectOrderFormDetail(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum
-                                        ,HttpSession session) {
+    public Result<List<Goods>> selectOrderFormDetail(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum
+                                        ,HttpSession session,HttpServletRequest request) {
         //判断session不为空，注意分页
-        Result<List<OrderFormDetail>> result = new Result<>();
-        List<OrderFormDetail> list = new LinkedList<>();
-        OrderFormDetail orderFormDetail = new OrderFormDetail();
-        orderFormDetail.setGoodsName("testDetail");
-        list.add(orderFormDetail);
+        Result<List<Goods>> result = new Result<>();
+        if (session.getAttribute("user") == null) {
+            result.setCode(HttpStatus.UNAUTHORIZED.value());
+            result.setMessage("请重新登录");
+            return result;
+        }
+        List<Goods> list = new LinkedList<>();
+        Cookie[] cookies = request.getCookies();
+        for (Cookie c : cookies) {
+            Integer goodsId = Integer.valueOf(c.getName());
+            list.add(goodsService.selectGoods(goodsId));
+        }
         result.setCode(HttpStatus.OK.value());
         result.setMessage("成功");
         result.setData(list);

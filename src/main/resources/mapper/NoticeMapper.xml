@@ -100,11 +100,11 @@
     notice_message
   </sql>
 
-  <select id="selectByEntityAndTime" resultMap="BaseResultMap">
+  <select id="selectByEntityAndTime" resultMap="ResultMapWithBLOBs">
     select
-    <include refid="Base_Column_List"></include>
+    <include refid="Base_Column_List" />
     ,
-    <include refid="Blob_Column_List"></include>
+    <include refid="Blob_Column_List" />
     from notice
     <where>
       <if test="param1.noticeId != null">

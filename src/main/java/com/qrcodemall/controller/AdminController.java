@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.qrcodemall.controller.vo.AdminLoginVO;
 import com.qrcodemall.controller.vo.GoodsVO;
 import com.qrcodemall.controller.vo.NoticeVO;
+import com.qrcodemall.controller.vo.QrcodeVO;
 import com.qrcodemall.entity.*;
 import com.qrcodemall.service.*;
 import com.qrcodemall.util.BeanUtil;
@@ -337,9 +338,9 @@ public class AdminController {
 
 /**qrcode**/
     @GetMapping("/QRCode")
-    public Result<PageInfo<Qrcode>> selectQRCode(String userName,
-    @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
-        Result<PageInfo<Qrcode>> result = new Result<>();
+    public Result<PageInfo<QrcodeVO>> selectQRCode(String userName,
+                                                   @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
+        Result<PageInfo<QrcodeVO>> result = new Result<>();
         if (userName == null || userName.length() == 0) {
             result.setCode(HttpStatus.BAD_REQUEST.value());
             result.setMessage("请输入用户名");
@@ -347,10 +348,29 @@ public class AdminController {
         }
 
         PageInfo<Qrcode> list = qrcodeService.selectQrcode(userName, pageNum);
+        //PageInfo<QrcodeVO> ql = new PageInfo<>(buildQrcodeVO(list.getList()));
+        //上下两种写法不一样，下面应该合理
+        PageInfo<QrcodeVO> ql = new PageInfo<>();
+        BeanUtil.copyProperties(list,ql,"list");
+        ql.setList(buildQrcodeVO(list.getList()));
         result.setCode(HttpStatus.OK.value());
-        result.setData(list);
+        result.setData(ql);
         result.setMessage("成功");
         return result;
+    }
+
+    private List<QrcodeVO> buildQrcodeVO(List<Qrcode> list) {
+        List<QrcodeVO> res = new LinkedList<>();
+        for (Qrcode qrcode : list) {
+            QrcodeVO qv = new QrcodeVO();
+            BeanUtil.copyProperties(qrcode,qv);
+            User su = userService.selectUser(qrcode.getUserId());
+            Goods sg = goodsService.selectGoods(qrcode.getGoodsId());
+            qv.setGoodsName(sg.getGoodsName());
+            qv.setUserName(su.getUserName());
+            res.add(qv);
+        }
+        return res;
     }
 
     @PostMapping("/addQRCode")

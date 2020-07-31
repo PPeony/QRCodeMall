@@ -83,7 +83,7 @@
     -->
     goods_type_id, goods_type_name, is_deleted
   </sql>
-  <select id="selectByName">
+  <select id="selectByName" resultType="com.qrcodemall.entity.GoodsType">
     select
     <include refid="Base_Column_List"></include>
     from goods_type where goods_type_name = #{goodsTypeName}
