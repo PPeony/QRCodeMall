@@ -9,6 +9,7 @@ an innovative project in university using springboot
 - 引入alipay支付（微信正在交涉中）
 - 全局异常处理
 - restful返回形式
+- swagger
 # 未来功能：
 - 手机号发送验证码
 - 生成各式各样的二维码
