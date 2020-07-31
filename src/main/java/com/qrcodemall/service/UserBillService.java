@@ -17,4 +17,6 @@ public interface UserBillService {
     PageInfo<UserBill> selectUserBill(Date beginTime, Date endTime, Integer pageNum);
 
     Integer deleteUserBill(Integer userBillId);
+
+    PageInfo<UserBill> selectByUserId(Integer userId,Integer pageNum);
 }

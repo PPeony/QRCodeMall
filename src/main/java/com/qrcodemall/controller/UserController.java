@@ -1,5 +1,6 @@
 package com.qrcodemall.controller;
 
+import com.github.pagehelper.PageInfo;
 import com.qrcodemall.controller.vo.UserLoginVO;
 import com.qrcodemall.dao.UserAddressMapper;
 import com.qrcodemall.dao.UserMapper;
@@ -7,8 +8,10 @@ import com.qrcodemall.entity.User;
 import com.qrcodemall.entity.UserAddress;
 import com.qrcodemall.entity.UserBill;
 import com.qrcodemall.service.UserAddressService;
+import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.service.UserService;
 import com.qrcodemall.util.Result;
+import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -27,6 +30,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/user")
+@Api(value = "数据库里面密码都为12345678，注意密码长度在8-16之间")
 public class UserController {
 
     @Autowired
@@ -37,6 +41,9 @@ public class UserController {
 
     @Autowired
     UserAddressService userAddressService;
+
+    @Autowired
+    UserBillService userBillService;
 
     @PostMapping("/login")//密码登录
     public Result login(@Valid @RequestBody UserLoginVO user,
@@ -80,7 +87,8 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public Result register(@Valid User user, Errors errors) {
+    //已注册账号
+    public Result register(@RequestBody @Valid User user, Errors errors) {
         Result result = new Result();
         if (errors.hasErrors()) {
             result.setCode(HttpStatus.BAD_REQUEST.value());
@@ -129,6 +137,11 @@ public class UserController {
             result.setMessage(errors.getAllErrors().get(0).getDefaultMessage());
             return result;
         }
+        if (session.getAttribute("user") == null) {
+            result.setCode(HttpStatus.UNAUTHORIZED.value());
+            result.setMessage("请重新登录");
+            return result;
+        }
         User tmp = (User)session.getAttribute("user");
         userAddress.setUserId(tmp.getUserId());
         Integer r = userAddressService.insertUserAddress(userAddress);
@@ -142,8 +155,12 @@ public class UserController {
 
     @PutMapping("/updateAddress")
     public Result updateUserAddress(@RequestBody UserAddress userAddress) {
+
         //传参方式有待商榷
         Result result = new Result();
+        User user = (User)session.getAttribute("user");
+        userAddress.setUserId(user.getUserId());
+        userAddressService.updateUserAddress(userAddress);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("修改成功");
         return result;
@@ -154,6 +171,7 @@ public class UserController {
         //url 传参
         //System.out.println(userAddressId);
         Result result = new Result();
+        userAddressService.deleteUserAddress(userAddressId);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("删除成功");
         return result;
@@ -162,18 +180,22 @@ public class UserController {
 
     @GetMapping("/myAddress")
     public Result<List<UserAddress>> selectUserAddress(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
-                                    HttpSession session) {
+                                                           HttpSession session) {
         //判断session不为空,根据id看地址
-
         Result<List<UserAddress>> result = new Result();
-        //分页查询
-        List<UserAddress> list = new LinkedList<>();
-        UserAddress userAddress = new UserAddress();
-        userAddress.setUserAddressProvince("testProvince");
-        list.add(userAddress);
+        if (session.getAttribute("user") == null) {
+            result.setCode(HttpStatus.UNAUTHORIZED.value());
+            result.setMessage("请重新登录");
+            return result;
+        }
+        User user = (User)session.getAttribute("user");
+
+        //不分页
+        List<UserAddress> userAddressList = userAddressService.selectUserAddress(user.getUserId());
+
         result.setCode(HttpStatus.OK.value());
         result.setMessage("成功");
-        result.setData(list);
+        result.setData(userAddressList);
         return result;
     }
 
@@ -181,8 +203,12 @@ public class UserController {
     public Result<User> selectUser(HttpSession session) {
         //不暴露id
         Result<User> result = new Result();
-        User user = new User();
-        user.setUserName("ZhangMaZi");
+        if (session.getAttribute("user") == null) {
+            result.setCode(HttpStatus.UNAUTHORIZED.value());
+            result.setMessage("请重新登录");
+            return result;
+        }
+        User user = (User)session.getAttribute("user");
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         result.setData(user);
@@ -190,14 +216,21 @@ public class UserController {
     }
 
     @GetMapping("/myBill")
-    public Result<List<UserBill>> selectUserBill(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
+    public Result<PageInfo<UserBill>> selectUserBill(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
                                  HttpSession session) {
         //判断session不为空，分页
-        Result<List<UserBill>> result = new Result<>();
-        List<UserBill> list = new LinkedList<>();
+        Result<PageInfo<UserBill>> result = new Result<>();
+        if (session.getAttribute("user") == null) {
+            result.setCode(HttpStatus.UNAUTHORIZED.value());
+            result.setMessage("请重新登录");
+            return result;
+        }
+        User user = (User)session.getAttribute("user");
+        PageInfo<UserBill> pageInfo = userBillService.selectByUserId(user.getUserId(),pageNum);
+
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
-        result.setData(list);
+        result.setData(pageInfo);
         return result;
     }
 
