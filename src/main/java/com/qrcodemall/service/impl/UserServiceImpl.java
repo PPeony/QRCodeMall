@@ -108,20 +108,20 @@ public class UserServiceImpl implements UserService {
         User u = new User();
         u.setUserName(user.getUserName());
         List<User> l0 = userMapper.selectBySelective(u);
-        if (l0 != null) {//名字不能重复
+        if (l0.size() > 0) {//名字不能重复
             return -2;
         }
         u = new User();
         u.setUserPhone(user.getUserPhone());
         l0 = userMapper.selectBySelective(u);
-        if (l0 != null) {
+        if (l0.size() > 0) {
             //手机号不能重复
             return -3;
         }
         u = new User();
         u.setUserEmail(user.getUserEmail());
         l0 = userMapper.selectBySelective(u);
-        if (l0 != null) {
+        if (l0.size() > 0) {
             //邮箱不能重复
             return -4;
         }

@@ -11,6 +11,7 @@ import com.qrcodemall.service.UserAddressService;
 import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.service.UserService;
 import com.qrcodemall.util.Result;
+import com.qrcodemall.util.SendSms;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,7 +31,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/user")
-@Api(value = "数据库里面密码都为12345678，注意密码长度在8-16之间")
+@Api(tags = "数据库里面密码都为12345678，注意密码长度在8-16之间")
 public class UserController {
 
     @Autowired
@@ -66,7 +67,7 @@ public class UserController {
     }
 
     @PostMapping("/signin")//手机验证码登录,admin不需要
-    //unsolved
+    //todo
     public Result signin(@RequestBody Map<String,Object> json, HttpSession session) {
         String phone = json.get("phone").toString();
         System.out.println("###:= "+phone);
@@ -87,7 +88,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    //已注册账号
+    //目前无法对手机号发送验证码,todo
     public Result register(@RequestBody @Valid User user, Errors errors) {
         Result result = new Result();
         if (errors.hasErrors()) {
@@ -129,6 +130,36 @@ public class UserController {
         return result;
     }
 
+    @PostMapping("/sendVerifyCode")
+    public Result sendVerifyCode(String userPhone,HttpSession session) {
+        Result result = new Result();
+        System.out.println(userPhone);
+        String code = SendSms.sms(userPhone);
+        session.removeAttribute("verifyCode");
+        session.setAttribute("verifyCode",code);
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("验证码发送成功");
+        return result;
+    }
+
+    @PostMapping("/checkVerifyCode")
+    public Result checkVerifyCode(String verifyCode,HttpSession session) {
+        Result result = new Result();
+        String sessionCode = (String)session.getAttribute("verifyCode");
+        if (sessionCode == null) {
+            result.setCode(HttpStatus.BAD_REQUEST.value());
+            result.setMessage("验证码已过期，请重新发送验证码");
+            return result;
+        }
+        if (!sessionCode.equals(verifyCode)) {
+            result.setCode(HttpStatus.BAD_REQUEST.value());
+            result.setMessage("验证码错误");
+            return result;
+        }
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        return result;
+    }
     @PostMapping("/addAddress")
     public Result insertUserAddress(@RequestBody @Valid UserAddress userAddress, Errors errors ) {
         Result result = new Result();

@@ -60,4 +60,14 @@ public class UserBillServiceImpl implements UserBillService {
         u.setIsDeleted(1);
         return userBillMapper.updateByPrimaryKeySelective(u);
     }
+
+    @Override
+    public PageInfo<UserBill> selectByUserId(Integer userId,Integer pageNum) {
+        UserBillExample example = new UserBillExample();
+        UserBillExample.Criteria criteria = example.createCriteria();
+        criteria.andUserIdEqualTo(userId);
+        PageHelper.startPage(pageNum,PageProperty.PAGESIZE);
+        List<UserBill> list = userBillMapper.selectByExample(example);
+        return new PageInfo<>(list);
+    }
 }

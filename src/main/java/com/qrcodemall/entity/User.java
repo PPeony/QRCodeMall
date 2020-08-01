@@ -46,7 +46,7 @@ public class User implements Serializable {
      * @mbg.generated
      */
     @NotEmpty(message = "请输入密码")
-    @Length(min = 8,max = 16)
+    @Length(min = 8,max = 16,message = "密码长度在8-16之间")
     private String userPassword;
 
     /**

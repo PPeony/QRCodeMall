@@ -131,7 +131,7 @@ public class AdminController {
     }
 
     @PostMapping("/addGoods")//添加商品
-    //todo,传图片
+
     public Result insertGoods(/** @Valid @RequestBody Goods goods **/
     Integer goodsTypeId,
     String goodsName,

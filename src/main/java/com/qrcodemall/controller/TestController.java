@@ -46,7 +46,7 @@ public class TestController {
 
     @RequestMapping("/pay")
     public void payController(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        System.out.println("pay");
+
         //获得初始化的AlipayClient
         AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.APP_ID, AlipayConfig.APP_PRIVATE_KEY, "json", AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.sign_type);
 
@@ -90,6 +90,7 @@ public class TestController {
         response.getWriter().write(form);//直接将完整的表单html输出到页面
         response.getWriter().flush();
         response.getWriter().close();
+
     }
 
     @RequestMapping("/alipay")

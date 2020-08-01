@@ -2,6 +2,7 @@ package com.qrcodemall.controller;
 
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.Api;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,12 +16,14 @@ import javax.servlet.http.HttpServletRequest;
  * @Date: 2020/7/31 11:32
  */
 @RestController
+@Slf4j
 @Api(value = "处理服务器异常，返回code500")
 public class MyExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public Result handleException(Exception e, HttpServletRequest req) {
-        System.out.println("common.NewBeeMallExceptionHandler.handleException");
+        //打印错误
+        e.printStackTrace();
         Result result = new Result();
         result.setCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         result.setMessage("服务器异常");
