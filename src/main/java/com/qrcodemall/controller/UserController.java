@@ -88,7 +88,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    //目前无法对手机号发送验证码,todo
+
     public Result register(@RequestBody @Valid User user, Errors errors) {
         Result result = new Result();
         if (errors.hasErrors()) {
