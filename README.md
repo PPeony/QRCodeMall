@@ -11,7 +11,7 @@ an innovative project in university using springboot
 - restful返回形式
 - swagger
 - post请求关闭springboot
-# 未来功能：
 - 手机号发送验证码
+# 未来功能：
 - 生成各式各样的二维码
 - 老用户邀请新用户的功能
