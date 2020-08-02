@@ -38,7 +38,15 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Override
     public Goods selectGoods(Integer goodsId) {
-        return goodsMapper.selectByPrimaryKey(goodsId);
+        GoodsExample example = new GoodsExample();
+        GoodsExample.Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo(0);
+        criteria.andGoodsIdEqualTo(goodsId);
+        List<Goods> list = goodsMapper.selectByExample(example);
+        if (list.size() == 0) {
+            return null;
+        }
+        return list.get(0);
     }
 
     @Override//cookie操作，建议在controller解决这个业务

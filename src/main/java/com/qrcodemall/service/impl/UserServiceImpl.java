@@ -38,6 +38,7 @@ public class UserServiceImpl implements UserService {
         UserExample t = new UserExample();
         UserExample.Criteria criteria = t.createCriteria();
         criteria.andUserNameEqualTo(account);
+        criteria.andIsDeletedEqualTo(0);
         List<User> search = userMapper.selectByExample(t);
         if (search != null && search.size() != 0) {
             return DesUtils.encrypt(password).equals(search.get(0).getUserPassword()) ? search.get(0) : null;
@@ -45,6 +46,7 @@ public class UserServiceImpl implements UserService {
         t = new UserExample();
         criteria = t.createCriteria();
         criteria.andUserEmailEqualTo(account);
+        criteria.andIsDeletedEqualTo(0);
         search = userMapper.selectByExample(t);
         if (search != null && search.size() != 0) {
             return DesUtils.encrypt(password).equals(search.get(0).getUserPassword()) ? search.get(0) : null;
@@ -52,6 +54,7 @@ public class UserServiceImpl implements UserService {
         t = new UserExample();
         criteria = t.createCriteria();
         criteria.andUserPhoneEqualTo(account);
+        criteria.andIsDeletedEqualTo(0);
         search = userMapper.selectByExample(t);
         if (search != null && search.size() != 0) {
             return DesUtils.encrypt(password).equals(search.get(0).getUserPassword()) ? search.get(0) : null;
@@ -151,6 +154,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User selectUser(Integer userId) {
-        return userMapper.selectByPrimaryKey(userId);
+        UserExample example = new UserExample();
+        UserExample.Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo(0);
+        criteria.andUserIdEqualTo(userId);
+        List<User> userList = userMapper.selectByExample(example);
+        if (userList.size() == 0) {
+            return null;
+        }
+        return userList.get(0);
     }
 }

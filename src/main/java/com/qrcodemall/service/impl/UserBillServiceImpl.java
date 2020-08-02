@@ -34,6 +34,7 @@ public class UserBillServiceImpl implements UserBillService {
         if (endTime != null) {
             criteria.andGmtModifiedLessThanOrEqualTo(endTime);
         }
+        criteria.andIsDeletedEqualTo(0);
         List<UserBill> list = userBillMapper.selectByExample(example);
         PageInfo<UserBill> pageInfo = new PageInfo<>(list);
         return pageInfo;
@@ -66,6 +67,7 @@ public class UserBillServiceImpl implements UserBillService {
         UserBillExample example = new UserBillExample();
         UserBillExample.Criteria criteria = example.createCriteria();
         criteria.andUserIdEqualTo(userId);
+        criteria.andIsDeletedEqualTo(0);
         PageHelper.startPage(pageNum,PageProperty.PAGESIZE);
         List<UserBill> list = userBillMapper.selectByExample(example);
         return new PageInfo<>(list);

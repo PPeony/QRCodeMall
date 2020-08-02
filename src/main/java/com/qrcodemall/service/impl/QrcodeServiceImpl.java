@@ -35,6 +35,7 @@ public class QrcodeServiceImpl implements QrcodeService {
         UserExample userExample = new UserExample();
         UserExample.Criteria userExampleCriteria = userExample.createCriteria();
         userExampleCriteria.andUserNameEqualTo(userName);
+        userExampleCriteria.andIsDeletedEqualTo(0);
         List<User> userList = userMapper.selectByExample(userExample);
         if (userList == null || userList.size() == 0) {
             return null;
@@ -43,6 +44,7 @@ public class QrcodeServiceImpl implements QrcodeService {
         QrcodeExample example = new QrcodeExample();
         QrcodeExample.Criteria criteria = example.createCriteria();
         criteria.andUserIdEqualTo(userList.get(0).getUserId());
+        criteria.andIsDeletedEqualTo(0);
         List<Qrcode> qrcodeList = qrcodeMapper.selectByExample(example);
         PageInfo<Qrcode> pageInfo = new PageInfo<>(qrcodeList);
         return pageInfo;

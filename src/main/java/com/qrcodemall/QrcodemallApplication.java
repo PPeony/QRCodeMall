@@ -12,7 +12,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @SpringBootApplication
 @MapperScan("com.qrcodemall.dao")
 //@ComponentScan("com.qrcodemall.controller")
-//目前版本0.0.7
+//目前版本0.0.9
 public class QrcodemallApplication {
 
     public static void main(String[] args) {
