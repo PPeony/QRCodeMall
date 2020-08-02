@@ -2,12 +2,15 @@ package com.qrcodemall.controller;
 
 import com.qrcodemall.entity.Carousel;
 import com.qrcodemall.service.CarouselService;
+import com.qrcodemall.util.PictureUtil;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
@@ -16,7 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/Carousel")
-@Api(value = "轮播图")
+@Api(tags = "轮播图")
 public class CarouselController {
     @Autowired
     CarouselService carouselService;
@@ -42,8 +45,14 @@ public class CarouselController {
     }
 
     @PostMapping("/addCarousel")
-    public Result insertCarousel(@RequestBody Carousel carousel) {
+    public Result insertCarousel(MultipartFile carouselImg,
+                                 String carouselLink,
+                                 HttpServletRequest request) {
         Result result = new Result();
+        String name = PictureUtil.uploadFile(carouselImg,request);
+        Carousel carousel = new Carousel();
+        carousel.setCarouselImgName(name);
+        carousel.setCarouselLink(carouselLink);
         carouselService.addCarousel(carousel);
         result.setCode(HttpStatus.CREATED.value());
         result.setMessage("success");
@@ -51,8 +60,19 @@ public class CarouselController {
     }
 
     @PutMapping("/updateCarousel")
-    public Result updateCarousel(@RequestBody Carousel carousel) {
+    public Result updateCarousel(Integer carouselId,
+                                 MultipartFile carouselImg,
+                                 String carouselLink,
+                                 HttpServletRequest request
+                                 ) {
         Result result = new Result();
+        Carousel carousel = new Carousel();
+        if (carouselImg != null) {
+            String name = PictureUtil.uploadFile(carouselImg,request);
+            carousel.setCarouselImgName(name);
+        }
+        carousel.setCarouselLink(carouselLink);
+        carousel.setCarouselId(carouselId);
         carouselService.updateCarousel(carousel);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
