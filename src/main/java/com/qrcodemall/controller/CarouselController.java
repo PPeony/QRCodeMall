@@ -58,4 +58,14 @@ public class CarouselController {
         result.setMessage("success");
         return result;
     }
+
+    @DeleteMapping("/deleteCarousel")
+    public Result deleteCarousel(Integer carouselId) {
+        Result result = new Result();
+        carouselService.deleteCarousel(carouselId);
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        return result;
+
+    }
 }
