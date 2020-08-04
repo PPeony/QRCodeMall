@@ -108,7 +108,7 @@
     goods_introduction
   </sql>
 
-  <select id="selectByEntityAndTime" resultMap="BaseResultMap">
+  <select id="selectByEntityAndTime" resultMap="ResultMapWithBLOBs">
     select
     <include refid="Base_Column_List" />
     ,
