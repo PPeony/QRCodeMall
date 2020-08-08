@@ -51,4 +51,17 @@ public class GoodsTypeServiceImpl implements GoodsTypeService {
         goodsType.setGoodsTypeId(goodsTypeId);
         return goodsTypeMapper.updateByPrimaryKeySelective(goodsType);
     }
+
+    @Override
+    public GoodsType selectByGoodsTypeName(String goodsTypeName) {
+        GoodsTypeExample example = new GoodsTypeExample();
+        GoodsTypeExample.Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo(0);
+        criteria.andGoodsTypeNameEqualTo(goodsTypeName);
+        List<GoodsType> list = goodsTypeMapper.selectByExample(example);
+        if (list.size() == 0) {
+            return null;
+        }
+        return list.get(0);
+    }
 }

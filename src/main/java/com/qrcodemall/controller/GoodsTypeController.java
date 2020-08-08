@@ -1,5 +1,6 @@
 package com.qrcodemall.controller;
 
+import com.qrcodemall.entity.Goods;
 import com.qrcodemall.entity.GoodsType;
 import com.qrcodemall.service.GoodsTypeService;
 import com.qrcodemall.util.Result;
@@ -28,6 +29,16 @@ public class GoodsTypeController {
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         result.setData(goodsTypeService.selectAllGoodsType());
+        return result;
+    }
+
+    @GetMapping("/{goodsTypeName}")
+    public Result<GoodsType> selectOneGoodsType(@PathVariable String goodsTypeName) {
+        Result<GoodsType> result = new Result<>();
+        GoodsType goodsType = goodsTypeService.selectByGoodsTypeName(goodsTypeName);
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        result.setData(goodsType);
         return result;
     }
 

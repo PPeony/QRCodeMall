@@ -18,4 +18,6 @@ public interface GoodsTypeService {
     Integer updateGoodsType(GoodsType goodsType);
 
     Integer deleteGoodsType(Integer goodsTypeId);
+
+    GoodsType selectByGoodsTypeName(String goodsTypeName);
 }
