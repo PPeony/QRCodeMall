@@ -73,11 +73,11 @@
 <!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
 <!--            <generatedKey column="goods_id" sqlStatement="Mysql" identity="true" />-->
 <!--        </table>-->
-<!--        <table tableName="goods_type" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
-<!--            <property name="useActualColumnNames" value="false" />-->
-<!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
-<!--            <generatedKey column="goods_type_id" sqlStatement="Mysql" identity="true" />-->
-<!--        </table>-->
+        <table tableName="goods_type" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+            <property name="useActualColumnNames" value="false" />
+            <!-- 数据库表主键 -->
+            <generatedKey column="goods_type_id" sqlStatement="Mysql" identity="true" />
+        </table>
 <!--        <table tableName="notice" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
 <!--            <property name="useActualColumnNames" value="false" />-->
 <!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
@@ -108,11 +108,11 @@
 <!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
 <!--            <generatedKey column="user_bill_id" sqlStatement="Mysql" identity="true" />-->
 <!--        </table>-->
-        <table tableName="carousel" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
-            <property name="useActualColumnNames" value="false" />
-            <!-- 数据库表主键 -->
-            <generatedKey column="carousel_id" sqlStatement="Mysql" identity="true" />
-        </table>
+<!--        <table tableName="carousel" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">-->
+<!--            <property name="useActualColumnNames" value="false" />-->
+<!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
+<!--            <generatedKey column="carousel_id" sqlStatement="Mysql" identity="true" />-->
+<!--        </table>-->
 
 
     </context>

@@ -39,7 +39,7 @@ public class SendSMS
     int appId = Property.appId;
     String appKey = Property.appKey;
     int templateId = Property.templateId;
-    public String[] phones={"18846039727"};
+    public String[] phones={"18842332832"};
 
     String smsSign = Property.smsSign;
 

@@ -13,6 +13,7 @@ import com.qrcodemall.service.UserService;
 import com.qrcodemall.util.Result;
 import com.qrcodemall.util.SendSms;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -131,10 +132,13 @@ public class UserController {
     }
 
     @PostMapping("/sendVerifyCode")
-    public Result sendVerifyCode(String userPhone,HttpSession session) {
+    @ApiParam(name = "userPhone",value = "发送短信的手机号")
+    public Result sendVerifyCode(@RequestBody Map<String,Object> json,HttpSession session) {
+        String userPhone = (String)json.get("userPhone");
         Result result = new Result();
         System.out.println(userPhone);
         String code = SendSms.sms(userPhone);
+        System.out.println("code = "+code);
         session.removeAttribute("verifyCode");
         session.setAttribute("verifyCode",code);
         result.setCode(HttpStatus.OK.value());
@@ -143,9 +147,13 @@ public class UserController {
     }
 
     @PostMapping("/checkVerifyCode")
-    public Result checkVerifyCode(String verifyCode,HttpSession session) {
+    @ApiParam(name = "verifyCode", value = "用户输入的验证码")
+    public Result checkVerifyCode(@RequestBody Map<String,Object> json,HttpSession session) {
+        String verifyCode = (String)json.get("verifyCode");
         Result result = new Result();
+        System.out.println(verifyCode);
         String sessionCode = (String)session.getAttribute("verifyCode");
+        System.out.println("sessionCode = "+sessionCode);
         if (sessionCode == null) {
             result.setCode(HttpStatus.BAD_REQUEST.value());
             result.setMessage("验证码已过期，请重新发送验证码");

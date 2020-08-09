@@ -34,7 +34,7 @@ public class OrderFormController {
     @ApiOperation(value = "不知道咋写业务，不知道咋返回，先起个名字，这是买东西用的")
     public Result buyGoods(@RequestBody OrderForm orderForm) {
         Result result = new Result();
-        //应该唤醒支付方式在跳转，不会写，先放着
+        //应该唤醒支付方式在跳转，不会写，先放着,todo
         result.setMessage("success");
         result.setCode(HttpStatus.OK.value());
         return result;

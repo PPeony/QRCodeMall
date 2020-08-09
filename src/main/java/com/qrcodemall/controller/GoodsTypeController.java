@@ -33,6 +33,7 @@ public class GoodsTypeController {
     }
 
     @GetMapping("/{goodsTypeName}")
+
     public Result<GoodsType> selectOneGoodsType(@PathVariable String goodsTypeName) {
         Result<GoodsType> result = new Result<>();
         GoodsType goodsType = goodsTypeService.selectByGoodsTypeName(goodsTypeName);
