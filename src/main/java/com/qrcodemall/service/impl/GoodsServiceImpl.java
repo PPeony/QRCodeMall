@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.qrcodemall.common.PageProperty;
 import com.qrcodemall.dao.GoodsMapper;
+import com.qrcodemall.dao.GoodsTypeMapper;
 import com.qrcodemall.entity.Goods;
 import com.qrcodemall.entity.GoodsExample;
 import com.qrcodemall.service.GoodsService;
@@ -25,6 +26,9 @@ public class GoodsServiceImpl implements GoodsService {
 
     @Autowired
     GoodsMapper goodsMapper;
+
+    @Autowired
+    GoodsTypeMapper goodsTypeMapper;
 
     @Override
     public PageInfo<Goods> selectAllGoods(Integer pageNum) {
@@ -79,6 +83,7 @@ public class GoodsServiceImpl implements GoodsService {
 //        PageInfo<Goods> pageInfo = new PageInfo<>(list);
 //        //System.out.println(pageInfo);
 //        return pageInfo;
+
         return PageUtil.generatePageInfoByTime(goods, pageNum, beginTime, endTime, goodsMapper);
     }
 

@@ -13,12 +13,14 @@ import com.qrcodemall.util.PictureUtil;
 import com.qrcodemall.util.Result;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.util.UUID;
@@ -27,9 +29,29 @@ import java.util.UUID;
  * @Author: Peony
  * @Date: 2020/7/27 16:43
  */
-@Controller
+@RestController
 @RequestMapping("/test")
 public class TestController {
+
+
+    @GetMapping("/setSession")
+    public Result cookiek(String str,HttpSession session) {
+        System.out.println(str);
+        session.setAttribute("str",str);
+
+        Result result = new Result();
+        result.setCode(HttpStatus.OK.value());
+        return result;
+    }
+
+    @GetMapping("/getSession")
+    public Result<String> getSession(HttpSession session) {
+        String s = (String)session.getAttribute("str");
+        System.out.println("session := "+s);
+        Result<String> result = new Result<>();
+        result.setData(s);
+        return result;
+    }
 
 
 

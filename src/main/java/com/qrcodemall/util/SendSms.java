@@ -15,7 +15,7 @@ import static com.qrcodemall.common.Property.*;
 public class SendSms {
     public static String sms(String phone)
     {
-        String verifyCode = String.valueOf((Math.random() * 9 + 1) * 1000);
+        String verifyCode = String.valueOf(Math.round((Math.random() * 9 + 1) * 1000));
         try {
             //短信模板中的参数列表
             //第一个为验证码，第二个是几分钟有效

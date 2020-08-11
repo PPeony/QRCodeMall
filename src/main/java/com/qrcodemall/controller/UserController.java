@@ -89,7 +89,6 @@ public class UserController {
     }
 
     @PostMapping("/register")
-
     public Result register(@RequestBody @Valid User user, Errors errors) {
         Result result = new Result();
         if (errors.hasErrors()) {
@@ -133,25 +132,26 @@ public class UserController {
 
     @PostMapping("/sendVerifyCode")
     @ApiParam(name = "userPhone",value = "发送短信的手机号")
-    public Result sendVerifyCode(@RequestBody Map<String,Object> json,HttpSession session) {
-        String userPhone = (String)json.get("userPhone");
+    public Result sendVerifyCode(@RequestBody Map<String,Object> userPhone,HttpSession session) {
+        String userPhones = (String)userPhone.get("userPhone");
         Result result = new Result();
-        System.out.println(userPhone);
-        String code = SendSms.sms(userPhone);
+        System.out.println(userPhones);
+        String code = SendSms.sms(userPhones);
         System.out.println("code = "+code);
         session.removeAttribute("verifyCode");
         session.setAttribute("verifyCode",code);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("验证码发送成功");
+        //result.setData(code);
         return result;
     }
 
     @PostMapping("/checkVerifyCode")
     @ApiParam(name = "verifyCode", value = "用户输入的验证码")
-    public Result checkVerifyCode(@RequestBody Map<String,Object> json,HttpSession session) {
-        String verifyCode = (String)json.get("verifyCode");
+    public Result checkVerifyCode(@RequestBody Map<String,Object> verifyCode,HttpSession session) {
+        String verifyCodes = (String)verifyCode.get("verifyCode");
         Result result = new Result();
-        System.out.println(verifyCode);
+        System.out.println(verifyCodes);
         String sessionCode = (String)session.getAttribute("verifyCode");
         System.out.println("sessionCode = "+sessionCode);
         if (sessionCode == null) {
@@ -159,7 +159,7 @@ public class UserController {
             result.setMessage("验证码已过期，请重新发送验证码");
             return result;
         }
-        if (!sessionCode.equals(verifyCode)) {
+        if (!sessionCode.equals(verifyCodes)) {
             result.setCode(HttpStatus.BAD_REQUEST.value());
             result.setMessage("验证码错误");
             return result;

@@ -39,4 +39,5 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:"+ Property.fileAddress);
     }
 
+
 }

@@ -108,11 +108,22 @@ public class AdminController {
 //    }
 /**goods**/
     @GetMapping("/goods")
-    public Result<PageInfo<Goods>> selectGoods(Goods goods,
+    public Result<PageInfo<Goods>> selectGoods(GoodsVO goodsVO,
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
     @RequestParam(required = false,value = "beginTime") Date beginTime,
     @RequestParam(required = false,value = "endTime") Date endTime) {
         Result<PageInfo<Goods>> result = new Result();
+        Goods goods = new Goods();
+        BeanUtil.copyProperties(goodsVO,goods);
+        if (goodsVO.getGoodsName() != null) {
+            GoodsType goodsType = goodsTypeService.selectByGoodsTypeName(goodsVO.getGoodsTypeName());
+            if (goodsType == null) {
+                result.setCode(HttpStatus.BAD_REQUEST.value());
+                result.setMessage("no such goods type");
+                return result;
+            }
+            goods.setGoodsTypeId(goodsType.getGoodsTypeId());
+        }
         System.out.println(goods);
         //全空查询所有
         //分页查询,一页十个，返回
