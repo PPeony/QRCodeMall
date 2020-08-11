@@ -112,10 +112,11 @@ public class AdminController {
     @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
     @RequestParam(required = false,value = "beginTime") Date beginTime,
     @RequestParam(required = false,value = "endTime") Date endTime) {
+        System.out.println("goodsVo = "+goodsVO);
         Result<PageInfo<Goods>> result = new Result();
         Goods goods = new Goods();
         BeanUtil.copyProperties(goodsVO,goods);
-        if (goodsVO.getGoodsName() != null) {
+        if (goodsVO.getGoodsTypeName() != null) {
             GoodsType goodsType = goodsTypeService.selectByGoodsTypeName(goodsVO.getGoodsTypeName());
             if (goodsType == null) {
                 result.setCode(HttpStatus.BAD_REQUEST.value());
