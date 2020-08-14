@@ -164,4 +164,25 @@ public class UserServiceImpl implements UserService {
         }
         return userList.get(0);
     }
+
+    @Override
+    public List<User> findInvitees(Integer userId) {
+        UserExample example = new UserExample();
+        example.or().andUserFatherProxyIdEqualTo(userId);
+        example.or().andUserGrandfatherProxyIdEqualTo(userId);
+        List<User> list = userMapper.selectByExample(example);
+        return list;
+    }
+
+    @Override
+    public User selectByUserPhone(String userPhone) {
+        UserExample example = new UserExample();
+        UserExample.Criteria criteria = example.createCriteria();
+        criteria.andUserPhoneEqualTo(userPhone);
+        List<User> list = userMapper.selectByExample(example);
+        if (list.size() == 0) {
+            return null;
+        }
+        return list.get(0);
+    }
 }

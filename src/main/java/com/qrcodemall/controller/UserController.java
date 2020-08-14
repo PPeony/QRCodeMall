@@ -13,6 +13,7 @@ import com.qrcodemall.service.UserService;
 import com.qrcodemall.util.Result;
 import com.qrcodemall.util.SendSms;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -67,8 +68,9 @@ public class UserController {
         return result;
     }
 
+    @ApiOperation(value = "验证码登录(已废弃)",notes = "在checkVerifyCode之后，返回true直接跳转到正确页面")
     @PostMapping("/signin")//手机验证码登录,admin不需要
-    //todo
+    //废弃
     public Result signin(@RequestBody Map<String,Object> json, HttpSession session) {
         String phone = json.get("phone").toString();
         System.out.println("###:= "+phone);
@@ -135,6 +137,14 @@ public class UserController {
     public Result sendVerifyCode(@RequestBody Map<String,Object> userPhone,HttpSession session) {
         String userPhones = (String)userPhone.get("userPhone");
         Result result = new Result();
+        //首先判断是否存在这个手机号
+        User user = userService.selectByUserPhone(userPhones);
+        if (user == null) {
+            result.setCode(HttpStatus.UNAUTHORIZED.value());
+            result.setMessage("该用户不存在");
+            return result;
+        }
+
         System.out.println(userPhones);
         String code = SendSms.sms(userPhones);
         System.out.println("code = "+code);
@@ -147,9 +157,10 @@ public class UserController {
     }
 
     @PostMapping("/checkVerifyCode")
-    @ApiParam(name = "verifyCode", value = "用户输入的验证码")
+    @ApiOperation(value = "验证验证码",notes = "两个参数，userPhone和verifyCode")
     public Result checkVerifyCode(@RequestBody Map<String,Object> verifyCode,HttpSession session) {
         String verifyCodes = (String)verifyCode.get("verifyCode");
+        String userPhones = (String)verifyCode.get("userPhone");
         Result result = new Result();
         System.out.println(verifyCodes);
         String sessionCode = (String)session.getAttribute("verifyCode");
@@ -164,6 +175,8 @@ public class UserController {
             result.setMessage("验证码错误");
             return result;
         }
+        User u = userService.selectByUserPhone(userPhones);
+        session.setAttribute("user",u);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         return result;
@@ -251,6 +264,28 @@ public class UserController {
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         result.setData(user);
+        return result;
+    }
+
+    @ApiOperation(value = "查看自己下级代理")
+    @GetMapping("/invitees")
+    public Result<List<User>> findInvitees(HttpSession session) {
+        Result<List<User>> result = new Result<>();
+        if (session == null) {
+            result.setCode(HttpStatus.UNAUTHORIZED.value());
+            result.setMessage("failure");
+            return result;
+        }
+        User user = (User)session.getAttribute("user");
+        if (user == null) {
+            result.setCode(HttpStatus.UNAUTHORIZED.value());
+            result.setMessage("请登录");
+            return result;
+        }
+        List<User> invitees = userService.findInvitees(user.getUserId());
+        result.setCode(HttpStatus.OK.value());
+        result.setData(invitees);
+        result.setMessage("success");
         return result;
     }
 

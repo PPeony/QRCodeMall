@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.20.0-0/axios.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+</head>
+<body>
+<button id="btn1">按钮1</button>
+<button id="btn2">按钮2</button>
+<script>
+
+
+    let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}};
+    $(function () {
+        axios.defaults.withCredentials = true;
+        $("#btn1").click(function () {
+            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/setSession?str=abc').then(res => {
+                console.log(res.data);
+            });
+        });
+        $("#btn2").click(function () {
+            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/getSession').then(res => {
+                console.log(res.data);
+            });
+        })
+    })
+
+</script>
+</body>
+</html>

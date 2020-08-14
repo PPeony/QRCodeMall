@@ -904,6 +904,76 @@ public class UserAddressExample {
             addCriterion("receive_name not between", value1, value2, "receiveName");
             return (Criteria) this;
         }
+
+        public Criteria andReceivePhoneIsNull() {
+            addCriterion("receive_phone is null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneIsNotNull() {
+            addCriterion("receive_phone is not null");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneEqualTo(String value) {
+            addCriterion("receive_phone =", value, "receivePhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneNotEqualTo(String value) {
+            addCriterion("receive_phone <>", value, "receivePhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneGreaterThan(String value) {
+            addCriterion("receive_phone >", value, "receivePhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneGreaterThanOrEqualTo(String value) {
+            addCriterion("receive_phone >=", value, "receivePhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneLessThan(String value) {
+            addCriterion("receive_phone <", value, "receivePhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneLessThanOrEqualTo(String value) {
+            addCriterion("receive_phone <=", value, "receivePhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneLike(String value) {
+            addCriterion("receive_phone like", value, "receivePhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneNotLike(String value) {
+            addCriterion("receive_phone not like", value, "receivePhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneIn(List<String> values) {
+            addCriterion("receive_phone in", values, "receivePhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneNotIn(List<String> values) {
+            addCriterion("receive_phone not in", values, "receivePhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneBetween(String value1, String value2) {
+            addCriterion("receive_phone between", value1, value2, "receivePhone");
+            return (Criteria) this;
+        }
+
+        public Criteria andReceivePhoneNotBetween(String value1, String value2) {
+            addCriterion("receive_phone not between", value1, value2, "receivePhone");
+            return (Criteria) this;
+        }
     }
 
     /**

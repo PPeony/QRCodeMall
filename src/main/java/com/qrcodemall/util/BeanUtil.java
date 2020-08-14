@@ -3,6 +3,8 @@ package com.qrcodemall.util;
 import org.springframework.beans.BeanUtils;
 
 import java.lang.reflect.Field;
+import java.util.HashSet;
+import java.util.List;
 
 /**
  * @Author: Peony
@@ -19,6 +21,24 @@ public class BeanUtil {
         return target;
     }
 
+    //判断list里面每个对象的value属性是否有重复的
+    public static <T> boolean checkIfRepeat(List<T> list,String value) {
+        HashSet<String> set = new HashSet<>();
+        try {
+            for (T o : list) {
+                Field field = o.getClass().getDeclaredField(value);
+                field.setAccessible(true);
+                String v = (String)field.get(o);
+                if (set.contains(v)) {
+                    return false;
+                }
+                set.add(v);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return true;
+    }
 
     //检查对象是否全null,全null返回true
     public static boolean checkPojoNullField(Object o, Class<?> clz) {

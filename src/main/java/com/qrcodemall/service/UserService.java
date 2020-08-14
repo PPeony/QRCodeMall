@@ -29,7 +29,9 @@ public interface UserService {
 
     User selectUser(Integer userId);
 
+    List<User> findInvitees(Integer userId);
 
+    User selectByUserPhone(String userPhone);
 
 
 }

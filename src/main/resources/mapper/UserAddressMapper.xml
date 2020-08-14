@@ -17,6 +17,7 @@
     <result column="gmt_modified" jdbcType="TIMESTAMP" property="gmtModified" />
     <result column="is_deleted" jdbcType="INTEGER" property="isDeleted" />
     <result column="receive_name" jdbcType="VARCHAR" property="receiveName" />
+    <result column="receive_phone" jdbcType="VARCHAR" property="receivePhone" />
   </resultMap>
   <sql id="Example_Where_Clause">
     <!--
@@ -91,7 +92,7 @@
     -->
     user_address_id, user_id, user_address_province, user_address_city, user_address_district, 
     user_address_detail, user_address_default, gmt_created, gmt_modified, is_deleted, 
-    receive_name
+    receive_name, receive_phone
   </sql>
   <select id="selectByExample" parameterType="com.qrcodemall.entity.UserAddressExample" resultMap="BaseResultMap">
     <!--
@@ -151,11 +152,13 @@
     insert into user_address (user_id, user_address_province, user_address_city, 
       user_address_district, user_address_detail, 
       user_address_default, gmt_created, gmt_modified, 
-      is_deleted, receive_name)
+      is_deleted, receive_name, receive_phone
+      )
     values (#{userId,jdbcType=INTEGER}, #{userAddressProvince,jdbcType=VARCHAR}, #{userAddressCity,jdbcType=VARCHAR}, 
       #{userAddressDistrict,jdbcType=VARCHAR}, #{userAddressDetail,jdbcType=VARCHAR}, 
       #{userAddressDefault,jdbcType=INTEGER}, #{gmtCreated,jdbcType=TIMESTAMP}, #{gmtModified,jdbcType=TIMESTAMP}, 
-      #{isDeleted,jdbcType=INTEGER}, #{receiveName,jdbcType=VARCHAR})
+      #{isDeleted,jdbcType=INTEGER}, #{receiveName,jdbcType=VARCHAR}, #{receivePhone,jdbcType=VARCHAR}
+      )
   </insert>
   <insert id="insertSelective" parameterType="com.qrcodemall.entity.UserAddress">
     <!--
@@ -197,6 +200,9 @@
       <if test="receiveName != null">
         receive_name,
       </if>
+      <if test="receivePhone != null">
+        receive_phone,
+      </if>
     </trim>
     <trim prefix="values (" suffix=")" suffixOverrides=",">
       <if test="userId != null">
@@ -228,6 +234,9 @@
       </if>
       <if test="receiveName != null">
         #{receiveName,jdbcType=VARCHAR},
+      </if>
+      <if test="receivePhone != null">
+        #{receivePhone,jdbcType=VARCHAR},
       </if>
     </trim>
   </insert>
@@ -281,6 +290,9 @@
       <if test="record.receiveName != null">
         receive_name = #{record.receiveName,jdbcType=VARCHAR},
       </if>
+      <if test="record.receivePhone != null">
+        receive_phone = #{record.receivePhone,jdbcType=VARCHAR},
+      </if>
     </set>
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
@@ -302,7 +314,8 @@
       gmt_created = #{record.gmtCreated,jdbcType=TIMESTAMP},
       gmt_modified = #{record.gmtModified,jdbcType=TIMESTAMP},
       is_deleted = #{record.isDeleted,jdbcType=INTEGER},
-      receive_name = #{record.receiveName,jdbcType=VARCHAR}
+      receive_name = #{record.receiveName,jdbcType=VARCHAR},
+      receive_phone = #{record.receivePhone,jdbcType=VARCHAR}
     <if test="_parameter != null">
       <include refid="Update_By_Example_Where_Clause" />
     </if>
@@ -344,6 +357,9 @@
       <if test="receiveName != null">
         receive_name = #{receiveName,jdbcType=VARCHAR},
       </if>
+      <if test="receivePhone != null">
+        receive_phone = #{receivePhone,jdbcType=VARCHAR},
+      </if>
     </set>
     where user_address_id = #{userAddressId,jdbcType=INTEGER}
   </update>
@@ -362,7 +378,8 @@
       gmt_created = #{gmtCreated,jdbcType=TIMESTAMP},
       gmt_modified = #{gmtModified,jdbcType=TIMESTAMP},
       is_deleted = #{isDeleted,jdbcType=INTEGER},
-      receive_name = #{receiveName,jdbcType=VARCHAR}
+      receive_name = #{receiveName,jdbcType=VARCHAR},
+      receive_phone = #{receivePhone,jdbcType=VARCHAR}
     where user_address_id = #{userAddressId,jdbcType=INTEGER}
   </update>
 </mapper>
