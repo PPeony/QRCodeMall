@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminOrderFormVO {
+public class OrderFormVO {
     private OrderForm orderForm;
     private List<OrderFormDetail> details;
 }

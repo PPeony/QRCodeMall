@@ -308,4 +308,38 @@ public class UserController {
         return result;
     }
 
+    @PostMapping("/addBill")
+    public Result insertBill(@RequestBody UserBill userBill,HttpSession session) {
+        Result result = new Result();
+        User u = (User)session.getAttribute("user");
+        if (u == null) {
+            result.setCode(HttpStatus.UNAUTHORIZED.value());
+            result.setMessage("未登录");
+            return result;
+        }
+        userBill.setUserId(u.getUserId());
+        userBillService.insertUserBill(userBill);
+        result.setCode(HttpStatus.CREATED.value());
+        result.setMessage("success");
+        return result;
+    }
+
+    @PutMapping("/updateBill")
+    public Result updateBill(@RequestBody UserBill userBill) {
+        Result result = new Result();
+        userBillService.updateUserBill(userBill);
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        return result;
+    }
+
+    @DeleteMapping("/delete")
+    public Result deleteBill(Integer userBillId) {
+        Result result = new Result();
+        userBillService.deleteUserBill(userBillId);
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        return result;
+    }
+
 }

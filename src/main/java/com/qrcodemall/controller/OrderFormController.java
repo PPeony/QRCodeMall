@@ -2,7 +2,7 @@ package com.qrcodemall.controller;
 
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
-import com.qrcodemall.controller.vo.AdminOrderFormVO;
+import com.qrcodemall.controller.vo.OrderFormVO;
 import com.qrcodemall.entity.OrderForm;
 import com.qrcodemall.entity.OrderFormDetail;
 import com.qrcodemall.entity.User;
@@ -42,28 +42,33 @@ public class OrderFormController {
 
     //user用的
     @GetMapping("/myOrderForm")
-    public Result<PageInfo<OrderForm>> selectOneOrderForm(HttpSession session,
+    public Result<PageInfo<OrderFormVO>> selectOneOrderForm(HttpSession session,
             @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
             @RequestParam(required = false,value = "beginTime") Date beginTime,
             @RequestParam(required = false,value = "endTime") Date endTime) {
         //判断session为不为空，分页
-        Result<PageInfo<OrderForm>> result = new Result();
+        Result<PageInfo<OrderFormVO>> result = new Result();
         User u = (User)session.getAttribute("user");
+        if (u == null) {
+            result.setCode(HttpStatus.UNAUTHORIZED.value());
+            result.setMessage("未登录");
+            return result;
+        }
         PageInfo<OrderForm> list = orderFormService.selectOrderForm(u.getUserId(),beginTime,endTime,pageNum);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
-        result.setData(list);
+        result.setData(buildOrderFormVO(list));
         return result;
     }
 
     //admin用的
     @GetMapping("/allOrderForms")
-    public Result<PageInfo<AdminOrderFormVO>> selectAllOrderForms(
+    public Result<PageInfo<OrderFormVO>> selectAllOrderForms(
                                       @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
                                       @RequestParam(required = false,value = "beginTime") Date beginTime,
                                       @RequestParam(required = false,value = "endTime") Date endTime) {
         //分页
-        Result<PageInfo<AdminOrderFormVO>> result = new Result();
+        Result<PageInfo<OrderFormVO>> result = new Result();
         PageInfo pageInfo = orderFormService.selectAllOrderForms(beginTime,endTime,pageNum);
 
         result.setCode(HttpStatus.OK.value());
@@ -72,14 +77,14 @@ public class OrderFormController {
         return result;
     }
 
-    private PageInfo<AdminOrderFormVO> buildOrderFormVO(PageInfo<OrderForm> pageInfo) {
+    private PageInfo<OrderFormVO> buildOrderFormVO(PageInfo<OrderForm> pageInfo) {
         //System.out.println("OrderForm: = ");
         //System.out.println(pageInfo.getList().toString());
-        List<AdminOrderFormVO> res = new LinkedList<>();
+        List<OrderFormVO> res = new LinkedList<>();
         List<OrderForm> forms = pageInfo.getList();
         for (OrderForm of : forms) {
             //System.out.println("ofId = "+of.getOrderFormId());
-            AdminOrderFormVO aof = new AdminOrderFormVO();
+            OrderFormVO aof = new OrderFormVO();
             aof.setOrderForm(of);
             List<OrderFormDetail> tl = orderFormService.selectOrderFormDetailWithoutPage(of.getOrderFormId());
             //System.out.println(tl);
@@ -88,7 +93,7 @@ public class OrderFormController {
         }
         //System.out.println("res : = ");
         //System.out.println(res);
-        PageInfo<AdminOrderFormVO> pres = new PageInfo<>();
+        PageInfo<OrderFormVO> pres = new PageInfo<>();
         BeanUtil.copyProperties(pageInfo,pres,"list");
         pres.setList(res);
         return pres;
