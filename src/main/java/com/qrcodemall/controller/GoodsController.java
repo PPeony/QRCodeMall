@@ -19,6 +19,7 @@ import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: Peony
@@ -67,9 +68,13 @@ public class GoodsController {
     }
 
     @PostMapping("/addToShoppingCart")
-    public Result insertToShoppingCart(Integer goodsId, HttpSession session, HttpServletResponse response, HttpServletRequest request) {
+    @ApiOperation(value = "一次对goodsid商品计数器加一")
+    public Result insertToShoppingCart(@RequestBody Map<String,String> json, HttpServletResponse response, HttpServletRequest request) {
+        System.out.println(json);
         Result result = new Result();
-        Goods sg = goodsService.selectGoods(goodsId);
+        String goodsId = json.get("goodsId");
+        Integer id = Integer.valueOf(goodsId);
+        Goods sg = goodsService.selectGoods(id);
         if (sg.getIsDeleted() == 1) {
             //已下架，不让买
             result.setCode(HttpStatus.NOT_FOUND.value());
@@ -77,18 +82,19 @@ public class GoodsController {
             return result;
         }
         //Cookie cookie = new Cookie();
+        Cookie add;
         Cookie[] cookies = request.getCookies();
-        for (Cookie c : cookies) {
-            if (c.getName().equals(goodsId.toString())) {
-                int v = Integer.valueOf(c.getValue()) + 1;
-                c.setValue(String.valueOf(v));
-                result.setCode(HttpStatus.OK.value());
-                result.setMessage("添加成功");
-                return result;
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+                if (c.getName().equals(goodsId)) {
+                    add = new Cookie(goodsId,c.getValue() + 1);
+                    break;
+                }
             }
         }
-        Cookie c = new Cookie(String.valueOf(goodsId),"1");
-        response.addCookie(c);
+
+        add = new Cookie(goodsId,"1");
+        response.addCookie(add);
         //查数据库，下架不能买
 
         result.setCode(HttpStatus.OK.value());
@@ -98,21 +104,27 @@ public class GoodsController {
 
     @GetMapping("/shoppingCart")//查看购物车所有东西
     //@ApiOperation()
-    public Result<List<Goods>> selectOrderFormDetail(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum
-                                        ,HttpSession session,HttpServletRequest request) {
-        //判断session不为空，注意分页
+    public Result<List<Goods>> selectOrderFormDetail(HttpServletRequest request) {
+
         Result<List<Goods>> result = new Result<>();
+        /*
         if (session.getAttribute("user") == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("请重新登录");
             return result;
         }
+
+         */
         List<Goods> list = new LinkedList<>();
         Cookie[] cookies = request.getCookies();
-        for (Cookie c : cookies) {
-            Integer goodsId = Integer.valueOf(c.getName());
-            list.add(goodsService.selectGoods(goodsId));
+        if (cookies != null) {
+            for (Cookie c : cookies) {
+
+                Integer goodsId = Integer.valueOf(c.getName());
+                list.add(goodsService.selectGoods(goodsId));
+            }
         }
+
         result.setCode(HttpStatus.OK.value());
         result.setMessage("成功");
         result.setData(list);

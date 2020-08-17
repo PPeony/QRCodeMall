@@ -2,8 +2,8 @@ package com.qrcodemall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.qrcodemall.common.Exception.GlobalException;
 import com.qrcodemall.common.PageProperty;
-import com.qrcodemall.common.UserException;
 import com.qrcodemall.dao.UserMapper;
 import com.qrcodemall.entity.User;
 import com.qrcodemall.entity.UserExample;
@@ -95,7 +95,7 @@ public class UserServiceImpl implements UserService {
             t.setUserId(user.getUserFatherProxyId());
             t = userMapper.selectByPrimaryKey(user.getUserFatherProxyId());
             if (t == null) {
-                throw new UserException("该父级的上一层代理不存在", HttpStatus.OK.value());
+                GlobalException.fail("该父级的上一层代理不存在");
             }
             user.setUserGrandfatherProxyId(t.getUserGrandfatherProxyId());
             user.setUserGrandfatherProxyName(t.getUserGrandfatherProxyName());
@@ -166,12 +166,23 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> findInvitees(Integer userId) {
+    public List<User> findFirstInvitees(Integer userId) {
         UserExample example = new UserExample();
-        example.or().andUserFatherProxyIdEqualTo(userId);
-        example.or().andUserGrandfatherProxyIdEqualTo(userId);
+        UserExample.Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo(0);
+        criteria.andUserFatherProxyIdEqualTo(userId);
         List<User> list = userMapper.selectByExample(example);
         return list;
+    }
+
+    @Override
+    public List<User> findSecondInvitees(Integer userId) {
+        UserExample example = new UserExample();
+        UserExample.Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo(0);
+        criteria.andUserGrandfatherProxyIdEqualTo(userId);
+        List<User> list = userMapper.selectByExample(example);
+        return null;
     }
 
     @Override

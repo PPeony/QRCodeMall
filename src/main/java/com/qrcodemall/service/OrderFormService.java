@@ -1,8 +1,10 @@
 package com.qrcodemall.service;
 
 import com.github.pagehelper.PageInfo;
+import com.qrcodemall.entity.Goods;
 import com.qrcodemall.entity.OrderForm;
 import com.qrcodemall.entity.OrderFormDetail;
+import com.qrcodemall.entity.User;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -27,6 +29,10 @@ public interface OrderFormService {
     Integer deleteOrderForm(Integer orderFormId);
 
     BigDecimal getSalesSituation(Date beginTime,Date endtime);
+
+    OrderForm selectByOrderFormNumber(String orderFormNumber);
+
+    OrderForm generateOrderForm(List<Goods> list, User user);
 
 
     List<OrderFormDetail> selectOrderFormDetailWithoutPage(Integer orderFormId);

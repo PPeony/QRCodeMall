@@ -1,7 +1,8 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
 
-<form action="http://localhost:8080/QRCodeMall/test/pay" method="post">
+<form action="/QRCodeMall/test/pay" method="post">
+    <!--http://localhost:8080/QRCodeMall/test/pay-->
     订单号：<input type="text" name="WIDout_trade_no" required><br/>
     订单名称：<input type="text" name="WIDsubject" required><br/>
     付款金额：<input type="text" name="WIDtotal_amount" required><br/>

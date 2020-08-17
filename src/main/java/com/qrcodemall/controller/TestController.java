@@ -23,13 +23,14 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 import java.util.UUID;
 
 /**
  * @Author: Peony
  * @Date: 2020/7/27 16:43
  */
-@RestController
+@Controller
 @RequestMapping("/test")
 public class TestController {
 
@@ -56,17 +57,74 @@ public class TestController {
 
 
     @PostMapping("/post")
-    public String post(String name,String password) {
-
-        System.out.println(name+" *** "+password);
+    @ResponseBody
+    public String post(@RequestBody Map<String,Object> json, HttpSession session) {
+        Integer orderFormId = (Integer)json.get("orderFormId");
+        System.out.println(orderFormId);
         return "success";
     }
+
+
+
     @PostMapping("/upload")
     public String uploadFile(MultipartFile file, HttpServletRequest request) {
         return PictureUtil.uploadFile(file, request);
     }
 
+    @GetMapping("/getPayTest")
+    @ResponseBody
+    public void payTest(@RequestParam("outTradeNo") String out_trade_no,
+                        @RequestParam("totalAmount") String total_amount,
+                        @RequestParam("subject") String subject,
+                        HttpServletResponse response) throws IOException {
+        AlipayClient alipayClient = new DefaultAlipayClient(AlipayConfig.gatewayUrl, AlipayConfig.APP_ID, AlipayConfig.APP_PRIVATE_KEY, "json", AlipayConfig.CHARSET, AlipayConfig.ALIPAY_PUBLIC_KEY, AlipayConfig.sign_type);
+
+        //设置请求参数
+        AlipayTradePagePayRequest alipayRequest = new AlipayTradePagePayRequest();
+        alipayRequest.setReturnUrl(AlipayConfig.return_url);
+        alipayRequest.setNotifyUrl(AlipayConfig.notify_url);
+
+        //商户订单号，商户网站订单系统中唯一订单号，必填
+        //out_trade_no = new String(request.getParameter("WIDout_trade_no").getBytes("ISO-8859-1"),"UTF-8");
+        //付款金额，必填
+        //total_amount = new String(request.getParameter("WIDtotal_amount").getBytes("ISO-8859-1"),"UTF-8");
+        //订单名称，必填
+        //subject = new String(request.getParameter("WIDsubject").getBytes("ISO-8859-1"),"UTF-8");
+        //商品描述，可空
+        //String body = new String(request.getParameter("WIDbody").getBytes("ISO-8859-1"),"UTF-8");
+        String body = "";
+        alipayRequest.setBizContent("{\"out_trade_no\":\""+ out_trade_no +"\","
+                + "\"total_amount\":\""+ total_amount +"\","
+                + "\"subject\":\""+ subject +"\","
+                + "\"body\":\""+ body +"\","
+                + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
+
+        //若想给BizContent增加其他可选请求参数，以增加自定义超时时间参数timeout_express来举例说明
+        //alipayRequest.setBizContent("{\"out_trade_no\":\""+ out_trade_no +"\","
+        //		+ "\"total_amount\":\""+ total_amount +"\","
+        //		+ "\"subject\":\""+ subject +"\","
+        //		+ "\"body\":\""+ body +"\","
+        //		+ "\"timeout_express\":\"10m\","
+        //		+ "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
+        //请求参数可查阅【电脑网站支付的API文档-alipay.trade.page.pay-请求参数】章节
+
+        //请求
+        String form="";
+        try {
+            form = alipayClient.pageExecute(alipayRequest).getBody(); //调用SDK生成表单
+        } catch (AlipayApiException e) {
+            e.printStackTrace();
+        }
+        response.setContentType("text/html;charset=" + AlipayConfig.CHARSET);
+        response.getWriter().write(form);//直接将完整的表单html输出到页面
+        response.getWriter().flush();
+        response.getWriter().close();
+    }
+
+
     @RequestMapping("/pay")
+    @ResponseBody
+    //必须restcontroller，而且方法不能带有返回值.或者直接用responsebody
     public void payController(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         //获得初始化的AlipayClient
@@ -112,7 +170,6 @@ public class TestController {
         response.getWriter().write(form);//直接将完整的表单html输出到页面
         response.getWriter().flush();
         response.getWriter().close();
-
     }
 
     @RequestMapping("/alipay")

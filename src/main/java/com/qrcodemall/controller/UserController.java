@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -269,8 +270,8 @@ public class UserController {
 
     @ApiOperation(value = "查看自己下级代理")
     @GetMapping("/invitees")
-    public Result<List<User>> findInvitees(HttpSession session) {
-        Result<List<User>> result = new Result<>();
+    public Result<List<List<User>>> findInvitees(HttpSession session) {
+        Result<List<List<User>>> result = new Result<>();
         if (session == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("failure");
@@ -282,9 +283,13 @@ public class UserController {
             result.setMessage("请登录");
             return result;
         }
-        List<User> invitees = userService.findInvitees(user.getUserId());
+        List<User> invitees1 = userService.findFirstInvitees(user.getUserId());
+        List<User> invitees2 = userService.findSecondInvitees(user.getUserId());
+        List<List<User>> res = new ArrayList<>(2);
+        res.add(invitees1);
+        res.add(invitees2);
         result.setCode(HttpStatus.OK.value());
-        result.setData(invitees);
+        result.setData(res);
         result.setMessage("success");
         return result;
     }
@@ -333,7 +338,7 @@ public class UserController {
         return result;
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/deleteBill")
     public Result deleteBill(Integer userBillId) {
         Result result = new Result();
         userBillService.deleteUserBill(userBillId);

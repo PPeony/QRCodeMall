@@ -494,7 +494,6 @@ public class AdminController {
 
 
     @PutMapping("/outputMoney")//给用户打钱,money是打多少
-    //没懂啥功能，放着,todo
     public Result outputMoney(@RequestBody UserBill orign) {
         System.out.println(orign);
         Result result = new Result();

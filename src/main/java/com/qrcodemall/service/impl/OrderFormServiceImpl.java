@@ -2,13 +2,14 @@ package com.qrcodemall.service.impl;
 
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.qrcodemall.common.Exception.GlobalException;
 import com.qrcodemall.common.PageProperty;
+import com.qrcodemall.dao.GoodsMapper;
 import com.qrcodemall.dao.OrderFormDetailMapper;
 import com.qrcodemall.dao.OrderFormMapper;
-import com.qrcodemall.entity.OrderForm;
-import com.qrcodemall.entity.OrderFormDetail;
-import com.qrcodemall.entity.OrderFormDetailExample;
+import com.qrcodemall.entity.*;
 import com.qrcodemall.service.OrderFormService;
+import com.qrcodemall.util.OrderFormNumberGenerator;
 import com.qrcodemall.util.PageUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,6 +31,9 @@ public class OrderFormServiceImpl implements OrderFormService {
 
     @Autowired
     OrderFormDetailMapper orderFormDetailMapper;
+
+    @Autowired
+    GoodsMapper goodsMapper;
 
     @Override
     public PageInfo<OrderForm> selectOrderForm(Integer userId, Date beginTime, Date endTime, Integer pageNum) {
@@ -55,6 +59,58 @@ public class OrderFormServiceImpl implements OrderFormService {
             res.add(form.getOrderFormPrice());
         }
         return res;
+    }
+
+    @Override
+    public OrderForm selectByOrderFormNumber(String orderFormNumber) {
+        OrderFormExample example = new OrderFormExample();
+        OrderFormExample.Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo(0);
+        criteria.andOrderFormNumberEqualTo(orderFormNumber);
+        return orderFormMapper.selectByExample(example).get(0);
+    }
+
+    @Override
+    public OrderForm generateOrderForm(List<Goods> list, User user){
+        BigDecimal decimal = getPrice(list);
+        OrderForm orderForm = new OrderForm();
+        orderForm.setUserId(user.getUserId());
+        String id = OrderFormNumberGenerator.generate();
+        orderForm.setOrderFormNumber(id);
+        orderForm.setOrderFormStatus(0);
+        orderForm.setOrderFormPrice(decimal);
+        orderForm.setGmtCreated(new Date());
+        orderForm.setGmtModified(new Date());
+        insertOrderForm(orderForm);
+        ////
+        OrderForm orderForm2 = selectByOrderFormNumber(id);
+        Integer orderFormId = orderForm2.getOrderFormId();
+        for (Goods goods : list) {
+            OrderFormDetail detail = new OrderFormDetail();
+            detail.setOrderFormId(orderFormId);
+            detail.setGoodsId(goods.getGoodsId());
+            detail.setGoodsName(goods.getGoodsName());
+            detail.setGoodsPrice(goods.getGoodsPrice());
+            detail.setGoodsQrcodeQuantity(goods.getGoodsQrcodeQuantity());
+            detail.setGoodsTypeName(goods.getGoodsTypeName());
+            insertOrderFormDetail(detail);
+        }
+        return orderForm2;
+    }
+
+    private BigDecimal getPrice(List<Goods> list) {
+        BigDecimal decimal = new BigDecimal("0");
+        int i = 0;
+
+        for (Goods goods : list) {
+            Goods sg = goodsMapper.selectByPrimaryKey(goods.getGoodsId());
+            if (sg.getIsDeleted() == 1) {
+                GlobalException.fail("第"+i+"个产品不存在");
+            }
+            decimal.add(goods.getGoodsPrice());
+            i++;
+        }
+        return decimal;
     }
 
     @Override
