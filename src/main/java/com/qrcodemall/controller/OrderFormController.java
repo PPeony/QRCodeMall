@@ -53,7 +53,7 @@ public class OrderFormController {
 
 
     @PutMapping("/buyGoods")
-    //todo,应该先生成订单，再跳转支付宝
+    //todo,应该先生成订单，再跳转支付宝,功能应该是实现了，出问题再说
     @ApiOperation(value = "传参数是orderForm信息，id，number，payType，price一定要有")
     public void buyGoods(@RequestBody Map<String,Object> json, HttpServletRequest request, HttpServletResponse response) throws IOException {
 

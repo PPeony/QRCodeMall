@@ -182,7 +182,7 @@ public class UserServiceImpl implements UserService {
         criteria.andIsDeletedEqualTo(0);
         criteria.andUserGrandfatherProxyIdEqualTo(userId);
         List<User> list = userMapper.selectByExample(example);
-        return null;
+        return list;
     }
 
     @Override
