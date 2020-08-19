@@ -70,6 +70,7 @@ public class GoodsController {
     @PostMapping("/addToShoppingCart")
     @ApiOperation(value = "一次对goodsid商品计数器加一")
     public Result insertToShoppingCart(@RequestBody Map<String,String> json, HttpServletResponse response, HttpServletRequest request) {
+        System.out.println("addToShoppingCart");
         System.out.println(json);
         Result result = new Result();
         String goodsId = json.get("goodsId");
@@ -82,7 +83,7 @@ public class GoodsController {
             return result;
         }
         //Cookie cookie = new Cookie();
-        Cookie add;
+        Cookie add = null;
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
@@ -92,9 +93,18 @@ public class GoodsController {
                 }
             }
         }
-
-        add = new Cookie(goodsId,"1");
+        if (add == null) {
+            add = new Cookie(goodsId,"1");
+        }
+        add.setDomain(request.getServerName());
+        add.setHttpOnly(false);
+        add.setPath("*");
+        add.setMaxAge(60*60*24);
+        System.out.println("contextPath = "+request.getContextPath());
+        System.out.println("ServerName = "+request.getServerName());
         response.addCookie(add);
+        response.setHeader("Access-Control-Allow-Credentials", "true");
+        response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
         //查数据库，下架不能买
 
         result.setCode(HttpStatus.OK.value());
@@ -105,7 +115,7 @@ public class GoodsController {
     @GetMapping("/shoppingCart")//查看购物车所有东西
     //@ApiOperation()
     public Result<List<Goods>> selectOrderFormDetail(HttpServletRequest request) {
-
+        System.out.println("shoppingCart");
         Result<List<Goods>> result = new Result<>();
         /*
         if (session.getAttribute("user") == null) {
@@ -113,16 +123,23 @@ public class GoodsController {
             result.setMessage("请重新登录");
             return result;
         }
-
          */
         List<Goods> list = new LinkedList<>();
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (Cookie c : cookies) {
+                if (c.getName().equals("JSESSIONID")) {
+                    System.out.println("this is JSESSIONID");
+                    continue;
+                }
+                System.out.println("c.getName() = "+c.getName());
 
                 Integer goodsId = Integer.valueOf(c.getName());
+                System.out.println("goodsId = "+goodsId);
                 list.add(goodsService.selectGoods(goodsId));
             }
+        } else {
+            System.out.println("cookies null!!!!");
         }
 
         result.setCode(HttpStatus.OK.value());

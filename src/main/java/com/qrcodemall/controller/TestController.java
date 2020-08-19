@@ -18,6 +18,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -142,12 +143,11 @@ public class TestController {
         //订单名称，必填
         String subject = new String(request.getParameter("WIDsubject").getBytes("ISO-8859-1"),"UTF-8");
         //商品描述，可空
-        String body = new String(request.getParameter("WIDbody").getBytes("ISO-8859-1"),"UTF-8");
+        //String body = new String(request.getParameter("WIDbody").getBytes("ISO-8859-1"),"UTF-8");
 
         alipayRequest.setBizContent("{\"out_trade_no\":\""+ out_trade_no +"\","
                 + "\"total_amount\":\""+ total_amount +"\","
                 + "\"subject\":\""+ subject +"\","
-                + "\"body\":\""+ body +"\","
                 + "\"product_code\":\"FAST_INSTANT_TRADE_PAY\"}");
 
         //若想给BizContent增加其他可选请求参数，以增加自定义超时时间参数timeout_express来举例说明
@@ -177,4 +177,35 @@ public class TestController {
         System.out.println("via");
         return "alipay";
     }
+
+    @GetMapping("/addCookie")
+    @ResponseBody
+    public String addCookie(@RequestParam("name") String name,@RequestParam("value") String value,HttpServletRequest request,HttpServletResponse response) {
+        //String name = json.get("name");
+        //String value = json.get("value");
+        System.out.println(name+" "+value);
+        Cookie cookie = new Cookie(name,value);
+        cookie.setDomain(request.getServerName());
+        cookie.setHttpOnly(false);
+        cookie.setPath(request.getContextPath());
+        cookie.setMaxAge(60*60*24);
+        response.addCookie(cookie);
+        return "success";
+    }
+
+    @GetMapping("getCookie")
+    @ResponseBody
+    public String getCookie(@RequestParam("name") String name,HttpServletRequest request) {
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return "no cookies";
+        }
+        for (Cookie cookie : cookies) {
+            if (cookie.getName().equals(name)) {
+                return cookie.getValue();
+            }
+        }
+        return "no such cookie";
+    }
+
 }
