@@ -16,12 +16,12 @@
     $(function () {
         axios.defaults.withCredentials = true;
         $("#btn1").click(function () {
-            axios.get('http://49.232.104.97:8080/QRCodeMall/test/addCookie?name=demoData&value=demoData').then(res => {
+            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/addCookie?name=demoData&value=demoData').then(res => {
                 console.log(res.data);
             });
         });
         $("#btn2").click(function () {
-            axios.get('http://49.232.104.97:8080/QRCodeMall/test/getCookie?name=demoData').then(res => {
+            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/getCookie?name=demoData').then(res => {
                 console.log(res.data);
             });
         })

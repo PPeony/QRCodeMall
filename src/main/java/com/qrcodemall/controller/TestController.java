@@ -37,6 +37,7 @@ public class TestController {
 
 
     @GetMapping("/setSession")
+    @ResponseBody
     public Result cookiek(String str,HttpSession session) {
         System.out.println(str);
         session.setAttribute("str",str);
@@ -47,6 +48,7 @@ public class TestController {
     }
 
     @GetMapping("/getSession")
+    @ResponseBody
     public Result<String> getSession(HttpSession session) {
         String s = (String)session.getAttribute("str");
         System.out.println("session := "+s);
@@ -185,11 +187,13 @@ public class TestController {
         //String value = json.get("value");
         System.out.println(name+" "+value);
         Cookie cookie = new Cookie(name,value);
-        cookie.setDomain(request.getServerName());
+        cookie.setDomain("stu.hrbkyd.com");
         cookie.setHttpOnly(false);
         cookie.setPath(request.getContextPath());
+        System.out.println(request.getServerName()+" "+request.getContextPath());
         cookie.setMaxAge(60*60*24);
         response.addCookie(cookie);
+        //response.setHeader("Set_Cookie","");
         return "success";
     }
 

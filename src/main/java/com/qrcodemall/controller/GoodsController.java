@@ -8,6 +8,7 @@ import com.qrcodemall.service.GoodsService;
 import com.qrcodemall.service.GoodsTypeService;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +28,7 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/goods")
+@CrossOrigin
 public class GoodsController {
 
     @Autowired
@@ -85,6 +87,7 @@ public class GoodsController {
         //Cookie cookie = new Cookie();
         Cookie add = null;
         Cookie[] cookies = request.getCookies();
+
         if (cookies != null) {
             for (Cookie c : cookies) {
                 if (c.getName().equals(goodsId)) {
@@ -96,7 +99,7 @@ public class GoodsController {
         if (add == null) {
             add = new Cookie(goodsId,"1");
         }
-        add.setDomain(request.getServerName());
+        add.setDomain("stu.hrbkyd.com");
         add.setHttpOnly(false);
         add.setPath("*");
         add.setMaxAge(60*60*24);
@@ -127,9 +130,11 @@ public class GoodsController {
         List<Goods> list = new LinkedList<>();
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
-            for (Cookie c : cookies) {
-                if (c.getName().equals("JSESSIONID")) {
-                    System.out.println("this is JSESSIONID");
+
+            for (int i = 0; i < cookies.length; i++) {
+                Cookie c = cookies[i];
+                if (!StringUtils.isNumeric(c.getName())) {
+                    System.out.println(c.getName());
                     continue;
                 }
                 System.out.println("c.getName() = "+c.getName());
