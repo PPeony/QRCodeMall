@@ -52,11 +52,11 @@ public class OrderFormController {
     HttpSession session;
 
 
-    @PutMapping("/buyGoods")
+    @GetMapping("/buyGoods")
     //todo,应该先生成订单，再跳转支付宝,功能应该是实现了，出问题再说
     @ApiOperation(value = "传参数是orderForm信息，id，number，payType，price一定要有")
-    public void buyGoods(@RequestBody Map<String,Object> json, HttpServletRequest request, HttpServletResponse response) throws IOException {
-
+    public void buyGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        //System.out.println("buyGoods :"+json);
         HttpSession session = request.getSession();
         /*
         User u = (User)session.getAttribute("user");
@@ -66,10 +66,11 @@ public class OrderFormController {
         }
 
          */
-        Integer id = (Integer)json.get("orderFormId");
-        String number = (String)json.get("orderFormNumber");
-        BigDecimal price = (BigDecimal) json.get("orderFormPrice");
-        Integer payType = (Integer)json.get("orderFormPayType");
+        Integer id = Integer.valueOf(request.getParameter("orderFormId"));
+        String number = request.getParameter("orderFormNumber");
+        BigDecimal price = new BigDecimal(request.getParameter("orderFormPrice"));
+        Integer payType = Integer.valueOf(request.getParameter("orderFormPayType"));
+        System.out.println(id+" "+number+" "+price+" "+payType);
         OrderForm orderForm = new OrderForm();
         orderForm.setOrderFormPayType(payType);
         orderForm.setOrderFormId(id);
@@ -136,7 +137,7 @@ public class OrderFormController {
         response.getWriter().close();
     }
 
-    @GetMapping("/generateOrderForm")
+    @PostMapping("/generateOrderForm")
     @ApiOperation(value = "生成订单,只返回orderForm，想要返回vo再请求别的接口")
     public Result<OrderForm> generateOrderForm(@RequestBody List<Goods> list) {
         Result<OrderForm> result = new Result<>();

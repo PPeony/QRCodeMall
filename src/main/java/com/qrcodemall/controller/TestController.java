@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -187,7 +189,7 @@ public class TestController {
         //String value = json.get("value");
         System.out.println(name+" "+value);
         Cookie cookie = new Cookie(name,value);
-        cookie.setDomain("stu.hrbkyd.com");
+        cookie.setDomain("localhost");
         cookie.setHttpOnly(false);
         cookie.setPath(request.getContextPath());
         System.out.println(request.getServerName()+" "+request.getContextPath());
@@ -197,7 +199,7 @@ public class TestController {
         return "success";
     }
 
-    @GetMapping("getCookie")
+    @GetMapping("/getCookie")
     @ResponseBody
     public String getCookie(@RequestParam("name") String name,HttpServletRequest request) {
         Cookie[] cookies = request.getCookies();
@@ -205,11 +207,36 @@ public class TestController {
             return "no cookies";
         }
         for (Cookie cookie : cookies) {
+            System.out.println(cookie.getName()+" "+cookie.getValue());
+        }
+        for (Cookie cookie : cookies) {
             if (cookie.getName().equals(name)) {
                 return cookie.getValue();
             }
         }
         return "no such cookie";
+    }
+
+    @GetMapping("/deleteCookie")
+    @ResponseBody
+    public String deleteCookie(String names, HttpServletRequest request,HttpServletResponse response) {
+        System.out.println("names:"+names);
+        Cookie[] cookies = request.getCookies();
+        if (cookies == null) {
+            return "no cookies";
+        }
+        for (int i = 0; i < cookies.length; i++) {
+            if (names.equals(cookies[i].getValue())) {
+                cookies[i].setMaxAge(0);
+                cookies[i].setValue(null);
+                cookies[i].setDomain("localhost");
+                cookies[i].setHttpOnly(false);
+                cookies[i].setPath(request.getContextPath());
+                System.out.println("delete: "+cookies[i].getName());
+                response.addCookie(cookies[i]);
+            }
+        }
+        return "success";
     }
 
 }

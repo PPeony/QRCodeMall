@@ -152,4 +152,56 @@ public class GoodsController {
         result.setData(list);
         return result;
     }
+
+    @PostMapping("/deleteShoppingCartGoods")
+    //jsonExample:[1,2]
+    //todo
+    public Result deleteOne(@RequestBody List<Integer> goodsIdList,HttpServletRequest request,HttpServletResponse response) {
+        Result result = new Result();
+        System.out.println(goodsIdList);
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (int i = 0; i < goodsIdList.size(); i++) {
+                Cookie c = cookies[i];
+                if (!StringUtils.isNumeric(c.getName())) {
+                    continue;
+                } else {
+                    if (goodsIdList.contains(Integer.valueOf(c.getName()))) {
+                        c = deleteCookie(c,request);
+                        response.addCookie(c);
+                    }
+                }
+            }
+
+        }
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        return result;
+    }
+    private Cookie deleteCookie(Cookie c,HttpServletRequest request) {
+        c.setMaxAge(0);
+        c.setValue(null);
+        c.setDomain("stu.hrbkyd.com");
+        c.setHttpOnly(false);
+        c.setPath(request.getContextPath());
+        return c;
+    }
+    @DeleteMapping("/deleteAllShoppingCartGoods")
+    public Result deleteAll(HttpServletRequest request,HttpServletResponse response) {
+        Result result = new Result();
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (int i = 0; i < cookies.length; i++) {
+                Cookie c = cookies[i];
+                if (StringUtils.isNumeric(c.getName())) {
+                    continue;
+                }
+                c = deleteCookie(c,request);
+                response.addCookie(c);
+            }
+        }
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        return result;
+    }
 }
