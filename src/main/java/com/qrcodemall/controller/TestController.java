@@ -189,7 +189,7 @@ public class TestController {
         //String value = json.get("value");
         System.out.println(name+" "+value);
         Cookie cookie = new Cookie(name,value);
-        cookie.setDomain("localhost");
+        cookie.setDomain("stu.hrbkyd.com");
         cookie.setHttpOnly(false);
         cookie.setPath(request.getContextPath());
         System.out.println(request.getServerName()+" "+request.getContextPath());
@@ -229,13 +229,20 @@ public class TestController {
             if (names.equals(cookies[i].getValue())) {
                 cookies[i].setMaxAge(0);
                 cookies[i].setValue(null);
-                cookies[i].setDomain("localhost");
+                cookies[i].setDomain("stu.hrbkyd.com");
                 cookies[i].setHttpOnly(false);
                 cookies[i].setPath(request.getContextPath());
                 System.out.println("delete: "+cookies[i].getName());
                 response.addCookie(cookies[i]);
             }
         }
+        return "success";
+    }
+
+    @GetMapping("/sendList")
+    @ResponseBody
+    public String sendList(@RequestParam("list") ArrayList<Integer> list) {
+        System.out.println(list);
         return "success";
     }
 

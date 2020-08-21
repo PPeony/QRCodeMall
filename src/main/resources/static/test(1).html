@@ -10,7 +10,9 @@
 <button id="btn1">按钮1(set)</button>
 <button id="btn2">按钮2(get)</button>
 <button id="btn3">按钮3(set)</button>
-<button id="btn4">按钮4(delete)</button>
+<button id="btn6">按钮6(get)</button>
+<button id="btn4">按钮4(delete1)</button>
+<button id="btn5">按钮4(delete2)</button>
 <script>
 
 
@@ -18,28 +20,40 @@
     $(function () {
         axios.defaults.withCredentials = true;
         $("#btn1").click(function () {
-            axios.get('http://localhost:8080/QRCodeMall/test/addCookie?name=demoData&value=demoData').then(res => {
+            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/addCookie?name=demoData&value=demoData').then(res => {
                 console.log(res.data);
             });
         });
 
         $("#btn2").click(function () {
-            axios.get('http://localhost:8080/QRCodeMall/test/getCookie?name=demoData').then(res => {
+            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/getCookie?name=demoData').then(res => {
                 console.log(res.data);
             });
         })
 
         $("#btn3").click(function () {
-            axios.get('http://localhost:8080/QRCodeMall/test/addCookie?name=demoData2&value=demoData2').then(res => {
+            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/addCookie?name=demoData2&value=demoData2').then(res => {
                 console.log(res.data);
             });
         });
 
         $("#btn4").click(function () {
-            axios.get('http://localhost:8080/QRCodeMall/test/deleteCookie?names=demoData').then(res => {
+            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/deleteCookie?names=demoData').then(res => {
                 console.log(res.data);
             });
         });
+
+        $("#btn5").click(function () {
+            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/deleteCookie?names=demoData2').then(res => {
+                console.log(res.data);
+            });
+        });
+
+        $("#btn6").click(function () {
+            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/getCookie?name=demoData2').then(res => {
+                console.log(res.data);
+            });
+        })
     })
 
 </script>

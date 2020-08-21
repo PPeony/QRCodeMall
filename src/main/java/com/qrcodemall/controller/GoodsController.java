@@ -153,22 +153,33 @@ public class GoodsController {
         return result;
     }
 
-    @PostMapping("/deleteShoppingCartGoods")
-    //jsonExample:[1,2]
+    @GetMapping("/deleteShoppingCartGoods")
+    //jsonExample:[1,2],urlExample:?goodsIdList=1,2,3,4
     //todo
-    public Result deleteOne(@RequestBody List<Integer> goodsIdList,HttpServletRequest request,HttpServletResponse response) {
+    public Result deleteOne(@RequestParam("goodsIdList") ArrayList<Integer> goodsIdList,HttpServletRequest request,HttpServletResponse response) {
         Result result = new Result();
+        System.out.println("deleteOne");
         System.out.println(goodsIdList);
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (int i = 0; i < goodsIdList.size(); i++) {
                 Cookie c = cookies[i];
+                System.out.println("cookies name:" + c.getName());
                 if (!StringUtils.isNumeric(c.getName())) {
                     continue;
                 } else {
                     if (goodsIdList.contains(Integer.valueOf(c.getName()))) {
+                        //System.out.println("contains: "+c.getName());
                         c = deleteCookie(c,request);
+//                        c.setMaxAge(0);
+//                        c.setPath("*");
+//                        c.setDomain("stu.hrbkyd.com");
+//                        c.setHttpOnly(false);
+                        //System.out.println("cookie = "+c);
+                        //System.out.println(c.getName()+" "+c.getDomain()+" "+c.getMaxAge());
                         response.addCookie(c);
+                    } else {
+                        System.out.println("no contains");
                     }
                 }
             }
@@ -183,7 +194,7 @@ public class GoodsController {
         c.setValue(null);
         c.setDomain("stu.hrbkyd.com");
         c.setHttpOnly(false);
-        c.setPath(request.getContextPath());
+        c.setPath("*");
         return c;
     }
     @DeleteMapping("/deleteAllShoppingCartGoods")

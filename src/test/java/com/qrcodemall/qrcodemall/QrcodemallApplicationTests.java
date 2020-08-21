@@ -9,7 +9,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 
 @SpringBootTest
@@ -17,17 +19,17 @@ class QrcodemallApplicationTests {
 
     @Test
     void contextLoads() {
-        User o = new User();
-        o.setUserName("name");
-        try {
-            Field field = o.getClass().getDeclaredField("userName");
-            field.setAccessible(true);
-            String v = (String)field.get(o);
-            System.out.println(v);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        testUser tu = new testUser();
+        tu.name = "张三";
+        tu = change(tu);
+        System.out.println(tu.name);
+    }
+    testUser change(testUser tu) {
+        tu.name = "zhangSan";
+        return tu;
     }
 
 }
-
+class testUser{
+    public String name;
+}

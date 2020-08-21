@@ -101,13 +101,12 @@ public class OrderFormServiceImpl implements OrderFormService {
     private BigDecimal getPrice(List<Goods> list) {
         BigDecimal decimal = new BigDecimal("0");
         int i = 0;
-
         for (Goods goods : list) {
             Goods sg = goodsMapper.selectByPrimaryKey(goods.getGoodsId());
             if (sg.getIsDeleted() == 1) {
                 GlobalException.fail("第"+i+"个产品不存在");
             }
-            decimal.add(goods.getGoodsPrice());
+            decimal = decimal.add(goods.getGoodsPrice());
             i++;
         }
         return decimal;

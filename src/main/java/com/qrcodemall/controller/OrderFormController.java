@@ -140,21 +140,24 @@ public class OrderFormController {
     @PostMapping("/generateOrderForm")
     @ApiOperation(value = "生成订单,只返回orderForm，想要返回vo再请求别的接口")
     public Result<OrderForm> generateOrderForm(@RequestBody List<Goods> list) {
+        System.out.println("generateOrderForm : "+list);
         Result<OrderForm> result = new Result<>();
-        if (list.size() == 0) {
+        if (list == null || list.size() == 0) {
             result.setCode(HttpStatus.BAD_REQUEST.value());
             result.setMessage("请选择商品");
             return result;
         }
         HttpSession session = request.getSession();
-        if (session == null) {
+
+        User user = (User)session.getAttribute("user");
+        if (user == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("请登录");
             return result;
         }
-        User user = (User)session.getAttribute("user");
         OrderForm orderForm = orderFormService.generateOrderForm(list,user);
         result.setData(orderForm);
+        result.setCode(HttpStatus.OK.value());
         return result;
     }
 
