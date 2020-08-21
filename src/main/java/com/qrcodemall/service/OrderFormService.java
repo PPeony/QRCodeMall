@@ -34,6 +34,7 @@ public interface OrderFormService {
 
     OrderForm generateOrderForm(List<Goods> list, User user);
 
+    Integer buyingSuccessfully(String orderFormNumber);
 
     List<OrderFormDetail> selectOrderFormDetailWithoutPage(Integer orderFormId);
 

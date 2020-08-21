@@ -98,6 +98,17 @@ public class OrderFormServiceImpl implements OrderFormService {
         return orderForm2;
     }
 
+    @Override
+    public Integer buyingSuccessfully(String orderFormNumber) {
+        OrderFormExample example = new OrderFormExample();
+        OrderFormExample.Criteria criteria = example.createCriteria();
+        criteria.andOrderFormNumberEqualTo(orderFormNumber);
+        OrderForm orderForm = new OrderForm();
+        orderForm.setOrderFormStatus(1);
+        orderForm.setGmtModified(new Date());
+        return 1;
+    }
+
     private BigDecimal getPrice(List<Goods> list) {
         BigDecimal decimal = new BigDecimal("0");
         int i = 0;

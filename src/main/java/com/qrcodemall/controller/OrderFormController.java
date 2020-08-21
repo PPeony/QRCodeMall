@@ -137,6 +137,16 @@ public class OrderFormController {
         response.getWriter().close();
     }
 
+    //todo,支付宝异步通知，修改订单状态
+    @GetMapping("/buyingSuccessfully")
+    public Result buyingSuccessfully(@RequestParam("orderFormNumber") String orderFormNumber) {
+        Result result = new Result();
+        orderFormService.buyingSuccessfully(orderFormNumber);
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("success");
+        return result;
+    }
+
     @PostMapping("/generateOrderForm")
     @ApiOperation(value = "生成订单,只返回orderForm，想要返回vo再请求别的接口")
     public Result<OrderForm> generateOrderForm(@RequestBody List<Goods> list) {

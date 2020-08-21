@@ -246,4 +246,15 @@ public class TestController {
         return "success";
     }
 
+    @GetMapping("/notify")
+    public void notify(HttpServletRequest request,HttpServletResponse response) {
+        System.out.println("notify");
+        String out_trade_no = request.getParameter("out_trade_no");
+        System.out.println(out_trade_no);
+        response.setContentType("text/html;charset=UTF-8");
+        String site = new String("http://www.runoob.com");
+        response.setStatus(response.SC_MOVED_TEMPORARILY);
+        response.setHeader("Location", site);
+    }
+
 }
