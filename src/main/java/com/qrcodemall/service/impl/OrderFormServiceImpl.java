@@ -106,6 +106,7 @@ public class OrderFormServiceImpl implements OrderFormService {
         OrderForm orderForm = new OrderForm();
         orderForm.setOrderFormStatus(1);
         orderForm.setGmtModified(new Date());
+        orderFormMapper.updateByExampleSelective(orderForm,example);
         return 1;
     }
 

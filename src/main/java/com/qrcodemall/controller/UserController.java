@@ -182,6 +182,17 @@ public class UserController {
         result.setMessage("success");
         return result;
     }
+    /**address**/
+    @GetMapping("/userAddress/{userAddressId}")
+    public Result<UserAddress> selectByAddressId(@PathVariable Integer userAddressId){
+        Result<UserAddress> result = new Result<>();
+        UserAddress userAddress = userAddressService.selectByPrimaryKey(userAddressId);
+        result.setCode(HttpStatus.OK.value());
+        result.setData(userAddress);
+        result.setMessage("success");
+        return result;
+    }
+
     @PostMapping("/addAddress")
     public Result insertUserAddress(@RequestBody @Valid UserAddress userAddress, Errors errors ) {
         Result result = new Result();
@@ -208,8 +219,6 @@ public class UserController {
 
     @PutMapping("/updateAddress")
     public Result updateUserAddress(@RequestBody UserAddress userAddress) {
-
-        //传参方式有待商榷
         Result result = new Result();
         User user = (User)session.getAttribute("user");
         userAddress.setUserId(user.getUserId());
@@ -221,8 +230,8 @@ public class UserController {
 
     @DeleteMapping("/deleteAddress")
     public Result deleteUserAddress(Integer userAddressId) {
-        //url 传参
-        //System.out.println(userAddressId);
+        //url 传参,todo,bug
+        System.out.println(userAddressId);
         Result result = new Result();
         userAddressService.deleteUserAddress(userAddressId);
         result.setCode(HttpStatus.OK.value());
@@ -267,7 +276,7 @@ public class UserController {
         result.setData(user);
         return result;
     }
-
+/**my proxy**/
     @ApiOperation(value = "查看自己下级代理")
     @GetMapping("/invitees")
     public Result<List<List<User>>> findInvitees(HttpSession session) {
@@ -293,7 +302,7 @@ public class UserController {
         result.setMessage("success");
         return result;
     }
-
+/**bill**/
     @GetMapping("/myBill")
     public Result<PageInfo<UserBill>> selectUserBill(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
                                  HttpSession session) {

@@ -68,4 +68,17 @@ public class UserAddressServiceImpl implements UserAddressService {
         userAddress.setIsDeleted(1);
         return userAddressMapper.updateByPrimaryKeySelective(userAddress);
     }
+
+    @Override
+    public UserAddress selectByPrimaryKey(Integer userAddressId) {
+        UserAddressExample example = new UserAddressExample();
+        UserAddressExample.Criteria criteria = example.createCriteria();
+        criteria.andIsDeletedEqualTo(0);
+        criteria.andUserAddressIdEqualTo(userAddressId);
+        List<UserAddress> list = userAddressMapper.selectByExample(example);
+        if (list.size() == 0) {
+            return null;
+        }
+        return list.get(0);
+    }
 }

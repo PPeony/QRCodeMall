@@ -20,4 +20,6 @@ public interface UserAddressService {
     Integer updateUserAddress(UserAddress userAddress);
 
     Integer deleteUserAddress(Integer userAddressId);
+
+    UserAddress selectByPrimaryKey(Integer userAddressId);
 }
