@@ -29,4 +29,19 @@ public class Result<T> implements Serializable {
         result.setMessage(errors.getAllErrors().get(0).getDefaultMessage());
         return result;
     }
+
+    public Result code(int code) {
+        this.code = code;
+        return this;
+    }
+
+    public Result<T> data(T data) {
+        this.data = data;
+        return this;
+    }
+
+    public Result message(String message) {
+        this.message = message;
+        return this;
+    }
 }

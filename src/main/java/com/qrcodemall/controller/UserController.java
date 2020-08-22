@@ -220,9 +220,15 @@ public class UserController {
     @PutMapping("/updateAddress")
     public Result updateUserAddress(@RequestBody UserAddress userAddress) {
         Result result = new Result();
-        User user = (User)session.getAttribute("user");
-        userAddress.setUserId(user.getUserId());
-        userAddressService.updateUserAddress(userAddress);
+        //User user = (User)session.getAttribute("user");
+        //userAddress.setUserId(user.getUserId());
+        int r = userAddressService.updateUserAddress(userAddress);
+        if (r == -1) {
+            //已有默认地址，不能再添加
+            result.code(HttpStatus.BAD_REQUEST.value()).
+                    message("已有默认地址，不能再添加");
+            return result;
+        }
         result.setCode(HttpStatus.OK.value());
         result.setMessage("修改成功");
         return result;
@@ -230,7 +236,7 @@ public class UserController {
 
     @DeleteMapping("/deleteAddress")
     public Result deleteUserAddress(Integer userAddressId) {
-        //url 传参,todo,bug
+        //url 传参
         System.out.println(userAddressId);
         Result result = new Result();
         userAddressService.deleteUserAddress(userAddressId);

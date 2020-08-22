@@ -153,10 +153,11 @@ public class GoodsController {
         return result;
     }
 
-    @GetMapping("/deleteShoppingCartGoods")
+    @PostMapping("/deleteShoppingCartGoods")
+    @ApiOperation(value = "删除购物车某一项，传goodsId,jsonExample:[1,2]",notes = "jsonExample:[1,2]")
     //jsonExample:[1,2],urlExample:?goodsIdList=1,2,3,4
-    //todo
-    public Result deleteOne(@RequestParam("goodsIdList") ArrayList<Integer> goodsIdList,HttpServletRequest request,HttpServletResponse response) {
+    //
+    public Result deleteOne(@RequestBody ArrayList<Integer> goodsIdList,HttpServletRequest request,HttpServletResponse response) {
         Result result = new Result();
         System.out.println("deleteOne");
         System.out.println(goodsIdList);

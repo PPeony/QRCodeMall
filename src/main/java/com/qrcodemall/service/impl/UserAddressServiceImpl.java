@@ -56,6 +56,18 @@ public class UserAddressServiceImpl implements UserAddressService {
 
     @Override
     public Integer updateUserAddress(UserAddress userAddress) {
+        if (userAddress.getUserAddressDefault() != null) {
+            UserAddressExample example = new UserAddressExample();
+            UserAddressExample.Criteria criteria = example.createCriteria();
+            criteria.andIsDeletedEqualTo(0);
+            criteria.andUserAddressDefaultEqualTo(1);
+            criteria.andUserAddressIdEqualTo(userAddress.getUserAddressId());
+            List<UserAddress> list = userAddressMapper.selectByExample(example);
+            if (list.size() > 0) {
+                //已有默认地址了，不能再修改
+                return -1;
+            }
+        }
         userAddress.setGmtModified(new Date());
         return userAddressMapper.updateByPrimaryKeySelective(userAddress);
     }
