@@ -62,6 +62,7 @@ public class UserController {
             result.setCode(HttpStatus.OK.value());
             result.setMessage("success");
             session.setAttribute("user",u);
+            session.setMaxInactiveInterval(3600);
             return result;
         }
         result.setCode(HttpStatus.UNAUTHORIZED.value());
@@ -178,6 +179,7 @@ public class UserController {
         }
         User u = userService.selectByUserPhone(userPhones);
         session.setAttribute("user",u);
+        session.setMaxInactiveInterval(3600);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         return result;

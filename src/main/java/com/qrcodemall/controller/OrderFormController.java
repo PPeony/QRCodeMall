@@ -9,11 +9,9 @@ import com.github.pagehelper.PageInfo;
 import com.qrcodemall.common.Exception.GlobalException;
 import com.qrcodemall.configure.AlipayConfig;
 import com.qrcodemall.controller.vo.OrderFormVO;
-import com.qrcodemall.entity.Goods;
-import com.qrcodemall.entity.OrderForm;
-import com.qrcodemall.entity.OrderFormDetail;
-import com.qrcodemall.entity.User;
+import com.qrcodemall.entity.*;
 import com.qrcodemall.service.OrderFormService;
+import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.OrderFormNumberGenerator;
 import com.qrcodemall.util.Result;
@@ -44,6 +42,9 @@ public class OrderFormController {
 
     @Autowired
     OrderFormService orderFormService;
+
+    @Autowired
+    UserBillService userBillService;
 
     @Autowired
     HttpServletRequest request;
@@ -139,9 +140,22 @@ public class OrderFormController {
 
     //todo,支付宝异步通知，修改订单状态
     @GetMapping("/buyingSuccessfully")
-    public Result buyingSuccessfully(@RequestParam("orderFormNumber") String orderFormNumber) {
+    public Result buyingSuccessfully(@RequestParam("orderFormNumber") String orderFormNumber,
+                                     @RequestParam("totalAmount") String totalAmount,
+                                     HttpSession session) {
         Result result = new Result();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            result.code(HttpStatus.UNAUTHORIZED.value()).message("未登录");
+            return result;
+        }
         orderFormService.buyingSuccessfully(orderFormNumber);
+        BigDecimal decimal = new BigDecimal(totalAmount);
+        UserBill userBill = new UserBill();
+        userBill.setUserId(user.getUserId());
+        userBill.setUserBillMoney(decimal);
+        userBill.setUserBillDirection(1);
+        userBillService.insertUserBill(userBill);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         return result;

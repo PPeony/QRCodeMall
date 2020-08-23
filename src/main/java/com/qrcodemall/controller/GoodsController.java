@@ -6,6 +6,7 @@ import com.qrcodemall.entity.GoodsType;
 import com.qrcodemall.entity.OrderFormDetail;
 import com.qrcodemall.service.GoodsService;
 import com.qrcodemall.service.GoodsTypeService;
+import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
@@ -36,6 +37,7 @@ public class GoodsController {
 
     @Autowired
     GoodsTypeService goodsTypeService;
+
 
     @GetMapping("/allGoods")
     public Result<PageInfo<Goods>> selectAllGoods(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
