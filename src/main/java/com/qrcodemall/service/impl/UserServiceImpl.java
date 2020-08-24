@@ -192,8 +192,20 @@ public class UserServiceImpl implements UserService {
         criteria.andUserPhoneEqualTo(userPhone);
         List<User> list = userMapper.selectByExample(example);
         if (list.size() == 0) {
-            return null;
+            GlobalException.fail("此手机号不存在");
         }
         return list.get(0);
+    }
+
+    @Override
+    public User selectByUserName(String userName) {
+        UserExample example = new UserExample();
+        UserExample.Criteria criteria = example.createCriteria();
+        criteria.andUserNameEqualTo(userName);
+        List<User> userList = userMapper.selectByExample(example);
+        if (userList.size() == 0) {
+            GlobalException.fail("此用户名不存在");
+        }
+        return userList.get(0);
     }
 }

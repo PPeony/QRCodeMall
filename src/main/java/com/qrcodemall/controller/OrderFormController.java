@@ -15,6 +15,7 @@ import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.OrderFormNumberGenerator;
 import com.qrcodemall.util.Result;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.http.HttpResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +56,7 @@ public class OrderFormController {
 
     @GetMapping("/buyGoods")
     //todo,应该先生成订单，再跳转支付宝,功能应该是实现了，出问题再说
-    @ApiOperation(value = "传参数是orderForm信息，id，number，payType，price一定要有")
+    @ApiOperation(value = "传参数是orderForm信息，id，number，payType，price一定要有,payType为2为微信支付，不会跳转到支付宝")
     public void buyGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //System.out.println("buyGoods :"+json);
         HttpSession session = request.getSession();
@@ -78,6 +79,9 @@ public class OrderFormController {
         //在这里就写入时间，跳转支付宝过程中写入的话不会写
         orderForm.setOrderFormPayTime(new Date());
         orderFormService.updateOrderForm(orderForm);
+        if (payType == 2) {
+            return;
+        }
         //唤醒支付宝：
         aliPay(number,price.toString(),number,response);
         /*
@@ -138,8 +142,9 @@ public class OrderFormController {
         response.getWriter().close();
     }
 
-    //todo,支付宝异步通知，修改订单状态
+    //todo,支付宝/微信，异步通知，修改订单状态
     @GetMapping("/buyingSuccessfully")
+    @ApiOperation(value = "参数为订单号和总金额")
     public Result buyingSuccessfully(@RequestParam("orderFormNumber") String orderFormNumber,
                                      @RequestParam("totalAmount") String totalAmount,
                                      HttpSession session) {

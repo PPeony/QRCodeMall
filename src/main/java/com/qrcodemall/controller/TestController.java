@@ -63,16 +63,24 @@ public class TestController {
 
     @PostMapping("/post")
     @ResponseBody
-    public String post(@RequestBody Map<String,Object> json, HttpSession session) {
-        Integer orderFormId = (Integer)json.get("orderFormId");
-        System.out.println(orderFormId);
+    public String post(@RequestParam("Name") String name, HttpSession session) {
+
+        System.out.println("==="+name+"===");
+        return "success";
+    }
+
+    @GetMapping("/get")
+    @ResponseBody
+    public String getTest(@RequestParam("Name") String name,HttpServletRequest request) {
+        System.out.println(request);
+        System.out.println("==="+name+"===");
         return "success";
     }
 
 
-
     @PostMapping("/upload")
     public String uploadFile(MultipartFile file, HttpServletRequest request) {
+
         return PictureUtil.uploadFile(file, request);
     }
 

@@ -35,5 +35,7 @@ public interface UserService {
 
     User selectByUserPhone(String userPhone);
 
+    User selectByUserName(String userName);
+
 
 }
