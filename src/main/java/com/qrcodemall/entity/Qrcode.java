@@ -22,7 +22,7 @@ public class Qrcode implements Serializable {
      *
      * @mbg.generated
      */
-    @NotNull(message = "请输入userId")
+    //@NotNull(message = "请输入userId")
     private Integer userId;
 
     /**

@@ -349,76 +349,7 @@ public class AdminController {
 //    }
 
 /**qrcode**/
-    @GetMapping("/QRCode")
-    public Result<PageInfo<QrcodeVO>> selectQRCode(String userName,
-                                                   @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
-        Result<PageInfo<QrcodeVO>> result = new Result<>();
-        if (userName == null || userName.length() == 0) {
-            result.setCode(HttpStatus.BAD_REQUEST.value());
-            result.setMessage("请输入用户名");
-            return result;
-        }
 
-        PageInfo<Qrcode> list = qrcodeService.selectQrcode(userName, pageNum);
-        //PageInfo<QrcodeVO> ql = new PageInfo<>(buildQrcodeVO(list.getList()));
-        //上下两种写法不一样，下面应该合理
-        PageInfo<QrcodeVO> ql = new PageInfo<>();
-        BeanUtil.copyProperties(list,ql,"list");
-        ql.setList(buildQrcodeVO(list.getList()));
-        result.setCode(HttpStatus.OK.value());
-        result.setData(ql);
-        result.setMessage("成功");
-        return result;
-    }
-
-    private List<QrcodeVO> buildQrcodeVO(List<Qrcode> list) {
-        List<QrcodeVO> res = new LinkedList<>();
-        for (Qrcode qrcode : list) {
-            QrcodeVO qv = new QrcodeVO();
-            BeanUtil.copyProperties(qrcode,qv);
-            User su = userService.selectUser(qrcode.getUserId());
-            Goods sg = goodsService.selectGoods(qrcode.getGoodsId());
-            qv.setGoodsName(sg.getGoodsName());
-            qv.setUserName(su.getUserName());
-            res.add(qv);
-        }
-        return res;
-    }
-
-    @PostMapping("/addQRCode")
-    public Result insertQrcode(@RequestBody @Valid Qrcode qrcode,Errors errors) {
-        Result result = new Result();
-        if (errors.hasErrors()) {
-            result.setCode(HttpStatus.BAD_REQUEST.value());
-            result.setMessage(errors.getAllErrors().get(0).getDefaultMessage());
-            return result;
-        }
-        //存数据库
-        qrcodeService.insertQrcode(qrcode);
-        result.setCode(HttpStatus.CREATED.value());
-        result.setMessage("add success");
-        return result;
-    }
-
-    @PutMapping("/updateQRCode")
-    public Result updateQrcode(@RequestBody Qrcode qrcode) {
-        Result result = new Result();
-        ///
-        qrcodeService.updateQrcode(qrcode);
-        result.setCode(HttpStatus.OK.value());
-        result.setMessage("update success");
-        return result;
-    }
-
-    @DeleteMapping("/deleteQRCode")
-    public Result deleteQrcode(Integer qrcodeId) {
-        Result result = new Result();
-        ///
-        qrcodeService.deleteQrcode(qrcodeId);
-        result.setCode(HttpStatus.OK.value());
-        result.setMessage("delete success");
-        return result;
-    }
 /**user**/
     @GetMapping("/user")
     public Result<PageInfo<User>> selectUser(User user,

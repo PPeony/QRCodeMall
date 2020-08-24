@@ -1,9 +1,9 @@
 package com.qrcodemall.controller;
 
-import com.qrcodemall.entity.Property;
-import com.qrcodemall.entity.PropertyValue;
-import com.qrcodemall.service.PropertyService;
-import com.qrcodemall.service.PropertyValueService;
+import com.github.pagehelper.PageInfo;
+import com.qrcodemall.controller.vo.QrcodeVO;
+import com.qrcodemall.entity.*;
+import com.qrcodemall.service.*;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.Api;
@@ -13,7 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -21,7 +24,7 @@ import java.util.List;
  * @Date: 2020/8/14 14:08
  */
 @RestController
-@RequestMapping("/code")
+@RequestMapping("/qrcode")
 @Api(tags = {"二维码接口，扫描，制作"})
 public class QRCodeController {
 
@@ -30,6 +33,18 @@ public class QRCodeController {
 
     @Autowired
     PropertyValueService propertyValueService;
+
+    @Autowired
+    QrcodeService qrcodeService;
+
+    @Autowired
+    UserService userService;
+
+    @Autowired
+    GoodsService goodsService;
+
+    @Autowired
+    HttpSession session;
 
 /**property**/
     @ApiOperation(value = "根据种类查出字段", notes = "参数为goodsType")
@@ -186,5 +201,94 @@ public class QRCodeController {
         result.setMessage("success");
         return result;
     }
+    /**qrcode**/
+    @GetMapping("/myQrcode")
+    @ApiOperation(value = "参数传一个pageNum")
+    public Result<PageInfo<Qrcode>> selectMyQrcode(HttpServletRequest request) {
+        Result<PageInfo<Qrcode>> result = new Result<>();
+        HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            return result.code(HttpStatus.UNAUTHORIZED.value()).message("请登录");
+        }
+        User user2 = userService.selectUser(user.getUserId());
+        PageInfo<Qrcode> list = qrcodeService.selectQrcode(user2.getUserName(),Integer.valueOf(request.getParameter("pageNum")));
+        return result.code(HttpStatus.OK.value()).data(list).message("success");
+    }
+
+    @PostMapping("/addQrcode")
+    @ApiOperation(value = "返回值为新增的qrcodeid")
+    public Result<Integer> addQrcode(@RequestBody @Valid Qrcode qrcode,Errors errors) {
+        Result<Integer> result = new Result<>();
+        if (errors.hasErrors()) {
+            return Result.generateBadRequestResult(errors);
+        }
+        User user = (User) session.getAttribute("user");
+        if (user == null) {
+            result.code(HttpStatus.UNAUTHORIZED.value())
+                    .message("请登录");
+            return result;
+        }
+        qrcode.setUserId(user.getUserId());
+        int r = qrcodeService.insertQrcode(qrcode);
+        return result.code(HttpStatus.OK.value()).data(r).message("success");
+    }
+
+    @GetMapping("/byName")
+    public Result<PageInfo<QrcodeVO>> selectQRCode(String userName,
+                                                   @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
+        Result<PageInfo<QrcodeVO>> result = new Result<>();
+        if (userName == null || userName.length() == 0) {
+            result.setCode(HttpStatus.BAD_REQUEST.value());
+            result.setMessage("请输入用户名");
+            return result;
+        }
+
+        PageInfo<Qrcode> list = qrcodeService.selectQrcode(userName, pageNum);
+        //PageInfo<QrcodeVO> ql = new PageInfo<>(buildQrcodeVO(list.getList()));
+        //上下两种写法不一样，下面应该合理
+        PageInfo<QrcodeVO> ql = new PageInfo<>();
+        BeanUtil.copyProperties(list,ql,"list");
+        ql.setList(buildQrcodeVO(list.getList()));
+        result.setCode(HttpStatus.OK.value());
+        result.setData(ql);
+        result.setMessage("成功");
+        return result;
+    }
+
+    private List<QrcodeVO> buildQrcodeVO(List<Qrcode> list) {
+        List<QrcodeVO> res = new LinkedList<>();
+        for (Qrcode qrcode : list) {
+            QrcodeVO qv = new QrcodeVO();
+            BeanUtil.copyProperties(qrcode,qv);
+            User su = userService.selectUser(qrcode.getUserId());
+            Goods sg = goodsService.selectGoods(qrcode.getGoodsId());
+            qv.setGoodsName(sg.getGoodsName());
+            qv.setUserName(su.getUserName());
+            res.add(qv);
+        }
+        return res;
+    }
+
+    @PutMapping("/updateQRCode")
+    public Result<Integer> updateQrcode(@RequestBody Qrcode qrcode) {
+        Result<Integer> result = new Result();
+        ///
+        qrcodeService.updateQrcode(qrcode);
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("update success");
+        return result;
+    }
+
+    @DeleteMapping("/deleteQRCode")
+    public Result deleteQrcode(Integer qrcodeId) {
+        Result result = new Result();
+        ///
+        qrcodeService.deleteQrcode(qrcodeId);
+        result.setCode(HttpStatus.OK.value());
+        result.setMessage("delete success");
+        return result;
+    }
+
 
 }

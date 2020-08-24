@@ -32,7 +32,9 @@ public class GoodsTypeServiceImpl implements GoodsTypeService {
         if (list.size() > 0) {
             return -1;
         }
-        return goodsTypeMapper.insertSelective(goodsType);
+        int r = goodsTypeMapper.insertSelective(goodsType);
+        //System.out.println("id = "+goodsType.getGoodsTypeId());
+        return r;
     }
 
     @Override

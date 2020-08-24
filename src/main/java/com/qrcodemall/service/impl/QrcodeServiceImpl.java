@@ -54,7 +54,8 @@ public class QrcodeServiceImpl implements QrcodeService {
     public Integer insertQrcode(Qrcode qrcode) {
         qrcode.setGmtCreated(new Date());
         qrcode.setGmtModified(new Date());
-        return qrcodeMapper.insertSelective(qrcode);
+        qrcodeMapper.insertSelective(qrcode);
+        return qrcode.getQrcodeId();
     }
 
     @Override
