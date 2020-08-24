@@ -13,6 +13,8 @@ an innovative project in university using springboot
 - swagger
 - post请求关闭springboot
 - 手机号发送验证码
+- 现在已经可以注册使用了，可以用支付宝沙箱购买
+- 可以查看邀请的朋友
 # 未来功能：
 - 生成各式各样的二维码
-- 老用户邀请新用户的功能
+
