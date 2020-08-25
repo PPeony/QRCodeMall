@@ -3,6 +3,7 @@ package com.qrcodemall.controller;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
+import com.alipay.api.domain.OrderDetail;
 import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
@@ -10,6 +11,7 @@ import com.qrcodemall.common.Exception.GlobalException;
 import com.qrcodemall.configure.AlipayConfig;
 import com.qrcodemall.controller.vo.OrderFormVO;
 import com.qrcodemall.entity.*;
+import com.qrcodemall.service.AccountService;
 import com.qrcodemall.service.OrderFormService;
 import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.util.BeanUtil;
@@ -46,6 +48,9 @@ public class OrderFormController {
 
     @Autowired
     UserBillService userBillService;
+
+    @Autowired
+    AccountService accountService;
 
     @Autowired
     HttpServletRequest request;
@@ -154,13 +159,25 @@ public class OrderFormController {
             result.code(HttpStatus.UNAUTHORIZED.value()).message("未登录");
             return result;
         }
+        //更新orderForm表
         orderFormService.buyingSuccessfully(orderFormNumber);
         BigDecimal decimal = new BigDecimal(totalAmount);
         UserBill userBill = new UserBill();
         userBill.setUserId(user.getUserId());
         userBill.setUserBillMoney(decimal);
         userBill.setUserBillDirection(1);
+        //更新userBill表
         userBillService.insertUserBill(userBill);
+        //更新account表
+        OrderForm orderForm = orderFormService.selectByOrderFormNumber(orderFormNumber);
+        List<OrderFormDetail> details = orderFormService.selectOrderFormDetailWithoutPage(orderForm.getOrderFormId());
+        for (OrderFormDetail detail : details) {
+            Account account = new Account();
+            account.setUserId(user.getUserId());
+            account.setGoodsTypeName(detail.getGoodsTypeName());
+            account.setGoodsTypeQrcodeQuantity(detail.getGoodsQrcodeQuantity());
+            accountService.insertAccount(account);
+        }
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         return result;
