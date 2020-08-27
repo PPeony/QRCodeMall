@@ -4,6 +4,7 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.qrcodemall.common.Exception.GlobalException;
 import com.qrcodemall.common.PageProperty;
+import com.qrcodemall.common.Property;
 import com.qrcodemall.dao.UserMapper;
 import com.qrcodemall.entity.User;
 import com.qrcodemall.entity.UserExample;
@@ -81,29 +82,53 @@ public class UserServiceImpl implements UserService {
             return flag;
         }
         if (user.getUserFatherProxyName() != null) {
+            //查询父级代理
             if (user.getUserFatherProxyId() == null) {
                 UserExample t = new UserExample();
                 UserExample.Criteria criteria = t.createCriteria();
                 criteria.andUserNameEqualTo(user.getUserFatherProxyName());
                 List<User> list = userMapper.selectByExample(t);
-                if (list == null || list.size() == 0) {
+                if (list.size() == 0) {
                     return -1;
                 }
-                user.setUserFatherProxyId(list.get(0).getUserId());
+                Integer fatherId = list.get(0).getUserId();
+                user.setUserFatherProxyId(fatherId);
+                //更新父级代理的积分
+                updatePoints(fatherId,Property.firstPoint);
             }
-            User t = new User();
-            t.setUserId(user.getUserFatherProxyId());
-            t = userMapper.selectByPrimaryKey(user.getUserFatherProxyId());
-            if (t == null) {
-                GlobalException.fail("该父级的上一层代理不存在");
+            //查询grandFather
+            User t = userMapper.selectByPrimaryKey(user.getUserFatherProxyId());
+            if (t != null) {
+                user.setUserGrandfatherProxyId(t.getUserFatherProxyId());
+                user.setUserGrandfatherProxyName(t.getUserFatherProxyName());
+                //更新父级的父级代理积分
+                updatePoints(t.getUserFatherProxyId(), Property.secondPoint);
             }
-            user.setUserGrandfatherProxyId(t.getUserGrandfatherProxyId());
-            user.setUserGrandfatherProxyName(t.getUserGrandfatherProxyName());
+
         }
         //密码加密
         user.setUserPassword(DesUtils.encrypt(user.getUserPassword()));
-        //添加用户同时要添加userBill表，这个service在下面
+        //todo,添加用户同时要添加userBill表，这个service在下面,没写，看情况而定
         return userMapper.insertSelective(user);
+    }
+    public Integer updatePoints(Integer userId,Integer points) {
+        User tu = new User();
+        User user = userMapper.selectByPrimaryKey(userId);
+        Integer newPoints = user.getUserPoint() + points;
+        if (newPoints < 0) {
+            return newPoints;
+        }
+        tu.setUserPoint(newPoints);
+        tu.setUserId(userId);
+        userMapper.updateByPrimaryKeySelective(tu);
+        return newPoints;
+    }
+
+    @Override
+    public Integer checkUpdatePoints(Integer userId, Integer changeNum) {
+        User user = selectUser(userId);
+        Integer newPoints = user.getUserPoint()+changeNum;
+        return newPoints;
     }
 
     private Integer userIfRepeat(User user) {

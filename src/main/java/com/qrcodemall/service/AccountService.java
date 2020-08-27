@@ -11,6 +11,7 @@ import java.util.List;
 public interface AccountService {
     List<Account> selectAccountBySelective(Account account);
 
+    Integer updateAccount0(Account account);
 
     Integer updateAccount(Account account);
 

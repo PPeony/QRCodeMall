@@ -72,7 +72,7 @@ public class GoodsController {
     }
 
     @PostMapping("/addToShoppingCart")
-    @ApiOperation(value = "一次对goodsid商品计数器加一")
+    @ApiOperation(value = "一次对goodsid商品计数器加一,唯一参数goodsId")
     public Result insertToShoppingCart(@RequestBody Map<String,String> json, HttpServletResponse response, HttpServletRequest request) {
         System.out.println("addToShoppingCart");
         System.out.println(json);

@@ -1,6 +1,7 @@
 package com.qrcodemall.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.qrcodemall.common.Property;
 import com.qrcodemall.controller.vo.UserLoginVO;
 import com.qrcodemall.dao.UserAddressMapper;
 import com.qrcodemall.dao.UserMapper;
@@ -21,8 +22,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -54,7 +57,7 @@ public class UserController {
                         HttpSession session,Errors errors) {
         String account = user.getAccount();
         String password = user.getPassword();
-        System.out.println(account+" *** "+password);
+        //System.out.println(account+" *** "+password);
         Result result = new Result();
         //登陆完之后id存入session
         User u = userService.login(account,password);
@@ -363,5 +366,27 @@ public class UserController {
         result.setMessage("success");
         return result;
     }
-
+    //todo，积分换钱接口，同时要在上面controller增加代理时候更新积分
+    //10积分一块钱，一级代理500积分，二级代理200积分
+    @PostMapping("/usePoints")
+    @ApiOperation(value = "传的是变化多少，注意兑换积分时候传负数,只有一个参数为userPoint")
+    public Result usePoints(@RequestParam("userPoint") Integer userPoint,HttpSession session) {
+        Result result = new Result();
+        System.out.println(userPoint+" ===");
+        User u = (User) session.getAttribute("user");
+        if (u == null) {
+            return result.code(HttpStatus.UNAUTHORIZED.value()).message("未登录");
+        }
+        Integer r = userService.updatePoints(u.getUserId(),userPoint);
+        if (r < 0) {
+            return result.code(HttpStatus.BAD_REQUEST.value()).message("没有足够积分");
+        }
+        UserBill userBill = new UserBill();
+        userBill.setUserId(u.getUserId());
+        userBill.setUserBillDirection(0);
+        userBill.setUserBillRemark(Property.remark);
+        userBill.setUserBillMoney(new BigDecimal(r / Property.times));
+        userBillService.insertUserBill(userBill);
+        return result.code(HttpStatus.CREATED.value()).message("success");
+    }
 }

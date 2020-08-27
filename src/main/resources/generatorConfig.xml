@@ -123,10 +123,10 @@
 <!--            &lt;!&ndash; 数据库表主键 &ndash;&gt;-->
 <!--            <generatedKey column="property_value_id" sqlStatement="Mysql" identity="true" />-->
 <!--        </table>-->
-        <table tableName="account" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
+        <table tableName="qrcode_batch" enableCountByExample="true" enableUpdateByExample="true" enableDeleteByExample="true" enableSelectByExample="true" selectByExampleQueryId="true">
             <property name="useActualColumnNames" value="false" />
             <!-- 数据库表主键 -->
-            <generatedKey column="account_id" sqlStatement="Mysql" identity="true" />
+            <generatedKey column="qrcode_batch_id" sqlStatement="Mysql" identity="true" />
         </table>
 
 

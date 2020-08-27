@@ -5,9 +5,22 @@ package com.qrcodemall.common;
  * @Date: 2020/7/28 15:50
  */
 public class Property {
+    //积分，一级500，二级200
+    public static final int firstPoint = 500;
+
+    public static final int secondPoint = 200;
+
+    //倍数,目前为10个积分1块
+    public static final int times = 10;
+
+    //userBill表的备注
+    public static final String remark = "积分兑换";
+
     //图片存储地址
     //示例：/usr/developmentTool/myproject/bookstoreAPI/files/images/
     public static final String fileAddress = "/usr/QRCodeMall/images/";
+
+    //支付宝配置
 
 
 

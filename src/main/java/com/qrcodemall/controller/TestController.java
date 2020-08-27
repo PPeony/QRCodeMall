@@ -63,9 +63,8 @@ public class TestController {
 
     @PostMapping("/post")
     @ResponseBody
-    public String post(@RequestParam("Name") String name, HttpSession session) {
-
-        System.out.println("==="+name+"===");
+    public String post(@RequestParam("Name") String name,@RequestParam("age") Integer age) {
+        System.out.println("==="+name+"==="+age+"===");
         return "success";
     }
 

@@ -56,6 +56,15 @@ public class AccountServiceImpl implements AccountService {
         return 1;
     }
 
+    public Integer updateAccount0(Account account) {
+        AccountExample example = new AccountExample();
+        AccountExample.Criteria criteria = example.createCriteria();
+        criteria.andGoodsTypeNameEqualTo(account.getGoodsTypeName());
+        criteria.andUserIdEqualTo(account.getUserId());
+        accountMapper.updateByExampleSelective(account,example);
+        return 1;
+    }
+
     //根据userId，type，quantity添加
     @Override
     public Integer insertAccount(Account account) {

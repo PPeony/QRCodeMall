@@ -149,15 +149,9 @@ public class AdminController {
     String goodsName,
     BigDecimal goodsPrice,
     String goodsTypeName,
-    Integer goodsQrcodeQuantity,
-    MultipartFile goodsPicture,
-    MultipartFile goodsDetail,
-    String goodsIntroduction,
-    Integer goodsStatus) {
+    Integer goodsQrcodeQuantity) {
         Result result = new Result();
-        if (goodsTypeId == null || goodsName == null || goodsPicture == null ||
-        goodsPicture == null || goodsDetail == null || goodsIntroduction == null
-                || goodsQrcodeQuantity == null || goodsTypeName == null
+        if (goodsTypeId == null || goodsName == null || goodsQrcodeQuantity == null || goodsTypeName == null
         ) {
             result.setMessage("缺少参数");
             result.setCode(HttpStatus.BAD_REQUEST.value());
@@ -171,15 +165,8 @@ public class AdminController {
         goods.setGoodsTypeName(goodsTypeName);
         goods.setGoodsPrice(goodsPrice);
         goods.setGoodsQrcodeQuantity(goodsQrcodeQuantity);
-        String goodsDetailName = PictureUtil.uploadFile(goodsDetail,httpServletRequest);
-        goods.setGoodsDetail(goodsDetailName);
-        goods.setGoodsStatus(goodsStatus);
-        String goodsPictureName = PictureUtil.uploadFile(goodsPicture,httpServletRequest);
-        goods.setGoodsPicture(goodsPictureName);
-        goods.setGoodsIntroduction(goodsIntroduction);
         System.out.println(goods);
         //insert
-
         Integer r = goodsService.insertGoods(goods);
         result.setCode(HttpStatus.CREATED.value());
         result.setMessage("success");

@@ -25,6 +25,11 @@ public interface UserService {
 
     PageInfo<User> selectUser(User user, Integer pageNum);
 
+    //改变了多少
+    Integer checkUpdatePoints(Integer userId,Integer changeNum);
+
+    Integer updatePoints(Integer userId,Integer changeNum);
+
     ////
 
     User selectUser(Integer userId);
