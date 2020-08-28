@@ -20,6 +20,7 @@ import com.qrcodemall.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.http.HttpResponse;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -61,7 +62,8 @@ public class OrderFormController {
 
     @GetMapping("/buyGoods")
     //todo,应该先生成订单，再跳转支付宝,功能应该是实现了，出问题再说
-    @ApiOperation(value = "传参数是orderForm信息，id，number，payType，price一定要有,payType为2为微信支付，不会跳转到支付宝")
+    @ApiOperation(value = "传参数是orderForm信息，id，number，payType，price一定要有,payType为2为微信支付，不会跳转到支付宝。" +
+            "注意此方法没有返回值，支付宝是通过response重定向，微信暂无")
     public void buyGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
         //System.out.println("buyGoods :"+json);
         HttpSession session = request.getSession();
@@ -149,7 +151,7 @@ public class OrderFormController {
 
     //todo,支付宝/微信，异步通知，修改订单状态
     @GetMapping("/buyingSuccessfully")
-    @ApiOperation(value = "参数为订单号和总金额")
+    @ApiOperation(value = "参数为订单号orderFormNumber和总金额totalAmount")
     public Result buyingSuccessfully(@RequestParam("orderFormNumber") String orderFormNumber,
                                      @RequestParam("totalAmount") String totalAmount,
                                      HttpSession session) {
@@ -184,7 +186,8 @@ public class OrderFormController {
     }
 
     @PostMapping("/generateOrderForm")
-    @ApiOperation(value = "生成订单,只返回orderForm，想要返回vo再请求别的接口")
+    @ApiOperation(value = "生成订单,只返回orderForm，想要返回vo再请求别的接口。" +
+            "传递good类型的list。jsonExample[{},{}]")
     public Result<OrderForm> generateOrderForm(@RequestBody List<Goods> list) {
         System.out.println("generateOrderForm : "+list);
         Result<OrderForm> result = new Result<>();
@@ -210,6 +213,7 @@ public class OrderFormController {
 
     //user用的
     @GetMapping("/myOrderForm")
+    @ApiOperation("pageNum,beginTime,endTime均可选参数")
     public Result<PageInfo<OrderFormVO>> selectOneOrderForm(HttpSession session,
             @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
             @RequestParam(required = false,value = "beginTime") Date beginTime,
@@ -267,6 +271,7 @@ public class OrderFormController {
         return pres;
     }
     @GetMapping("/{orderFormId}")//查看订单详情
+    @ApiOperation("唯一参数orderFormId")
     public Result<List<OrderFormDetail>> selectOrderDetails(@PathVariable Integer orderFormId,
                                      @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
         //orderDetail表照着id查
@@ -288,6 +293,7 @@ public class OrderFormController {
         return result;
     }
     @DeleteMapping("/deleteOrderForm")
+    @ApiOperation("唯一参数orderFormId")
     public Result deleteOrderForm(Integer orderFormId) {
         Result result = new Result();
         orderFormService.deleteOrderForm(orderFormId);

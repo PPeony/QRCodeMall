@@ -11,6 +11,8 @@ import com.qrcodemall.entity.Notice;
 import com.qrcodemall.service.NoticeService;
 import com.qrcodemall.util.PictureUtil;
 import com.qrcodemall.util.Result;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -35,6 +37,7 @@ import java.util.UUID;
  */
 @Controller
 @RequestMapping("/test")
+@Api(tags = "测试方法，正式发布时候删除")
 public class TestController {
 
 

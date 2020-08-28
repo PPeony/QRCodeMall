@@ -40,6 +40,7 @@ public class GoodsController {
 
 
     @GetMapping("/allGoods")
+    @ApiOperation(value = "唯一参数pageNum，页号(1开始)。每页大小写死了")
     public Result<PageInfo<Goods>> selectAllGoods(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
         Result<PageInfo<Goods>> result = new Result<>();
         //分页
@@ -51,6 +52,7 @@ public class GoodsController {
     }
 
     @GetMapping("/goodsType")
+    @ApiOperation(value = "no param")
     public Result<List<GoodsType>> selectAllGoodsType(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum) {
         Result<List<GoodsType>> result = new Result<>();
         //不分页
@@ -62,6 +64,7 @@ public class GoodsController {
     }
 
     @GetMapping("/{goodsId}")
+    @ApiOperation(value = "唯一参数goodsId")
     public Result<Goods> selectGoods(@PathVariable Integer goodsId) {
         Result<Goods> result = new Result();
         Goods goods = goodsService.selectGoods(goodsId);
@@ -118,7 +121,7 @@ public class GoodsController {
     }
 
     @GetMapping("/shoppingCart")//查看购物车所有东西
-    //@ApiOperation()
+    @ApiOperation(value = "no param")
     public Result<List<Goods>> selectOrderFormDetail(HttpServletRequest request) {
         System.out.println("shoppingCart");
         Result<List<Goods>> result = new Result<>();
@@ -161,13 +164,13 @@ public class GoodsController {
     //
     public Result deleteOne(@RequestBody ArrayList<Integer> goodsIdList,HttpServletRequest request,HttpServletResponse response) {
         Result result = new Result();
-        System.out.println("deleteOne");
-        System.out.println(goodsIdList);
+        //System.out.println("deleteOne");
+        //System.out.println(goodsIdList);
         Cookie[] cookies = request.getCookies();
         if (cookies != null) {
             for (int i = 0; i < goodsIdList.size(); i++) {
                 Cookie c = cookies[i];
-                System.out.println("cookies name:" + c.getName());
+                //System.out.println("cookies name:" + c.getName());
                 if (!StringUtils.isNumeric(c.getName())) {
                     continue;
                 } else {
@@ -201,6 +204,7 @@ public class GoodsController {
         return c;
     }
     @DeleteMapping("/deleteAllShoppingCartGoods")
+    @ApiOperation("no params")
     public Result deleteAll(HttpServletRequest request,HttpServletResponse response) {
         Result result = new Result();
         Cookie[] cookies = request.getCookies();

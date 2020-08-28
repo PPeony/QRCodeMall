@@ -16,11 +16,13 @@ import com.tencentcloudapi.sms.v20190711.SmsClient;
 // 导入要请求接口对应的 request response 类
 import com.tencentcloudapi.sms.v20190711.models.SendSmsRequest;
 import com.tencentcloudapi.sms.v20190711.models.SendSmsResponse;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.xml.ws.http.HTTPException;
 import java.io.IOException;
 import java.util.HashMap;
@@ -39,14 +41,20 @@ public class SendSMS
     int appId = Property.appId;
     String appKey = Property.appKey;
     int templateId = Property.templateId;
-    public String[] phones={"18842332832"};
+    public String[] phones={""};
 
     String smsSign = Property.smsSign;
 
     @GetMapping("/send")
-    public void sms()
+    @ApiOperation("测试方法，正式发布时候删除.测试参数为phone")
+    public void sms(HttpServletRequest request)
     {
         try {
+            String phone = request.getParameter("phone");
+            if (phone == null) {
+                return;
+            }
+            phones[0] = phone;
             //短信模板中的参数列表
             //第一个为验证码，第二个是几分钟有效
             String[] params = {"4567","5"};

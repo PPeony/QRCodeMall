@@ -24,6 +24,7 @@ public class GoodsTypeController {
     GoodsTypeService goodsTypeService;
 
     @GetMapping("/all")
+    @ApiOperation("no params")
     public Result<List<GoodsType>> selectAllGoodsType() {
         Result<List<GoodsType>> result = new Result<>();
         result.setCode(HttpStatus.OK.value());
@@ -33,7 +34,7 @@ public class GoodsTypeController {
     }
 
     @GetMapping("/{goodsTypeName}")
-
+    @ApiOperation("唯一参数goodsTypeName")
     public Result<GoodsType> selectOneGoodsType(@PathVariable String goodsTypeName) {
         Result<GoodsType> result = new Result<>();
         GoodsType goodsType = goodsTypeService.selectByGoodsTypeName(goodsTypeName);

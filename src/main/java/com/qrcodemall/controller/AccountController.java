@@ -29,7 +29,7 @@ public class AccountController {
 
 
     @GetMapping("/myAccount")
-    @ApiOperation(value = "通过session的userId查询，no params")
+    @ApiOperation(value = "通过session的userId查询，no param")
     public Result<List<Account>> selectByUserId(HttpSession session) {
         Result<List<Account>> result = new Result<>();
         User u = (User)session.getAttribute("user");

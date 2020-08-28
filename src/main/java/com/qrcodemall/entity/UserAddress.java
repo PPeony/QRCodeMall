@@ -1,5 +1,7 @@
 package com.qrcodemall.entity;
 
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.Date;
 
@@ -20,6 +22,7 @@ public class UserAddress implements Serializable {
      *
      * @mbg.generated
      */
+    //@NotNull(message = "userId不能为空"),change to session
     private Integer userId;
 
     /**
@@ -29,6 +32,7 @@ public class UserAddress implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "省份不能为空")
     private String userAddressProvince;
 
     /**
@@ -38,6 +42,7 @@ public class UserAddress implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "城市不能为空")
     private String userAddressCity;
 
     /**
@@ -47,6 +52,7 @@ public class UserAddress implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "区县不能为空")
     private String userAddressDistrict;
 
     /**
@@ -56,6 +62,7 @@ public class UserAddress implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "请输入详细地址")
     private String userAddressDetail;
 
     /**
@@ -101,6 +108,7 @@ public class UserAddress implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "名字不能为空")
     private String receiveName;
 
     /**
@@ -110,6 +118,7 @@ public class UserAddress implements Serializable {
      *
      * @mbg.generated
      */
+    @NotEmpty(message = "联系电话不能为空")
     private String receivePhone;
 
     /**

@@ -5,6 +5,7 @@ import com.qrcodemall.service.CarouselService;
 import com.qrcodemall.util.PictureUtil;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -25,6 +26,7 @@ public class CarouselController {
     CarouselService carouselService;
 
     @GetMapping("/all")
+    @ApiOperation(value = "no param")
     public Result<List<Carousel>> selectAllCarousel() {
         Result<List<Carousel>> result = new Result<>();
         List<Carousel> carousels = carouselService.selectAllCarousel();
@@ -35,6 +37,7 @@ public class CarouselController {
     }
 
     @GetMapping("/{carouselId}")
+    @ApiOperation(value = "唯一参数carouselId")
     public Result<Carousel> selectOneCarousel(@PathVariable Integer carouselId) {
         Result<Carousel> result = new Result<>();
         Carousel carousel = carouselService.selectOneCarousel(carouselId);

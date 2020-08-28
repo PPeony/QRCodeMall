@@ -16,6 +16,7 @@ import com.qrcodemall.util.SendSms;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -53,6 +54,7 @@ public class UserController {
     UserBillService userBillService;
 
     @PostMapping("/login")//密码登录
+    @ApiOperation("account和password。account可以是手机号，用户名，邮箱")
     public Result login(@Valid @RequestBody UserLoginVO user,
                         HttpSession session,Errors errors) {
         String account = user.getAccount();
@@ -87,6 +89,7 @@ public class UserController {
     }
 
     @GetMapping("/logout")//退出登录
+    @ApiOperation("no param")
     public Result logout(HttpSession session) {
         session.removeAttribute("user");
         Result result = new Result();
@@ -96,6 +99,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
+    @ApiOperation("userName,userPhone,userEmail,userPassword必传。userFatherProxyName可选。")
     public Result register(@RequestBody @Valid User user, Errors errors) {
         Result result = new Result();
         if (errors.hasErrors()) {
@@ -138,6 +142,7 @@ public class UserController {
     }
 
     @PostMapping("/sendVerifyCode")
+    @ApiOperation("userPhone发送短信的手机号")
     @ApiParam(name = "userPhone",value = "发送短信的手机号")
     public Result sendVerifyCode(@RequestBody Map<String,Object> userPhone,HttpSession session) {
         String userPhones = (String)userPhone.get("userPhone");
@@ -189,6 +194,7 @@ public class UserController {
     }
     /**address**/
     @GetMapping("/userAddress/{userAddressId}")
+    @ApiOperation("唯一参数userAddressId")
     public Result<UserAddress> selectByAddressId(@PathVariable Integer userAddressId){
         Result<UserAddress> result = new Result<>();
         UserAddress userAddress = userAddressService.selectByPrimaryKey(userAddressId);
@@ -199,6 +205,8 @@ public class UserController {
     }
 
     @PostMapping("/addAddress")
+    @ApiOperation("receiveName,receivePhone,userAddressDetail,userAddressDistrict,userAddressCity,userAddressProvince" +
+            "必须传")
     public Result insertUserAddress(@RequestBody @Valid UserAddress userAddress, Errors errors ) {
         Result result = new Result();
         if (errors.hasErrors()) {
@@ -223,6 +231,7 @@ public class UserController {
 
 
     @PutMapping("/updateAddress")
+    @ApiOperation("不要传userId，所有修改都是按照主键id来的，所以userAddressId一定要有")
     public Result updateUserAddress(@RequestBody UserAddress userAddress) {
         Result result = new Result();
         //User user = (User)session.getAttribute("user");
@@ -240,6 +249,7 @@ public class UserController {
     }
 
     @DeleteMapping("/deleteAddress")
+    @ApiOperation("唯一参数userAddressId")
     public Result deleteUserAddress(Integer userAddressId) {
         //url 传参
         System.out.println(userAddressId);
@@ -252,6 +262,7 @@ public class UserController {
 
 
     @GetMapping("/myAddress")
+    @ApiOperation("no param.operate by session")
     public Result<List<UserAddress>> selectUserAddress(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
                                                            HttpSession session) {
         //判断session不为空,根据id看地址
@@ -273,6 +284,7 @@ public class UserController {
     }
 
     @GetMapping("/my")//查看自己的所有信息
+    @ApiOperation("no param.operate by session")
     public Result<User> selectUser(HttpSession session) {
         //不暴露id
         Result<User> result = new Result();
@@ -288,7 +300,7 @@ public class UserController {
         return result;
     }
 /**my proxy**/
-    @ApiOperation(value = "查看自己下级代理")
+    @ApiOperation(value = "查看自己下级代理.no param.operate by session")
     @GetMapping("/invitees")
     public Result<List<List<User>>> findInvitees(HttpSession session) {
         Result<List<List<User>>> result = new Result<>();
@@ -315,6 +327,7 @@ public class UserController {
     }
 /**bill**/
     @GetMapping("/myBill")
+    @ApiOperation("pageNum页号")
     public Result<PageInfo<UserBill>> selectUserBill(@RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
                                  HttpSession session) {
         //判断session不为空，分页
@@ -385,7 +398,7 @@ public class UserController {
         userBill.setUserId(u.getUserId());
         userBill.setUserBillDirection(0);
         userBill.setUserBillRemark(Property.remark);
-        userBill.setUserBillMoney(new BigDecimal(r / Property.times));
+        userBill.setUserBillMoney(new BigDecimal(userPoint*(-1) / Property.times));
         userBillService.insertUserBill(userBill);
         return result.code(HttpStatus.CREATED.value()).message("success");
     }

@@ -1,5 +1,6 @@
 package com.qrcodemall.controller.vo;
 
+import com.qrcodemall.entity.UserAddress;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -22,4 +23,6 @@ public class QrcodeBatchVO implements Serializable {
 
     @NotEmpty(message = "种类不能为空")
     private String goodsTypeName;
+
+    private UserAddress userAddress;
 }

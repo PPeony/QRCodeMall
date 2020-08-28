@@ -2,14 +2,8 @@ package com.qrcodemall.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.qrcodemall.controller.vo.QrcodeBatchVO;
-import com.qrcodemall.entity.Account;
-import com.qrcodemall.entity.Qrcode;
-import com.qrcodemall.entity.QrcodeBatch;
-import com.qrcodemall.entity.User;
-import com.qrcodemall.service.AccountService;
-import com.qrcodemall.service.QrcodeBatchService;
-import com.qrcodemall.service.QrcodeService;
-import com.qrcodemall.service.UserService;
+import com.qrcodemall.entity.*;
+import com.qrcodemall.service.*;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.ApiOperation;
@@ -43,41 +37,63 @@ public class QrcodeBatchController {
     QrcodeService qrcodeService;
 
     @Autowired
+    UserAddressService userAddressService;
+
+    @Autowired
     HttpSession session;
 
     //
     @GetMapping("/adminFind")
     @ApiOperation(value = "admin的不定参数查询")
-    public Result<PageInfo<QrcodeBatch>> findQrcodeBatchAdmin(QrcodeBatch qrcodeBatch,
+    public Result<PageInfo<QrcodeBatchVO>> findQrcodeBatchAdmin(QrcodeBatch qrcodeBatch,
     @RequestParam(defaultValue = "1",required = false,value = "pageNum") Integer pageNum
                                                          ) {
-        Result<PageInfo<QrcodeBatch>> result = new Result<>();
+        Result<PageInfo<QrcodeBatchVO>> result = new Result<>();
         PageInfo<QrcodeBatch> batch = qrcodeBatchService.selectQrcodeBatch(qrcodeBatch, pageNum);
-        result.code(HttpStatus.OK.value()).data(batch).message("success");
+        PageInfo<QrcodeBatchVO> batchVO = buildQrcodeBatchVO(batch);
+        result.code(HttpStatus.OK.value()).data(batchVO).message("success");
         return result;
     }
 
     //
     @GetMapping("/find")
     @ApiOperation(value = "user的不定项查询")
-    public Result<PageInfo<QrcodeBatch>> findQrcodeBatch(QrcodeBatch qrcodeBatch,
+    public Result<PageInfo<QrcodeBatchVO>> findQrcodeBatch(QrcodeBatch qrcodeBatch,
     @RequestParam(defaultValue = "1",required = false,value = "pageNum") Integer pageNum,
      HttpSession session
     ) {
         System.out.println(qrcodeBatch+"====");
 
-        Result<PageInfo<QrcodeBatch>> result = new Result<>();
+        Result<PageInfo<QrcodeBatchVO>> result = new Result<>();
         User user = (User) session.getAttribute("user");
         if (user != null) {
             qrcodeBatch.setUserId(user.getUserId());
         }
         PageInfo<QrcodeBatch> batch = qrcodeBatchService.selectQrcodeBatch(qrcodeBatch, pageNum);
-        result.code(HttpStatus.OK.value()).data(batch).message("success");
+        PageInfo<QrcodeBatchVO> voBatch = buildQrcodeBatchVO(batch);
+        result.code(HttpStatus.OK.value()).data(voBatch).message("success");
         return result;
+    }
+    private PageInfo<QrcodeBatchVO> buildQrcodeBatchVO(PageInfo<QrcodeBatch> batch) {
+        List<QrcodeBatch> list = batch.getList();
+        List<QrcodeBatchVO> voList = new ArrayList<>();
+        for (QrcodeBatch qrcodeBatch:list) {
+            QrcodeBatchVO vo = new QrcodeBatchVO();
+            BeanUtil.copyProperties(qrcodeBatch,vo);
+            Integer addressId = qrcodeBatch.getUserAddressId();
+            if (addressId != null) {
+                vo.setUserAddress(userAddressService.selectByPrimaryKey(addressId));
+            }
+            voList.add(vo);
+        }
+        PageInfo<QrcodeBatchVO> voPageInfo = new PageInfo<>();
+        BeanUtil.copyProperties(batch,voPageInfo,"list");
+        voPageInfo.setList(voList);
+        return voPageInfo;
     }
 
     @PostMapping("/addBatch")
-    @ApiOperation(value = "这里的number是要多少,so一律是正数")
+    @ApiOperation(value = "这里的number是要多少,so一律是正数。参数是list类型的QrcodeBatch.")
     public Result<Integer> insertQrcodeBatch(@RequestBody @Valid List<QrcodeBatch> batches,
                                              Errors errors,
                                              HttpSession session) {
@@ -150,7 +166,7 @@ public class QrcodeBatchController {
     }
 
     @PutMapping("/updateBatch")
-    @ApiOperation(value = "number为变化了多少（正负区分）,如果种类错了直接删除重建batch,这里面传goodsTypeName是为了查表，所以必须传。如果已经送出去了，number,type,qrcodeId不能改")
+    @ApiOperation(value = "batchId必传，number为变化了多少（正负区分）,如果种类错了直接删除重建batch,这里面传goodsTypeName是为了查表，所以必须传。如果已经送出去了，number,type,qrcodeId不能改")
     public Result<Integer> updateQrcodeBatch(@RequestBody QrcodeBatch qrcodeBatch) {
         Result<Integer> result = new Result<>();
         //
