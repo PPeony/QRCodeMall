@@ -15,6 +15,7 @@ an innovative project in university using springboot
 - 手机号发送验证码
 - 现在已经可以注册使用了，可以用支付宝沙箱购买
 - 可以查看邀请的朋友
-# 未来功能：
-- 生成各式各样的二维码
+# 可以点击链接测试
+网站地址：[stu.jeehon.com](http://stu.jeehon.com/public)
+可以注册账号，也可以使用测试账号测试： __test,123456789__
 
