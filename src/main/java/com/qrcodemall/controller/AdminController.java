@@ -359,25 +359,23 @@ public class AdminController {
         //存数据库
         Integer r = userService.addUser(user);
         if (r < 0) {
-            result.setCode(HttpStatus.OK.value());
-            switch (r) {
-                case -1:result.setMessage("没有父级代理名字");break;
-                case -2:result.setMessage("名字重复");break;
-                case -3:result.setMessage("手机号重复");break;
-                case -4:result.setMessage("邮箱重复");break;
-            }
-            return result;
+            return Result.badUserParams(r);
         }
         result.setCode(HttpStatus.CREATED.value());
         result.setMessage("add success");
         return result;
     }
 
+
+
     @PutMapping("/updateUser")
     public Result updateUser(@RequestBody User user) {
         Result result = new Result();
         Integer r = userService.updateUser(user);
         ///
+        if (r < 0) {
+            return Result.badUserParams(r);
+        }
         result.setCode(HttpStatus.OK.value());
         result.setMessage("update success");
         return result;

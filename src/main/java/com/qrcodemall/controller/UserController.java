@@ -141,6 +141,24 @@ public class UserController {
         return result;
     }
 
+    @PutMapping("/modify")
+    @ApiOperation("修改个人信息")
+    public Result updateMyProfile(@RequestBody User user,HttpSession session) {
+        Result result = new Result();
+        System.out.println(user);
+        User u = (User)session.getAttribute("user");
+        if (u == null) {
+            return result.code(HttpStatus.UNAUTHORIZED.value()).message("未登录");
+        }
+        user.setUserId(u.getUserId());
+        Integer r = userService.updateUser(user);
+        if (r < 0) {
+            return Result.badUserParams(r);
+        }
+        return result.code(HttpStatus.CREATED.value()).message("success");
+
+    }
+
     @PostMapping("/sendVerifyCode")
     @ApiOperation("userPhone发送短信的手机号")
     @ApiParam(name = "userPhone",value = "发送短信的手机号")

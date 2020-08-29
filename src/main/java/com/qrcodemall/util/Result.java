@@ -30,6 +30,18 @@ public class Result<T> implements Serializable {
         return result;
     }
 
+    public static Result badUserParams(Integer r) {
+        Result result = new Result();
+        result.setCode(HttpStatus.OK.value());
+        switch (r) {
+            case -1:result.setMessage("没有父级代理名字");break;
+            case -2:result.setMessage("名字重复");break;
+            case -3:result.setMessage("手机号重复");break;
+            case -4:result.setMessage("邮箱重复");break;
+        }
+        return result;
+    }
+
     public Result code(int code) {
         this.code = code;
         return this;
