@@ -134,24 +134,31 @@ public class UserServiceImpl implements UserService {
     private Integer userIfRepeat(User user) {
         //插入修改都需要检验名字，手机号，邮箱重复，拽出来
         User u = new User();
-        u.setUserName(user.getUserName());
-        List<User> l0 = userMapper.selectBySelective(u);
-        if (l0.size() > 0) {//名字不能重复
-            return -2;
+        List<User> l0;
+        if (user.getUserName() != null) {
+            u.setUserName(user.getUserName());
+            l0 = userMapper.selectBySelective(u);
+            if (l0.size() > 0) {//名字不能重复
+                return -2;
+            }
         }
-        u = new User();
-        u.setUserPhone(user.getUserPhone());
-        l0 = userMapper.selectBySelective(u);
-        if (l0.size() > 0) {
-            //手机号不能重复
-            return -3;
+        if (user.getUserPhone() != null) {
+            u = new User();
+            u.setUserPhone(user.getUserPhone());
+            l0 = userMapper.selectBySelective(u);
+            if (l0.size() > 0) {
+                //手机号不能重复
+                return -3;
+            }
         }
-        u = new User();
-        u.setUserEmail(user.getUserEmail());
-        l0 = userMapper.selectBySelective(u);
-        if (l0.size() > 0) {
-            //邮箱不能重复
-            return -4;
+        if (user.getUserEmail() != null) {
+            u = new User();
+            u.setUserEmail(user.getUserEmail());
+            l0 = userMapper.selectBySelective(u);
+            if (l0.size() > 0) {
+                //邮箱不能重复
+                return -4;
+            }
         }
         return 0;
     }

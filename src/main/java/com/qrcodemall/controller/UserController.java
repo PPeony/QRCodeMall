@@ -31,6 +31,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * @Author: Peony
@@ -145,10 +146,13 @@ public class UserController {
     @ApiOperation("修改个人信息")
     public Result updateMyProfile(@RequestBody User user,HttpSession session) {
         Result result = new Result();
-        System.out.println(user);
         User u = (User)session.getAttribute("user");
         if (u == null) {
             return result.code(HttpStatus.UNAUTHORIZED.value()).message("未登录");
+        }
+        String check = checkUpdateForm(user);
+        if (check != null) {
+            return result.code(HttpStatus.BAD_REQUEST.value()).message(check);
         }
         user.setUserId(u.getUserId());
         Integer r = userService.updateUser(user);
@@ -156,6 +160,29 @@ public class UserController {
             return Result.badUserParams(r);
         }
         return result.code(HttpStatus.CREATED.value()).message("success");
+
+    }
+
+    private String checkUpdateForm(User user) {
+        boolean res = true;
+        if (user.getUserPhone() != null) {
+            res = (res && Pattern.matches("^((13[0-9])|(15[^4,\\D])|(18[0,5-9]))\\d{8}$",user.getUserPhone()));
+            if (res == false) {
+                return "phone number illegal";
+            }
+        }
+        if (user.getUserEmail() != null) {
+            res = (res && Pattern.matches("[\\w!#$%&'*+/=?^_`{|}~-]+(?:\\.[\\w!#$%&'*+/=?^_`{|}~-]+)*@(?:[\\w](?:[\\w-]*[\\w])?\\.)+[\\w](?:[\\w-]*[\\w])?",user.getUserEmail()));
+            if (res == false) {
+                return "email illegal";
+            }
+        }
+        if (user.getUserPassword() != null) {
+            if (user.getUserPassword().length() < 8 || user.getUserPassword().length() > 16) {
+                return "password length not illegal";
+            }
+        }
+        return null;
 
     }
 
