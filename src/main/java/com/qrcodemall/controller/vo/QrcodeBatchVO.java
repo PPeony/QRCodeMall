@@ -12,6 +12,13 @@ import java.io.Serializable;
  */
 @Data
 public class QrcodeBatchVO implements Serializable {
+    private Integer qrcodeBatchId;
+    private Integer userId;
+    private Integer isMail;
+    private String expressNumber;
+    private String expressServicesCompany;
+
+
     @NotEmpty(message = "数量不能为空")
     private Integer qrcodeNumber;
 
