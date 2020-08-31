@@ -1,6 +1,7 @@
 package com.qrcodemall.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.qrcodemall.common.Exception.GlobalException;
 import com.qrcodemall.controller.vo.AdminLoginVO;
 import com.qrcodemall.controller.vo.GoodsVO;
 import com.qrcodemall.controller.vo.NoticeVO;
@@ -10,16 +11,21 @@ import com.qrcodemall.service.*;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.PictureUtil;
 import com.qrcodemall.util.Result;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -28,17 +34,19 @@ import java.util.List;
  * @Author: Peony
  * @Date: 2020/7/23 15:54
  */
+
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
+    //@Autowired
+    @Resource
     AdminService adminService;
 
-    @Autowired
+    @Resource
     UserService userService;
 
-    @Autowired
+    @Resource
     GoodsService goodsService;
 
     @Autowired
@@ -438,7 +446,6 @@ public class AdminController {
             @RequestParam(required = false,value = "beginTime") Date beginTime,
             @RequestParam(required = false,value = "endTime") Date endTime
     ) {
-
         Result<BigDecimal> result = new Result();
         //从orderForm里面查询符合日期的，在把和相加
         BigDecimal decimal = orderFormService.getSalesSituation(beginTime,endTime);
@@ -446,6 +453,30 @@ public class AdminController {
         result.setMessage("success");
         result.setData(decimal);
         return result;
+    }
+
+    @GetMapping("/weeklySales")
+    @ApiOperation("昨天是arr[6],前天是arr[5],类推")
+    public Result<BigDecimal[]> selectWeeklySales() {
+        Result<BigDecimal[]> result = new Result<>();
+        BigDecimal[] arr = new BigDecimal[7];
+        Date curDate = new Date();
+        SimpleDateFormat df=new SimpleDateFormat("yyyy-MM-dd");
+        Date origin = null;
+        try {
+            origin = df.parse(df.format(curDate));
+        } catch (ParseException e) {
+            GlobalException.fail("后台日期转换出错了");
+        }
+        System.out.println(origin);
+        for (int i = 0; i < 7; i++) {
+            Date time = new Date(origin.getTime() - (i) * 24 * 60 * 60 * 1000);
+            Date time2 = new Date(origin.getTime() - (i + 1) * 24 * 60 * 60 * 1000);
+            System.out.println(time2+" "+time);
+            BigDecimal tbd = orderFormService.getSalesSituation(time2,time);
+            arr[6 - i] = tbd;
+        }
+        return result.code(HttpStatus.OK.value()).data(arr).message("success");
     }
 
 }

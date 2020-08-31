@@ -15,6 +15,10 @@ public interface UserService {
 
     User login(String account, String password);
 
+    User login2(String account, String password);
+
+    User login3(String account, String password);
+
     Integer signin(String phone,String verifyCode);
 
     Integer deleteUser(Integer userId);

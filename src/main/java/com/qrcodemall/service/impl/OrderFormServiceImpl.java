@@ -56,7 +56,7 @@ public class OrderFormServiceImpl implements OrderFormService {
         List<OrderForm> list = orderFormMapper.selectByEntityAndTime(orderForm,beginTime,endtime);
         BigDecimal res = new BigDecimal("0.0");
         for (OrderForm form : list) {
-            res.add(form.getOrderFormPrice());
+            res = res.add(form.getOrderFormPrice());
         }
         return res;
     }

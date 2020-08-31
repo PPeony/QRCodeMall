@@ -54,10 +54,12 @@ public class UserController {
     @Autowired
     UserBillService userBillService;
 
-    @PostMapping("/login")//密码登录
+    /*
+    @PostMapping("/login")//密码登录，查三次
     @ApiOperation("account和password。account可以是手机号，用户名，邮箱")
     public Result login(@Valid @RequestBody UserLoginVO user,
                         HttpSession session,Errors errors) {
+        long start = System.currentTimeMillis();
         String account = user.getAccount();
         String password = user.getPassword();
         //System.out.println(account+" *** "+password);
@@ -69,10 +71,70 @@ public class UserController {
             result.setMessage("success");
             session.setAttribute("user",u);
             session.setMaxInactiveInterval(3600);
+            long end = System.currentTimeMillis();
+            System.out.println("login : "+(end - start));
             return result;
         }
         result.setCode(HttpStatus.UNAUTHORIZED.value());
         result.setMessage("该用户未注册");
+        long end = System.currentTimeMillis();
+        System.out.println("login : "+(end - start));
+        return result;
+    }
+
+    @PostMapping("/login2")//密码登录,多线程版，感觉没有直接修改sql语句快
+    @ApiOperation("account和password。account可以是手机号，用户名，邮箱")
+    public Result login2(@Valid @RequestBody UserLoginVO user,
+                        HttpSession session,Errors errors) {
+        long start = System.currentTimeMillis();
+        String account = user.getAccount();
+        String password = user.getPassword();
+        //System.out.println(account+" *** "+password);
+        Result result = new Result();
+        //登陆完之后id存入session
+        User u = userService.login2(account,password);
+        if (u != null) {
+            result.setCode(HttpStatus.OK.value());
+            result.setMessage("success");
+            session.setAttribute("user",u);
+            session.setMaxInactiveInterval(3600);
+            long end = System.currentTimeMillis();
+            System.out.println("login2 : "+(end - start));
+            return result;
+        }
+        result.setCode(HttpStatus.UNAUTHORIZED.value());
+        result.setMessage("该用户未注册");
+        long end = System.currentTimeMillis();
+        System.out.println("login2 : "+(end - start));
+        return result;
+    }
+
+     */
+
+    @PostMapping("/login")//密码登录，修改sql语句
+    @ApiOperation("account和password。account可以是手机号，用户名，邮箱")
+    public Result login3(@Valid @RequestBody UserLoginVO user,
+                         HttpSession session,Errors errors) {
+        //long start = System.currentTimeMillis();
+        String account = user.getAccount();
+        String password = user.getPassword();
+        //System.out.println(account+" *** "+password);
+        Result result = new Result();
+        //登陆完之后id存入session
+        User u = userService.login3(account,password);
+        if (u != null) {
+            result.setCode(HttpStatus.OK.value());
+            result.setMessage("success");
+            session.setAttribute("user",u);
+            session.setMaxInactiveInterval(3600);
+            //long end = System.currentTimeMillis();
+            //System.out.println("login3 : "+(end - start));
+            return result;
+        }
+        result.setCode(HttpStatus.UNAUTHORIZED.value());
+        result.setMessage("该用户未注册");
+        //long end = System.currentTimeMillis();
+        //System.out.println("login3 : "+(end - start));
         return result;
     }
 
@@ -191,16 +253,17 @@ public class UserController {
     @ApiParam(name = "userPhone",value = "发送短信的手机号")
     public Result sendVerifyCode(@RequestBody Map<String,Object> userPhone,HttpSession session) {
         String userPhones = (String)userPhone.get("userPhone");
+        //System.out.println(userPhones);
         Result result = new Result();
         //首先判断是否存在这个手机号
         User user = userService.selectByUserPhone(userPhones);
-        if (user == null) {
+        if (user != null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
-            result.setMessage("该用户不存在");
+            result.setMessage("该手机号存在");
             return result;
         }
 
-        System.out.println(userPhones);
+        //System.out.println(userPhones);
         String code = SendSms.sms(userPhones);
         System.out.println("code = "+code);
         session.removeAttribute("verifyCode");
@@ -230,9 +293,9 @@ public class UserController {
             result.setMessage("验证码错误");
             return result;
         }
-        User u = userService.selectByUserPhone(userPhones);
-        session.setAttribute("user",u);
-        session.setMaxInactiveInterval(3600);
+//        User u = userService.selectByUserPhone(userPhones);
+//        session.setAttribute("user",u);
+//        session.setMaxInactiveInterval(3600);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         return result;

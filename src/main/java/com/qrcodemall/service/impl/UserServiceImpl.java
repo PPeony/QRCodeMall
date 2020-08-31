@@ -9,6 +9,7 @@ import com.qrcodemall.dao.UserMapper;
 import com.qrcodemall.entity.User;
 import com.qrcodemall.entity.UserExample;
 import com.qrcodemall.service.UserService;
+import com.qrcodemall.service.serviceHelper.UserSelector;
 import com.qrcodemall.util.DesUtils;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     UserMapper userMapper;
+
+    @Autowired
+    UserSelector userSelector;
 
     @Override
     public Integer signin(String phone, String verifyCode) {
@@ -62,6 +66,36 @@ public class UserServiceImpl implements UserService {
         }
         return null;
      }
+
+     @SneakyThrows
+     public User login2(String account,String password) {
+        User u = new User();
+        u.setUserName(account);
+        u.setUserPhone(account);
+        u.setUserEmail(account);
+        User[] users = userSelector.searchUser(u);
+        for (User t : users) {
+            if (t != null) {
+                if (DesUtils.encrypt(password).equals(t.getUserPassword())) {
+                    return t;
+                }
+            }
+        }
+        return null;
+     }
+
+    @Override
+    public User login3(String account, String password) {
+        UserExample example = new UserExample();
+        example.or().andUserNameEqualTo(account);
+        example.or().andUserEmailEqualTo(account);
+        example.or().andUserPhoneEqualTo(account);
+        List<User> users = userMapper.selectByExample(example);
+        if (users.size() == 0) {
+            return null;
+        }
+        return users.get(0);
+    }
 
     @Override
     public PageInfo<User> selectUser(User user, Integer pageNum) {
@@ -163,6 +197,8 @@ public class UserServiceImpl implements UserService {
         return 0;
     }
 
+
+
     @SneakyThrows
     @Override
     public Integer updateUser(User user) {
@@ -173,7 +209,24 @@ public class UserServiceImpl implements UserService {
         if (user.getUserPassword() != null) {
             user.setUserPassword(DesUtils.encrypt(user.getUserPassword()));
         }
+        //更新代理的名字
+        if (user.getUserName() != null) {
+            updateProxyName(user.getUserId(),user.getUserName());
+        }
         return userMapper.updateByPrimaryKeySelective(user);
+    }
+
+    private Integer updateProxyName(Integer originId,String newName) {
+        UserExample example = new UserExample();
+        example.or().andUserFatherProxyIdEqualTo(originId);
+        User newUser = new User();
+        newUser.setUserGrandfatherProxyName(newName);
+        userMapper.updateByExampleSelective(newUser,example);
+        example.or().andUserGrandfatherProxyIdEqualTo(originId);
+        newUser = new User();
+        newUser.setUserGrandfatherProxyName(newName);
+        userMapper.updateByExampleSelective(newUser,example);
+        return 1;
     }
 
     @Override
@@ -224,7 +277,7 @@ public class UserServiceImpl implements UserService {
         criteria.andUserPhoneEqualTo(userPhone);
         List<User> list = userMapper.selectByExample(example);
         if (list.size() == 0) {
-            GlobalException.fail("此手机号不存在");
+            return null;
         }
         return list.get(0);
     }

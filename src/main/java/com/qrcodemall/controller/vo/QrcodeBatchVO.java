@@ -17,6 +17,7 @@ public class QrcodeBatchVO implements Serializable {
     private Integer isMail;
     private String expressNumber;
     private String expressServicesCompany;
+    private String userName;
 
 
     @NotEmpty(message = "数量不能为空")

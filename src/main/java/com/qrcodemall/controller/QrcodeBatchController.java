@@ -62,7 +62,7 @@ public class QrcodeBatchController {
     @RequestParam(defaultValue = "1",required = false,value = "pageNum") Integer pageNum,
      HttpSession session
     ) {
-        System.out.println(qrcodeBatch+"====");
+        //System.out.println(qrcodeBatch+"====");
 
         Result<PageInfo<QrcodeBatchVO>> result = new Result<>();
         User user = (User) session.getAttribute("user");
@@ -84,6 +84,7 @@ public class QrcodeBatchController {
             if (addressId != null) {
                 vo.setUserAddress(userAddressService.selectByPrimaryKey(addressId));
             }
+            vo.setUserName(userService.selectUser(qrcodeBatch.getUserId()).getUserName());
             voList.add(vo);
         }
         PageInfo<QrcodeBatchVO> voPageInfo = new PageInfo<>();
