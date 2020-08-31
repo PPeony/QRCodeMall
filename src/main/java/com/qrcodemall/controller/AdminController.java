@@ -102,7 +102,7 @@ public class AdminController {
 
     @GetMapping("/logout")//退出登录
     public Result logout(HttpSession session) {
-        session.removeAttribute("adminId");
+        session.removeAttribute("admin");
         Result result = new Result();
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
@@ -135,7 +135,7 @@ public class AdminController {
             }
             goods.setGoodsTypeId(goodsType.getGoodsTypeId());
         }
-        System.out.println(goods);
+        //System.out.println(goods);
         //全空查询所有
         //分页查询,一页十个，返回
         /*
