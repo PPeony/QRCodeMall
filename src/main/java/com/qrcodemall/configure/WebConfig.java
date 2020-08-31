@@ -1,6 +1,7 @@
 package com.qrcodemall.configure;
 
 import com.qrcodemall.common.Property;
+import com.qrcodemall.interceptor.AdminLoginInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -11,6 +12,7 @@ import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.servlet.HandlerExceptionResolver;
 import org.springframework.web.servlet.config.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 
 /**
@@ -20,6 +22,9 @@ import java.util.List;
 //配置swagger，防止被拦截
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
+
+    @Resource
+    AdminLoginInterceptor adminLoginInterceptor;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -39,5 +44,9 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:"+ Property.fileAddress);
     }
 
-
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor(adminLoginInterceptor).addPathPatterns("/**")
+                .excludePathPatterns("/admin/login");
+    }
 }

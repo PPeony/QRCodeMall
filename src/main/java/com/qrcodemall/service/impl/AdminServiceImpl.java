@@ -27,6 +27,9 @@ public class AdminServiceImpl implements AdminService {
         criteria.andAdminNameEqualTo(account);
 
         List<Admin> list = adminMapper.selectByExample(example);
+        if (list.size() == 0) {
+            return -1;
+        }
         if (list.get(0).getAdminPassword().equals(DesUtils.encrypt(password))) {
             return 1;
         } else {

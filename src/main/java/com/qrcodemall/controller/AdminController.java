@@ -88,12 +88,14 @@ public class AdminController {
 
         Integer r = adminService.login(account,password);
         if (r == 1) {
+            session.setAttribute("admin","admin");
+            session.setMaxInactiveInterval(3600);
             result.setCode(HttpStatus.OK.value());
             result.setMessage("登录成功");
             return result;
         }
         result.setCode(HttpStatus.UNAUTHORIZED.value());
-        result.setMessage("该用户未注册");
+        result.setMessage("该用户未注册或者密码错误");
         return result;
     }
 
