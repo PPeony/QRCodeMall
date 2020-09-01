@@ -3,6 +3,7 @@ package com.qrcodemall.controller;
 import com.github.pagehelper.PageInfo;
 import com.qrcodemall.common.Property;
 import com.qrcodemall.controller.vo.UserLoginVO;
+import com.qrcodemall.controller.vo.VerifyCodeVO;
 import com.qrcodemall.dao.UserAddressMapper;
 import com.qrcodemall.dao.UserMapper;
 import com.qrcodemall.entity.User;
@@ -253,21 +254,14 @@ public class UserController {
     @ApiParam(name = "userPhone",value = "发送短信的手机号")
     public Result sendVerifyCode(@RequestBody Map<String,Object> userPhone,HttpSession session) {
         String userPhones = (String)userPhone.get("userPhone");
-        //System.out.println(userPhones);
+        //System.out.println("**"+userPhones+"**");
         Result result = new Result();
-        //首先判断是否存在这个手机号
-        User user = userService.selectByUserPhone(userPhones);
-        if (user != null) {
-            result.setCode(HttpStatus.UNAUTHORIZED.value());
-            result.setMessage("该手机号存在");
-            return result;
-        }
-
         //System.out.println(userPhones);
         String code = SendSms.sms(userPhones);
-        System.out.println("code = "+code);
+        //System.out.println("code = "+code);
         session.removeAttribute("verifyCode");
-        session.setAttribute("verifyCode",code);
+        VerifyCodeVO vcv = new VerifyCodeVO(userPhones,code);
+        session.setAttribute("verifyCode",vcv);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("验证码发送成功");
         //result.setData(code);
@@ -280,15 +274,22 @@ public class UserController {
         String verifyCodes = (String)verifyCode.get("verifyCode");
         String userPhones = (String)verifyCode.get("userPhone");
         Result result = new Result();
+        if (verifyCodes == null || userPhones == null) {
+            return result.code(HttpStatus.BAD_REQUEST.value()).message("手机号或者验证码不能为空");
+        }
         System.out.println(verifyCodes);
-        String sessionCode = (String)session.getAttribute("verifyCode");
-        System.out.println("sessionCode = "+sessionCode);
-        if (sessionCode == null) {
+        VerifyCodeVO vcv = (VerifyCodeVO)session.getAttribute("verifyCode");
+        session.removeAttribute("verifyCode");
+        //System.out.println("sessionCode = "+sessionCode);
+        if (vcv == null) {
             result.setCode(HttpStatus.BAD_REQUEST.value());
             result.setMessage("验证码已过期，请重新发送验证码");
             return result;
         }
-        if (!sessionCode.equals(verifyCodes)) {
+        if (!vcv.getUserPhone().equals(userPhones)) {
+            return result.code(HttpStatus.BAD_REQUEST.value()).message("手机号与验证码不匹配");
+        }
+        if (!vcv.getVerifyCode().equals(verifyCodes)) {
             result.setCode(HttpStatus.BAD_REQUEST.value());
             result.setMessage("验证码错误");
             return result;

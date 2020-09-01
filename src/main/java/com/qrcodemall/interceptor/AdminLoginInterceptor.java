@@ -14,7 +14,7 @@ import java.io.IOException;
  * @Author: Peony
  * @Date: 2020/8/31 17:49
  */
-@Configuration
+//废弃
 public class AdminLoginInterceptor implements HandlerInterceptor {
     // 目标方法执行之前
     @Override

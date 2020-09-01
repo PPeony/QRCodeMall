@@ -83,7 +83,7 @@ public class UserServiceImpl implements UserService {
         }
         return null;
      }
-
+     @SneakyThrows
     @Override
     public User login3(String account, String password) {
         UserExample example = new UserExample();
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
         if (users.size() == 0) {
             return null;
         }
-        return users.get(0);
+        return DesUtils.encrypt(password).equals(users.get(0).getUserPassword()) ? users.get(0) : null;
     }
 
     @Override

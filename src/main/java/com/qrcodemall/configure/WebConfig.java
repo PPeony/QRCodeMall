@@ -23,8 +23,8 @@ import java.util.List;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Resource
-    AdminLoginInterceptor adminLoginInterceptor;
+//    @Resource
+//    AdminLoginInterceptor adminLoginInterceptor;
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
@@ -44,10 +44,14 @@ public class WebConfig implements WebMvcConfigurer {
                 .addResourceLocations("file:"+ Property.fileAddress);
     }
 
+    /*
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
+
         registry.addInterceptor(adminLoginInterceptor).addPathPatterns("/**")
                 .excludePathPatterns("/admin/login","/account/**","/carousel/**","/goods/**"
                 ,"/goodsType/**","/test/**","/qrcode/**","/user/**","/orderForm/**","/qrcodeBatch/**");
     }
+
+     */
 }
