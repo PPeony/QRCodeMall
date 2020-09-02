@@ -56,7 +56,7 @@ public class UserAddressServiceImpl implements UserAddressService {
 
     @Override
     public Integer updateUserAddress(UserAddress userAddress) {
-        if (userAddress.getUserAddressDefault() != null) {
+        if (userAddress.getUserAddressDefault() != null && userAddress.getUserAddressDefault() == 1) {
             UserAddressExample example = new UserAddressExample();
             UserAddressExample.Criteria criteria = example.createCriteria();
             criteria.andIsDeletedEqualTo(0);
