@@ -9,13 +9,17 @@ import com.qrcodemall.configure.AlipayConfig;
 import com.qrcodemall.dao.NoticeMapper;
 import com.qrcodemall.entity.Notice;
 import com.qrcodemall.service.NoticeService;
+import com.qrcodemall.util.CookieUtils;
 import com.qrcodemall.util.PictureUtil;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -41,12 +46,13 @@ import java.util.UUID;
 public class TestController {
 
 
+    private final String domain = "stu.hrbkyd.com";
+    //"stu.hrbkyd.com"
     @GetMapping("/setSession")
     @ResponseBody
     public Result cookiek(String str,HttpSession session) {
         System.out.println(str);
         session.setAttribute("str",str);
-
         Result result = new Result();
         result.setCode(HttpStatus.OK.value());
         return result;
@@ -199,13 +205,93 @@ public class TestController {
         //String value = json.get("value");
         System.out.println(name+" "+value);
         Cookie cookie = new Cookie(name,value);
-        cookie.setDomain("stu.hrbkyd.com");
+        cookie.setDomain(domain);
+        cookie.setHttpOnly(false);
+        cookie.setPath("*");
+        //System.out.println(request.getServerName()+" "+request.getContextPath());
+        cookie.setMaxAge(60*60*24);
+
+        response.setHeader("Set-Cookie", "HttpOnly;Secure;SameSite=None");
+        response.addCookie(cookie);
+        //new
+        /*
+        ResponseCookie cookie = ResponseCookie.from("myCookie", "myCookieValue") // key & value
+                .httpOnly(true)		// 禁止js读取
+                .secure(false)		// 在http下也传输
+                .domain("localhost")// 域名
+                .path("/")			// path
+                .maxAge(Duration.ofHours(1))	// 1个小时候过期
+                .sameSite("Lax")	// 大多数情况也是不发送第三方 Cookie，但是导航到目标网址的 Get 请求除外
+                .build()
+                ;
+
+        // 设置Cookie Header
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+         */
+        return "success";
+    }
+
+    @GetMapping("/addCookie2")
+    @ResponseBody
+    public String addCookie2(@RequestParam("name") String name,@RequestParam("value") String value,HttpServletRequest request,HttpServletResponse response) {
+        //String name = json.get("name");
+        //String value = json.get("value");
+        System.out.println(name+" "+value);
+        /*
+        Cookie cookie = new Cookie(name,value);
+        cookie.setDomain(domain);
         cookie.setHttpOnly(false);
         cookie.setPath(request.getContextPath());
-        System.out.println(request.getServerName()+" "+request.getContextPath());
+        //System.out.println(request.getServerName()+" "+request.getContextPath());
         cookie.setMaxAge(60*60*24);
         response.addCookie(cookie);
-        //response.setHeader("Set_Cookie","");
+        response.setHeader("Set-Cookie", "HttpOnly;Secure;SameSite=None");
+
+         */
+        //new
+        HttpCookie cookie = CookieUtils.generateSetCookie(request, name, value,Duration.ofHours(24 * 7));
+        // 设置Cookie Header
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+        return "success";
+    }
+
+    @GetMapping("/addCookie3")//第一次尝试这么写是ok的
+    @ResponseBody
+    public String addCookie3(@RequestParam("name") String name,@RequestParam("value") String value,HttpServletRequest request,HttpServletResponse response) {
+        //String name = json.get("name");
+        //String value = json.get("value");
+        System.out.println(name+" "+value);
+
+        Cookie cookie = new Cookie(name,value);
+        cookie.setDomain(domain);
+        cookie.setHttpOnly(false);
+        cookie.setPath(request.getContextPath());
+        //System.out.println(request.getServerName()+" "+request.getContextPath());
+        cookie.setMaxAge(60*60*24);
+        response.addCookie(cookie);
+        //response.setHeader("Set-Cookie", "HttpOnly;Secure;SameSite=None");
+        String s = name+"="+value+";";
+        response.setHeader("Set-Cookie",s + "Path=*; SameSite=None; Secure");
+
+        //new
+        /*
+        ResponseCookie cookie = ResponseCookie.from(name, value) // key & value
+                .httpOnly(true)		// 禁止js读取
+                .secure(false)		// 在http下也传输
+                .domain(domain)// 域名
+                .path("*")			// path
+                .maxAge(Duration.ofHours(1))	// 1个小时候过期
+                .sameSite("Lax")	// 大多数情况也是不发送第三方 Cookie，但是导航到目标网址的 Get 请求除外
+                .build()
+                ;
+
+        // 设置Cookie Header
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+         */
+
+
         return "success";
     }
 
@@ -235,15 +321,12 @@ public class TestController {
         if (cookies == null) {
             return "no cookies";
         }
+        //String delete = "";
         for (int i = 0; i < cookies.length; i++) {
             if (names.equals(cookies[i].getValue())) {
-                cookies[i].setMaxAge(0);
-                cookies[i].setValue(null);
-                cookies[i].setDomain("stu.hrbkyd.com");
-                cookies[i].setHttpOnly(false);
-                cookies[i].setPath(request.getContextPath());
-                System.out.println("delete: "+cookies[i].getName());
-                response.addCookie(cookies[i]);
+                ResponseCookie cookie = (ResponseCookie)CookieUtils.generateSetCookie(request,names,null,Duration.ZERO);
+                response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+                break;
             }
         }
         return "success";

@@ -21,13 +21,13 @@
     $(function () {
         axios.defaults.withCredentials = true;
         $("#btn1").click(function () {
-            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/addCookie?name=demoData&value=demoData').then(res => {
+            axios.get('http://localhost:8080/QRCodeMall/test/addCookie?name=demoData&value=demoData').then(res => {
                 console.log(res.data);
             });
         });
 
         $("#btn2").click(function () {
-            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/getCookie?name=demoData').then(res => {
+            axios.get('http://localhost:8080/QRCodeMall/test/getCookie?name=demoData').then(res => {
                 console.log(res.data);
             });
         })
@@ -39,19 +39,19 @@
         });
 
         $("#btn4").click(function () {
-            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/deleteCookie?names=demoData').then(res => {
+            axios.get('http://localhost:8080/QRCodeMall/test/deleteCookie?names=demoData').then(res => {
                 console.log(res.data);
             });
         });
 
         $("#btn5").click(function () {
-            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/deleteCookie?names=demoData2').then(res => {
+            axios.get('http://localhost:8080/QRCodeMall/test/deleteCookie?names=demoData2').then(res => {
                 console.log(res.data);
             });
         });
 
         $("#btn6").click(function () {
-            axios.get('https://stu.hrbkyd.com/QRCodeMall/test/getCookie?name=demoData2').then(res => {
+            axios.get('http://localhost:8080/QRCodeMall/test/getCookie?name=demoData2').then(res => {
                 console.log(res.data);
             });
         })

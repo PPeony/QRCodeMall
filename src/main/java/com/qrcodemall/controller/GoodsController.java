@@ -7,17 +7,22 @@ import com.qrcodemall.entity.OrderFormDetail;
 import com.qrcodemall.service.GoodsService;
 import com.qrcodemall.service.GoodsTypeService;
 import com.qrcodemall.service.UserBillService;
+import com.qrcodemall.util.CookieUtils;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -83,6 +88,7 @@ public class GoodsController {
         String goodsId = json.get("goodsId");
         Integer id = Integer.valueOf(goodsId);
         Goods sg = goodsService.selectGoods(id);
+        //查数据库，下架不能买
         if (sg.getIsDeleted() == 1) {
             //已下架，不让买
             result.setCode(HttpStatus.NOT_FOUND.value());
@@ -92,18 +98,21 @@ public class GoodsController {
         //Cookie cookie = new Cookie();
         Cookie add = null;
         Cookie[] cookies = request.getCookies();
-
+        String name = null,value = null;
         if (cookies != null) {
             for (Cookie c : cookies) {
                 if (c.getName().equals(goodsId)) {
-                    add = new Cookie(goodsId,c.getValue() + 1);
+                    name = c.getName();
+                    value = String.valueOf(Integer.valueOf(c.getValue() + 1));
                     break;
                 }
             }
         }
-        if (add == null) {
-            add = new Cookie(goodsId,"1");
+        if (name == null) {
+            name = goodsId;
+            value = "1";
         }
+        /*
         add.setDomain("stu.hrbkyd.com");
         add.setHttpOnly(false);
         add.setPath("*");
@@ -113,8 +122,10 @@ public class GoodsController {
         response.addCookie(add);
         response.setHeader("Access-Control-Allow-Credentials", "true");
         response.setHeader("Access-Control-Allow-Origin", request.getHeader("Origin"));
-        //查数据库，下架不能买
 
+         */
+        HttpCookie cookie = CookieUtils.generateSetCookie(request, name, value, Duration.ofHours(24 * 7));
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         result.setCode(HttpStatus.OK.value());
         result.setMessage("添加成功");
         return result;
@@ -167,6 +178,7 @@ public class GoodsController {
         //System.out.println("deleteOne");
         //System.out.println(goodsIdList);
         Cookie[] cookies = request.getCookies();
+        String delete = "";
         if (cookies != null) {
             for (int i = 0; i < goodsIdList.size(); i++) {
                 Cookie c = cookies[i];
@@ -176,21 +188,24 @@ public class GoodsController {
                 } else {
                     if (goodsIdList.contains(Integer.valueOf(c.getName()))) {
                         //System.out.println("contains: "+c.getName());
-                        c = deleteCookie(c,request);
+                        //c = deleteCookie(c,request);
 //                        c.setMaxAge(0);
 //                        c.setPath("*");
 //                        c.setDomain("stu.hrbkyd.com");
 //                        c.setHttpOnly(false);
                         //System.out.println("cookie = "+c);
                         //System.out.println(c.getName()+" "+c.getDomain()+" "+c.getMaxAge());
-                        response.addCookie(c);
+                        //response.addCookie(c);
+                        ResponseCookie cookie = (ResponseCookie)CookieUtils.generateSetCookie(request,c.getName(),null,Duration.ZERO);
+                        delete += cookie.toString()+";";
                     } else {
                         System.out.println("no contains");
                     }
                 }
             }
-
+            response.setHeader(HttpHeaders.SET_COOKIE, delete);
         }
+
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         return result;
