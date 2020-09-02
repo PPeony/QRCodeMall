@@ -5,6 +5,7 @@ import com.qrcodemall.entity.Goods;
 import com.qrcodemall.entity.User;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.DesUtils;
+import com.qrcodemall.util.Result;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -19,14 +20,19 @@ class QrcodemallApplicationTests {
 
     @Test
     void contextLoads() {
-        testUser tu = new testUser();
-        tu.name = "张三";
-        tu = change(tu);
-        System.out.println(tu.name);
+        try {
+            System.out.println(DesUtils.decrypt("e10adc3949ba59abbe56e057f20f883e"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-    testUser change(testUser tu) {
-        tu.name = "zhangSan";
-        return tu;
+    void change(testUser tu) {
+        testUser nt = new testUser();
+        nt.name = "123";
+    }
+    Result<Integer> testResult() {
+        Result<Integer> result = new Result<>();
+        return result.code(200).message("success").data("123&");
     }
 
 }

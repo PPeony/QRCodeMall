@@ -50,9 +50,12 @@ public class TestController {
     //"stu.hrbkyd.com"
     @GetMapping("/setSession")
     @ResponseBody
-    public Result cookiek(String str,HttpSession session) {
+    public Result cookiek(String str,HttpSession session,HttpServletRequest request,HttpServletResponse response) {
         System.out.println(str);
         session.setAttribute("str",str);
+        String id = session.getId();
+        HttpCookie cookie = CookieUtils.generateSetCookie(request, "JSESSIONID", id, Duration.ofHours(3));
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         Result result = new Result();
         result.setCode(HttpStatus.OK.value());
         return result;

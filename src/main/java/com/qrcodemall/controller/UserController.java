@@ -12,6 +12,7 @@ import com.qrcodemall.entity.UserBill;
 import com.qrcodemall.service.UserAddressService;
 import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.service.UserService;
+import com.qrcodemall.util.CookieUtils;
 import com.qrcodemall.util.Result;
 import com.qrcodemall.util.SendSms;
 import io.swagger.annotations.Api;
@@ -19,15 +20,19 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -115,7 +120,8 @@ public class UserController {
     @PostMapping("/login")//密码登录，修改sql语句
     @ApiOperation("account和password。account可以是手机号，用户名，邮箱")
     public Result login3(@Valid @RequestBody UserLoginVO user,
-                         HttpSession session,Errors errors) {
+                         HttpSession session, Errors errors, HttpServletRequest request,
+                         HttpServletResponse response) {
         //long start = System.currentTimeMillis();
         String account = user.getAccount();
         String password = user.getPassword();
@@ -128,6 +134,11 @@ public class UserController {
             result.setMessage("success");
             session.setAttribute("user",u);
             session.setMaxInactiveInterval(3600);
+            //跨域处理SameSite
+            String id = session.getId();
+            HttpCookie cookie = CookieUtils.generateSetCookie(request, "JSESSIONID", id, Duration.ofHours(3));
+            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            //
             //long end = System.currentTimeMillis();
             //System.out.println("login3 : "+(end - start));
             return result;
@@ -154,8 +165,11 @@ public class UserController {
 
     @GetMapping("/logout")//退出登录
     @ApiOperation("no param")
-    public Result logout(HttpSession session) {
+    public Result logout(HttpSession session,HttpServletRequest request,HttpServletResponse response) {
         session.removeAttribute("user");
+        String id = session.getId();
+        HttpCookie cookie = CookieUtils.generateSetCookie(request, "JSESSIONID", id, Duration.ZERO);
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         Result result = new Result();
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");

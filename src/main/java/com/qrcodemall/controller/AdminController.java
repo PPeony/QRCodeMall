@@ -9,10 +9,13 @@ import com.qrcodemall.controller.vo.QrcodeVO;
 import com.qrcodemall.entity.*;
 import com.qrcodemall.service.*;
 import com.qrcodemall.util.BeanUtil;
+import com.qrcodemall.util.CookieUtils;
 import com.qrcodemall.util.PictureUtil;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
@@ -20,11 +23,13 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -75,7 +80,8 @@ public class AdminController {
     HttpServletRequest httpServletRequest;
 
     @PostMapping("/login")//密码登录
-    public Result login(@RequestBody @Valid AdminLoginVO admin,Errors errors) {
+    public Result login(@RequestBody @Valid AdminLoginVO admin, Errors errors,
+                        HttpServletRequest request, HttpServletResponse response) {
         Result result = new Result();
         if (errors.hasErrors()) {
             return Result.generateBadRequestResult(errors);
@@ -90,6 +96,9 @@ public class AdminController {
         if (r == 1) {
             session.setAttribute("admin","admin");
             session.setMaxInactiveInterval(3600);
+            String id = session.getId();
+            HttpCookie cookie = CookieUtils.generateSetCookie(request, "JSESSIONID", id, Duration.ofHours(3));
+            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             result.setCode(HttpStatus.OK.value());
             result.setMessage("登录成功");
             return result;
@@ -101,8 +110,11 @@ public class AdminController {
 
 
     @GetMapping("/logout")//退出登录
-    public Result logout(HttpSession session) {
+    public Result logout(HttpSession session,HttpServletRequest request,HttpServletResponse response) {
         session.removeAttribute("admin");
+        String id = session.getId();
+        HttpCookie cookie = CookieUtils.generateSetCookie(request, "JSESSIONID", id, Duration.ZERO);
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         Result result = new Result();
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");

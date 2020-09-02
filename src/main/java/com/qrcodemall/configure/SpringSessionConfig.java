@@ -10,6 +10,7 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
  * @Date: 2020/8/10 11:42
  */
 @Configuration
+//0作用
 public class SpringSessionConfig {
 
 
@@ -18,6 +19,10 @@ public class SpringSessionConfig {
         DefaultCookieSerializer cookieSerializer = new DefaultCookieSerializer();
         // 取消仅限同一站点设置
         cookieSerializer.setSameSite(null);
+        cookieSerializer.setUseSecureCookie(true);
+        cookieSerializer.setUseHttpOnlyCookie(false);
+        cookieSerializer.setCookiePath("*");
+        cookieSerializer.setDomainNamePattern("stu.hrbkyd.com");
         return cookieSerializer;
     }
 }
