@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.20.0-0/axios.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+</head>
+<body>
+<button id="btn1">按钮1(set)</button>
+<button id="btn2">按钮2(get)</button>
+<button id="btn3">按钮3(set)</button>
+<button id="btn6">按钮6(get)</button>
+<button id="btn4">按钮4(delete1)</button>
+<button id="btn5">按钮4(delete2)</button>
+<script>
+
+
+    let config = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}};
+    let domain = "localhost"
+    $(function () {
+        axios.defaults.withCredentials = true;
+        $("#btn1").click(function () {
+            axios.get('http://localhost:8080/test/setSession?str=demoData').then(res => {
+                console.log(res.data);
+            });
+        });
+
+        $("#btn2").click(function () {
+            axios.get('http://localhost:8080/test/getSession?str=demoData').then(res => {
+                console.log(res.data);
+            });
+        })
+
+        $("#btn3").click(function () {
+            axios.get('https://stu.hrbkyd.com/test/addCookie2?name=demoData2&value=demoData2').then(res => {
+                console.log(res.data);
+            });
+        });
+
+        $("#btn4").click(function () {
+            axios.get('https://stu.hrbkyd.com/test/deleteCookie?names=demoData').then(res => {
+                console.log(res.data);
+            });
+        });
+
+        $("#btn5").click(function () {
+            axios.get('https://stu.hrbkyd.com/test/deleteCookie?names=demoData2').then(res => {
+                console.log(res.data);
+            });
+        });
+
+        $("#btn6").click(function () {
+            axios.get('https://stu.hrbkyd.com/test/getCookie?name=demoData2').then(res => {
+                console.log(res.data);
+            });
+        });
+
+    })
+
+</script>
+</body>
+</html>

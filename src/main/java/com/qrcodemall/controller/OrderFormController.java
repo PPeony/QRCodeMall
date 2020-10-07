@@ -15,6 +15,7 @@ import com.qrcodemall.service.AccountService;
 import com.qrcodemall.service.OrderFormService;
 import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.util.BeanUtil;
+import com.qrcodemall.util.CookieUtils;
 import com.qrcodemall.util.OrderFormNumberGenerator;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.Api;
@@ -22,6 +23,8 @@ import io.swagger.annotations.ApiOperation;
 import org.apache.http.HttpResponse;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -31,6 +34,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.time.Duration;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -155,6 +159,7 @@ public class OrderFormController {
     public Result buyingSuccessfully(@RequestParam("orderFormNumber") String orderFormNumber,
                                      @RequestParam("totalAmount") String totalAmount,
                                      HttpSession session) {
+        System.out.println("orderFormNumber = "+orderFormNumber+" totalAmount = "+totalAmount);
         Result result = new Result();
         User user = (User) session.getAttribute("user");
         if (user == null) {
@@ -188,7 +193,7 @@ public class OrderFormController {
     @PostMapping("/generateOrderForm")
     @ApiOperation(value = "生成订单,只返回orderForm，想要返回vo再请求别的接口。" +
             "传递good类型的list。jsonExample[{},{}]")
-    public Result<OrderForm> generateOrderForm(@RequestBody List<Goods> list) {
+    public Result<OrderForm> generateOrderForm(@RequestBody List<Goods> list,HttpServletResponse response) {
         System.out.println("generateOrderForm : "+list);
         Result<OrderForm> result = new Result<>();
         if (list == null || list.size() == 0) {
@@ -197,7 +202,8 @@ public class OrderFormController {
             return result;
         }
         HttpSession session = request.getSession();
-
+        String id = session.getId();
+        System.out.println("generate sessionId = "+id);
         User user = (User)session.getAttribute("user");
         if (user == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());

@@ -1,6 +1,7 @@
 package com.qrcodemall.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.google.gson.internal.$Gson$Preconditions;
 import com.qrcodemall.common.Property;
 import com.qrcodemall.controller.vo.UserLoginVO;
 import com.qrcodemall.controller.vo.VerifyCodeVO;
@@ -117,10 +118,10 @@ public class UserController {
 
      */
 
+
     @PostMapping("/login")//密码登录，修改sql语句
     @ApiOperation("account和password。account可以是手机号，用户名，邮箱")
-    public Result login3(@Valid @RequestBody UserLoginVO user,
-                         HttpSession session, Errors errors, HttpServletRequest request,
+    public Result login3(@Valid @RequestBody UserLoginVO user, Errors errors, HttpServletRequest request,
                          HttpServletResponse response) {
         //long start = System.currentTimeMillis();
         String account = user.getAccount();
@@ -136,7 +137,9 @@ public class UserController {
             session.setMaxInactiveInterval(3600);
             //跨域处理SameSite
             String id = session.getId();
-            HttpCookie cookie = CookieUtils.generateSetCookie(request, "JSESSIONID", id, Duration.ofHours(3));
+            System.out.println("userLoginSessionId = "+id);
+
+            HttpCookie cookie = CookieUtils.generateSetCookie3(request, "JSESSIONID", id, Duration.ofHours(3));
             response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             //
             //long end = System.currentTimeMillis();
@@ -168,7 +171,7 @@ public class UserController {
     public Result logout(HttpSession session,HttpServletRequest request,HttpServletResponse response) {
         session.removeAttribute("user");
         String id = session.getId();
-        HttpCookie cookie = CookieUtils.generateSetCookie(request, "JSESSIONID", id, Duration.ZERO);
+        HttpCookie cookie = CookieUtils.generateSetCookie3(request, "JSESSIONID", id, Duration.ZERO);
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         Result result = new Result();
         result.setCode(HttpStatus.OK.value());
@@ -266,16 +269,24 @@ public class UserController {
     @PostMapping("/sendVerifyCode")
     @ApiOperation("userPhone发送短信的手机号")
     @ApiParam(name = "userPhone",value = "发送短信的手机号")
-    public Result sendVerifyCode(@RequestBody Map<String,Object> userPhone,HttpSession session) {
+    public Result sendVerifyCode(@RequestBody Map<String,Object> userPhone,
+                                 HttpSession session,
+                                 HttpServletRequest request,
+                                 HttpServletResponse response) {
         String userPhones = (String)userPhone.get("userPhone");
         //System.out.println("**"+userPhones+"**");
         Result result = new Result();
         //System.out.println(userPhones);
         String code = SendSms.sms(userPhones);
         //System.out.println("code = "+code);
+        String id = session.getId();
         session.removeAttribute("verifyCode");
+        System.out.println("test get id: "+id+" verifyCode = "+code);
         VerifyCodeVO vcv = new VerifyCodeVO(userPhones,code);
         session.setAttribute("verifyCode",vcv);
+        //sameSite
+        HttpCookie cookie = CookieUtils.generateSetCookie3(request, "JSESSIONID", id, Duration.ofHours(3));
+        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         result.setCode(HttpStatus.OK.value());
         result.setMessage("验证码发送成功");
         //result.setData(code);
@@ -291,8 +302,9 @@ public class UserController {
         if (verifyCodes == null || userPhones == null) {
             return result.code(HttpStatus.BAD_REQUEST.value()).message("手机号或者验证码不能为空");
         }
-        System.out.println(verifyCodes);
+
         VerifyCodeVO vcv = (VerifyCodeVO)session.getAttribute("verifyCode");
+        System.out.println("jsessionId = "+session.getId()+"check = "+verifyCodes+" vcv = "+vcv);
         session.removeAttribute("verifyCode");
         //System.out.println("sessionCode = "+sessionCode);
         if (vcv == null) {

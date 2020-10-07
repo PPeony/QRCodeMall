@@ -2,6 +2,7 @@ package com.qrcodemall.configure;
 
 import com.qrcodemall.common.Property;
 import com.qrcodemall.interceptor.AdminLoginInterceptor;
+import com.qrcodemall.interceptor.TestCorsInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -26,6 +27,9 @@ public class WebConfig implements WebMvcConfigurer {
 //    @Resource
 //    AdminLoginInterceptor adminLoginInterceptor;
 
+    @Resource
+    TestCorsInterceptor corsInterceptor;
+    
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/statics/**").addResourceLocations("classpath:/statics/");
@@ -48,10 +52,11 @@ public class WebConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
-        registry.addInterceptor(adminLoginInterceptor).addPathPatterns("/**")
-                .excludePathPatterns("/admin/login","/account/**","/carousel/**","/goods/**"
-                ,"/goodsType/**","/test/**","/qrcode/**","/user/**","/orderForm/**","/qrcodeBatch/**");
+        registry.addInterceptor(corsInterceptor).addPathPatterns("/**");
     }
 
      */
+
+
+     
 }

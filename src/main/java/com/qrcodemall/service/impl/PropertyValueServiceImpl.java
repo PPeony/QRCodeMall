@@ -32,7 +32,7 @@ public class PropertyValueServiceImpl implements PropertyValueService {
 
     @Override
     public Integer insertPropertyValue(List<PropertyValue> propertyValues) {
-        //检查qrcodeId是否存在，已经存在不能再添加
+        //检查qrcodeId是否存在，已经存在不能再添加,不传id
         PropertyValueExample example = new PropertyValueExample();
         PropertyValueExample.Criteria criteria = example.createCriteria();
         criteria.andIsDeletedEqualTo(0);
@@ -59,10 +59,7 @@ public class PropertyValueServiceImpl implements PropertyValueService {
     public Integer updatePropertyValue(List<PropertyValue> propertyValues) {
         for (PropertyValue propertyValue : propertyValues) {
             propertyValue.setGmtModified(new Date());
-            PropertyValueExample example = new PropertyValueExample();
-            PropertyValueExample.Criteria criteria = example.createCriteria();
-            criteria.andQrcodeIdEqualTo(propertyValue.getQrcodeId());
-            propertyValueMapper.updateByExampleSelective(propertyValue,example);
+            propertyValueMapper.updateByPrimaryKeySelective(propertyValue);
         }
         return 1;
     }

@@ -74,8 +74,12 @@ public class AccountServiceImpl implements AccountService {
             return accountMapper.insertSelective(account);
         }
         //买过就update
+        AccountExample example = new AccountExample();
+        AccountExample.Criteria criteria = example.createCriteria();
+        criteria.andUserIdEqualTo(account.getUserId());
+        criteria.andGoodsTypeNameEqualTo(account.getGoodsTypeName());
         account.setGoodsTypeQrcodeQuantity(list0.get(0).getGoodsTypeQrcodeQuantity()+account.getGoodsTypeQrcodeQuantity());
-        accountMapper.updateByPrimaryKeySelective(account);
+        accountMapper.updateByExampleSelective(account,example);
         return 1;
     }
 }

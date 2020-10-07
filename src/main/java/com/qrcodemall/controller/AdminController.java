@@ -90,14 +90,12 @@ public class AdminController {
         String account = admin.getAccount();
         String password = admin.getPassword();
         System.out.println(account+" *** "+password);
-
-
         Integer r = adminService.login(account,password);
         if (r == 1) {
             session.setAttribute("admin","admin");
             session.setMaxInactiveInterval(3600);
             String id = session.getId();
-            HttpCookie cookie = CookieUtils.generateSetCookie(request, "JSESSIONID", id, Duration.ofHours(3));
+            HttpCookie cookie = CookieUtils.generateSetCookie3(request, "JSESSIONID", id, Duration.ofHours(3));
             response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
             result.setCode(HttpStatus.OK.value());
             result.setMessage("登录成功");
@@ -113,7 +111,7 @@ public class AdminController {
     public Result logout(HttpSession session,HttpServletRequest request,HttpServletResponse response) {
         session.removeAttribute("admin");
         String id = session.getId();
-        HttpCookie cookie = CookieUtils.generateSetCookie(request, "JSESSIONID", id, Duration.ZERO);
+        HttpCookie cookie = CookieUtils.generateSetCookie3(request, "JSESSIONID", id, Duration.ZERO);
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         Result result = new Result();
         result.setCode(HttpStatus.OK.value());

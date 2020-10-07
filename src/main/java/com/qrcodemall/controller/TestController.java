@@ -54,8 +54,12 @@ public class TestController {
         System.out.println(str);
         session.setAttribute("str",str);
         String id = session.getId();
-        HttpCookie cookie = CookieUtils.generateSetCookie(request, "JSESSIONID", id, Duration.ofHours(3));
+        System.out.println("test get id: "+id);
+
+        HttpCookie cookie = CookieUtils.generateSetCookie2(request, "JSESSIONID", id, Duration.ofHours(3));
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+
         Result result = new Result();
         result.setCode(HttpStatus.OK.value());
         return result;
@@ -64,6 +68,7 @@ public class TestController {
     @GetMapping("/getSession")
     @ResponseBody
     public Result<String> getSession(HttpSession session) {
+        System.out.println("getSessionId = "+session.getId());
         String s = (String)session.getAttribute("str");
         System.out.println("session := "+s);
         Result<String> result = new Result<>();

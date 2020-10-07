@@ -21,6 +21,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public Result handleException(Exception e, HttpServletRequest req) {
         //打印错误
+        log.error("error: ",e);
         e.printStackTrace();
         Result result = new Result();
         if (e instanceof org.springframework.web.servlet.NoHandlerFoundException) {
