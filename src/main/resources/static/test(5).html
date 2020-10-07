@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.20.0-0/axios.js"></script>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.js"></script>
+</head>
+<body>
+登录：
+<br>
+<input type="text" id="account" placeholder="用户名"/>
+<br>
+<input type="text" id="password" placeholder="密码"/>
+<br>
+<button id="login">登录</button>
+<br>
+<textarea id="goodsList" placeholder="传goods列表参数">
+</textarea>
+<br>
+<button id="generateOrderForm">generateOrderForm</button>
+<script>
+
+
+    let config = {headers: {'Content-Type': 'application/json;charset=UTF-8'}};
+    let domain = "localhost"
+    $(function () {
+        axios.defaults.withCredentials = true;
+        $("#login").click(function () {
+            let account = $("#account").val();
+            let password = $("#password").val();
+            axios.post('https://stu.hrbkyd.com/QRCodeMall/user/login', JSON.stringify({
+                account: account,
+                password: password
+            }),config).then(res => {
+                console.log(res.data);
+                alert(res.data);
+            });
+        });
+
+        $("#generateOrderForm").click(function () {
+            let goodsList = $("#goodsList").val();
+            axios.post('https://stu.hrbkyd.com/QRCodeMall/orderForm/generateOrderForm', goodsList,config).then(res => {
+               console.log(res.data);
+                alert(res.data);
+            });
+        })
+
+    })
+
+</script>
+</body>
+</html>
