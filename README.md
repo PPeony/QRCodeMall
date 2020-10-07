@@ -1,7 +1,7 @@
 # QRCodeMall
 an innovative project in university using springboot
 ### springboot+mybatis+mysql
-这里只有后端代码，等待前端同学迁移过来
+这里只有后端代码，前端代码点击[这里](https://github.com/yekaile/QRCodeMall-webFront)
 # now the basic structure has been built
 # 一些基本功能完成了，包括
 - 后台查看交易记录，curd商品，curd用户、通知等等curd操作，都做了分页处理
