@@ -1,0 +1,15 @@
+2020-09-29 09:20:12.992 DEBUG --- [nio-8080-exec-2] c.q.dao.GoodsTypeMapper.selectByExample  : ==>  Preparing: select 'true' as QUERYID, goods_type_id, goods_type_name, is_deleted , goods_type_message from goods_type WHERE ( is_deleted = ? and goods_type_name = ? )
+2020-09-29 09:20:13.049 DEBUG --- [nio-8080-exec-2] c.q.dao.GoodsTypeMapper.selectByExample  : ==> Parameters: 0(Integer), 农药(String)
+2020-09-29 09:20:13.252 DEBUG --- [nio-8080-exec-2] c.q.dao.GoodsTypeMapper.selectByExample  : <==      Total: 1
+2020-09-29 09:20:13.325 DEBUG --- [nio-8080-exec-2] c.q.d.G.selectByEntityAndTime_COUNT      : ==>  Preparing: SELECT count(0) FROM goods WHERE goods_type_id = ? AND is_deleted = ?
+2020-09-29 09:20:13.325 DEBUG --- [nio-8080-exec-2] c.q.d.G.selectByEntityAndTime_COUNT      : ==> Parameters: 1(Integer), 0(Integer)
+2020-09-29 09:20:13.387 DEBUG --- [nio-8080-exec-2] c.q.d.G.selectByEntityAndTime_COUNT      : <==      Total: 1
+2020-09-29 09:20:13.391 DEBUG --- [nio-8080-exec-2] c.q.d.GoodsMapper.selectByEntityAndTime  : ==>  Preparing: select goods_id, goods_type_id, goods_name, goods_price, goods_type_name, goods_qrcode_quantity, goods_picture, goods_detail, goods_status, gmt_created, gmt_modified, is_deleted , goods_introduction from goods WHERE goods_type_id = ? and is_deleted = ? LIMIT ?
+2020-09-29 09:20:13.391 DEBUG --- [nio-8080-exec-2] c.q.d.GoodsMapper.selectByEntityAndTime  : ==> Parameters: 1(Integer), 0(Integer), 9(Integer)
+2020-09-29 09:20:13.449 DEBUG --- [nio-8080-exec-2] c.q.d.GoodsMapper.selectByEntityAndTime  : <==      Total: 2
+2020-09-29 09:20:46.252 DEBUG --- [nio-8080-exec-3] c.q.d.G.selectByEntityAndTime_COUNT      : ==>  Preparing: SELECT count(0) FROM goods WHERE is_deleted = ?
+2020-09-29 09:20:46.253 DEBUG --- [nio-8080-exec-3] c.q.d.G.selectByEntityAndTime_COUNT      : ==> Parameters: 0(Integer)
+2020-09-29 09:20:46.303 DEBUG --- [nio-8080-exec-3] c.q.d.G.selectByEntityAndTime_COUNT      : <==      Total: 1
+2020-09-29 09:20:46.304 DEBUG --- [nio-8080-exec-3] c.q.d.GoodsMapper.selectByEntityAndTime  : ==>  Preparing: select goods_id, goods_type_id, goods_name, goods_price, goods_type_name, goods_qrcode_quantity, goods_picture, goods_detail, goods_status, gmt_created, gmt_modified, is_deleted , goods_introduction from goods WHERE is_deleted = ? LIMIT ?
+2020-09-29 09:20:46.305 DEBUG --- [nio-8080-exec-3] c.q.d.GoodsMapper.selectByEntityAndTime  : ==> Parameters: 0(Integer), 9(Integer)
+2020-09-29 09:20:46.410 DEBUG --- [nio-8080-exec-3] c.q.d.GoodsMapper.selectByEntityAndTime  : <==      Total: 9

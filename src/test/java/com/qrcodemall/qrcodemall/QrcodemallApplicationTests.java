@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Vector;
 
 @SpringBootTest
 class QrcodemallApplicationTests {
@@ -21,7 +22,7 @@ class QrcodemallApplicationTests {
     @Test
     void contextLoads() {
         try {
-            System.out.println(DesUtils.decrypt("e10adc3949ba59abbe56e057f20f883e"));
+            System.out.println(DesUtils.encrypt("12345678"));
         } catch (Exception e) {
             e.printStackTrace();
         }

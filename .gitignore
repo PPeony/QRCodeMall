@@ -4,6 +4,7 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 **/src/main/java/com/qrcodemall/common/Property
+**/src/main/resources/application.properties
 
 ### STS ###
 .apt_generated
