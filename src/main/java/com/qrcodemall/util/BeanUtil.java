@@ -10,7 +10,6 @@ import java.util.List;
  * @Author: Peony
  * @Date: 2020/7/24 9:25
  */
-// test word
 public class BeanUtil {
 
     public static Object copyProperties(Object source, Object target, String... ignoreProperties) {
