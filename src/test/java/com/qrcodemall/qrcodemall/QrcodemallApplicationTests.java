@@ -21,11 +21,13 @@ class QrcodemallApplicationTests {
 
     @Test
     void contextLoads() {
+        String s = null;
         try {
-            System.out.println(DesUtils.encrypt("12345678"));
+            s = DesUtils.decrypt("bacbbe20b16a33df4a0e3c9b7df6cbe8");
         } catch (Exception e) {
             e.printStackTrace();
         }
+        System.out.println(s);
     }
     void change(testUser tu) {
         testUser nt = new testUser();

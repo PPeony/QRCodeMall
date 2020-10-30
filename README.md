@@ -17,6 +17,10 @@ an innovative project in university using springboot
 - 现在已经可以注册使用了，可以用支付宝沙箱购买
 - 可以查看邀请的朋友
 - 尝试用多线程查询，但是发现效率可能不如修改底层sql语句高
+
+## 新增
+- 使用redis缓存验证码
+
 # 可以点击链接测试
 网站地址：[stu.jeehon.com](http://stu.jeehon.com/public)
 可以注册账号，也可以使用测试账号测试： __test,123456789__

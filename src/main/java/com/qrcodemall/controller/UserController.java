@@ -14,6 +14,7 @@ import com.qrcodemall.service.UserAddressService;
 import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.service.UserService;
 import com.qrcodemall.util.CookieUtils;
+import com.qrcodemall.util.RedisUtil;
 import com.qrcodemall.util.Result;
 import com.qrcodemall.util.SendSms;
 import io.swagger.annotations.Api;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -60,6 +62,9 @@ public class UserController {
 
     @Autowired
     UserBillService userBillService;
+
+    @Resource
+    RedisUtil redisUtil;
 
     /*
     @PostMapping("/login")//密码登录，查三次
@@ -278,7 +283,10 @@ public class UserController {
         Result result = new Result();
         //System.out.println(userPhones);
         String code = SendSms.sms(userPhones);
+        /**redis**/
+        redisUtil.set(userPhones,code);
         //System.out.println("code = "+code);
+        /* session
         String id = session.getId();
         session.removeAttribute("verifyCode");
         System.out.println("test get id: "+id+" verifyCode = "+code);
@@ -287,6 +295,8 @@ public class UserController {
         //sameSite
         HttpCookie cookie = CookieUtils.generateSetCookie3(request, "JSESSIONID", id, Duration.ofHours(3));
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+         */
         result.setCode(HttpStatus.OK.value());
         result.setMessage("验证码发送成功");
         //result.setData(code);

@@ -11,6 +11,7 @@ import com.qrcodemall.entity.Notice;
 import com.qrcodemall.service.NoticeService;
 import com.qrcodemall.util.CookieUtils;
 import com.qrcodemall.util.PictureUtil;
+import com.qrcodemall.util.RedisUtil;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,6 +25,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,8 +47,39 @@ import java.util.UUID;
 @Api(tags = "测试方法，正式发布时候删除")
 public class TestController {
 
+    @Resource
+    private RedisUtil redisUtil;
 
+    /**redis***/
+    @GetMapping("/redisSet")
+    @ResponseBody
+    public Result redisSet(String key,String value) {
+        boolean f = redisUtil.set(key,value);
+        redisUtil.expire(key,Property.REDIS_EXPIRE_TIME);
+        Result result = new Result();
+        if (f) {
+            return result.code(200).message("success");
+        } else {
+            return result.code(500).message("server error");
+        }
+    }
+
+    @GetMapping("/redisGet")
+    @ResponseBody
+    public Result redisGet(String key) {
+        Object o = redisUtil.get(key);
+        Result result = new Result();
+        return result.code(200).data(o).message("success");
+    }
+    @GetMapping("/redisRemove")
+    @ResponseBody
+    public Result redisRemove(String key) {
+        redisUtil.del(key);
+        return new Result().code(200).message("delete success");
+    }
+    /*****/
     private final String domain = "stu.hrbkyd.com";
+
     //"stu.hrbkyd.com"
     @GetMapping("/setSession")
     @ResponseBody
