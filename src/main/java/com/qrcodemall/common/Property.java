@@ -20,6 +20,7 @@ public class Property {
     //示例：/usr/developmentTool/myproject/bookstoreAPI/files/images/
     public static final String fileAddress = "/usr/QRCodeMall/images/";
 
+    public static final int REDIS_EXPIRE_TIME = 60;//Redis缓存过期时间300S
 
 
 
