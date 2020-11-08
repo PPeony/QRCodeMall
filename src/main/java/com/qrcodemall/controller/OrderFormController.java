@@ -14,6 +14,7 @@ import com.qrcodemall.entity.*;
 import com.qrcodemall.service.AccountService;
 import com.qrcodemall.service.OrderFormService;
 import com.qrcodemall.service.UserBillService;
+import com.qrcodemall.service.UserService;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.CookieUtils;
 import com.qrcodemall.util.OrderFormNumberGenerator;
@@ -28,6 +29,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,6 +58,9 @@ public class OrderFormController {
 
     @Autowired
     AccountService accountService;
+
+    @Resource
+    UserService userService;
 
     @Autowired
     HttpServletRequest request;
@@ -153,7 +158,7 @@ public class OrderFormController {
         response.getWriter().close();
     }
 
-    //todo,支付宝/微信，异步通知，修改订单状态
+
     @GetMapping("/buyingSuccessfully")
     @ApiOperation(value = "参数为订单号orderFormNumber和总金额totalAmount")
     public Result buyingSuccessfully(@RequestParam("orderFormNumber") String orderFormNumber,
@@ -166,6 +171,8 @@ public class OrderFormController {
             result.code(HttpStatus.UNAUTHORIZED.value()).message("未登录");
             return result;
         }
+        //更新该用户的父级节点积分，只会在第一次买的时候更新
+        userService.addPoint(user);
         //更新orderForm表
         orderFormService.buyingSuccessfully(orderFormNumber);
         BigDecimal decimal = new BigDecimal(totalAmount);
@@ -185,6 +192,7 @@ public class OrderFormController {
             account.setGoodsTypeQrcodeQuantity(detail.getGoodsQrcodeQuantity());
             accountService.insertAccount(account);
         }
+
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         return result;

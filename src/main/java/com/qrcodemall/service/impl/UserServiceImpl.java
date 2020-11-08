@@ -116,6 +116,7 @@ public class UserServiceImpl implements UserService {
             return flag;
         }
         if (user.getUserFatherProxyName() != null) {
+            user.setIsVip(1);
             //查询父级代理
             if (user.getUserFatherProxyId() == null) {
                 UserExample t = new UserExample();
@@ -127,25 +128,44 @@ public class UserServiceImpl implements UserService {
                 }
                 Integer fatherId = list.get(0).getUserId();
                 user.setUserFatherProxyId(fatherId);
-                //更新父级代理的积分
-                updatePoints(fatherId,Property.firstPoint);
             }
             //查询grandFather
             User t = userMapper.selectByPrimaryKey(user.getUserFatherProxyId());
             if (t != null) {
                 user.setUserGrandfatherProxyId(t.getUserFatherProxyId());
                 user.setUserGrandfatherProxyName(t.getUserFatherProxyName());
-                //更新父级的父级代理积分
-                updatePoints(t.getUserFatherProxyId(), Property.secondPoint);
             }
 
         }
         //密码加密
         user.setUserPassword(DesUtils.encrypt(user.getUserPassword()));
-        //todo,添加用户同时要添加userBill表，这个service在下面,没写，看情况而定
+
         return userMapper.insertSelective(user);
     }
-    public Integer updatePoints(Integer userId,Integer points) {
+
+    @Override
+    public Integer addPoint(User user0) {
+        User user = selectUser(user0.getUserId());
+        //每个用户的积分只加一次，不是买一次东西加一次
+        if (user.getIsVip() == 0) {
+            return 0;
+        }
+        Integer fatherId = user.getUserFatherProxyId();
+        Integer grandFatherId = null;
+        if (fatherId == null) {
+            return 1;
+        }
+        updatePoints(fatherId,Property.firstPoint);
+        User father = userMapper.selectByPrimaryKey(fatherId);
+        if (father.getUserFatherProxyId() == null) {
+            return 1;
+        }
+        grandFatherId = father.getUserFatherProxyId();
+        updatePoints(grandFatherId, Property.secondPoint);
+        return 1;
+    }
+
+    public Integer updatePoints(Integer userId, Integer points) {
         User tu = new User();
         User user = userMapper.selectByPrimaryKey(userId);
         Integer newPoints = user.getUserPoint() + points;

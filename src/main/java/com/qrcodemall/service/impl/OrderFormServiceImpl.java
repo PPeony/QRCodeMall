@@ -39,6 +39,7 @@ public class OrderFormServiceImpl implements OrderFormService {
     public PageInfo<OrderForm> selectOrderForm(Integer userId, Date beginTime, Date endTime, Integer pageNum) {
         OrderForm orderForm = new OrderForm();
         orderForm.setUserId(userId);
+        System.out.println("select order form:"+orderForm);
         return PageUtil.generatePageInfoByTime(orderForm,pageNum,beginTime,endTime,orderFormMapper);
     }
 

@@ -4,11 +4,14 @@ import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
 import com.alipay.api.request.AlipayTradePagePayRequest;
+import com.github.pagehelper.PageInfo;
 import com.qrcodemall.common.Property;
 import com.qrcodemall.configure.AlipayConfig;
 import com.qrcodemall.dao.NoticeMapper;
 import com.qrcodemall.entity.Notice;
+import com.qrcodemall.entity.OrderForm;
 import com.qrcodemall.service.NoticeService;
+import com.qrcodemall.service.OrderFormService;
 import com.qrcodemall.util.CookieUtils;
 import com.qrcodemall.util.PictureUtil;
 import com.qrcodemall.util.Result;
@@ -24,6 +27,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,6 +49,16 @@ import java.util.UUID;
 @Api(tags = "测试方法，正式发布时候删除")
 public class TestController {
 
+    @Resource
+    OrderFormService orderFormService;
+
+    @ResponseBody
+    @GetMapping("/testOrderForm")
+    public Result testOrderForm(Integer userId,Integer pageNum) {
+        Result<PageInfo<OrderForm>> result = new Result<>();
+        result.setData(orderFormService.selectOrderForm(userId,null,null,pageNum));
+        return result;
+    }
 
     private final String domain = "stu.hrbkyd.com";
     //"stu.hrbkyd.com"

@@ -20,10 +20,6 @@ public class Property {
     //示例：/usr/developmentTool/myproject/bookstoreAPI/files/images/
     public static final String fileAddress = "/usr/QRCodeMall/images/";
 
-    //支付宝配置
-
-
-
 
     //支付宝配置
     //push时记得清除

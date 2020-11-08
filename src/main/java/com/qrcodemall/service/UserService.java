@@ -27,6 +27,8 @@ public interface UserService {
 
     Integer addUser(User user);//登录，或者管理员手动添加
 
+    Integer addPoint(User user);
+
     PageInfo<User> selectUser(User user, Integer pageNum);
 
     //改变了多少
