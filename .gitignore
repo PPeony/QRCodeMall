@@ -1,10 +1,13 @@
 HELP.md
 target/
+
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
-#**/src/main/java/com/qrcodemall/common/Property.java
-#**/src/main/resources/application.properties
+src/main/java/com/qrcodemall/common/Property.java
+src/test
+out
+logs
 
 ### STS ###
 .apt_generated
