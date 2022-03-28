@@ -2,16 +2,10 @@ package com.qrcodemall.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.qrcodemall.common.Exception.GlobalException;
-import com.qrcodemall.controller.vo.AdminLoginVO;
-import com.qrcodemall.controller.vo.GoodsVO;
-import com.qrcodemall.controller.vo.NoticeVO;
-import com.qrcodemall.controller.vo.QrcodeVO;
+import com.qrcodemall.controller.vo.*;
 import com.qrcodemall.entity.*;
 import com.qrcodemall.service.*;
-import com.qrcodemall.util.BeanUtil;
-import com.qrcodemall.util.CookieUtils;
-import com.qrcodemall.util.PictureUtil;
-import com.qrcodemall.util.Result;
+import com.qrcodemall.util.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpCookie;
@@ -71,7 +65,6 @@ public class AdminController {
 
     @Autowired
     OrderFormService orderFormService;
-
 
     @Autowired
     HttpSession session;
@@ -239,6 +232,34 @@ public class AdminController {
         result.setMessage("delete success");
         return result;
     }
+
+    @PostMapping("/goodsPromotion")
+    public Result createGoodsPromotion(@RequestBody PromotionGoodsVO promotionGoodsvo) {
+        System.out.println("createGoodsPromotion==>"+promotionGoodsvo);
+        Result result = new Result();
+        Date startTime = DateUtil.strToDate(promotionGoodsvo.getPromotionStartTime());
+        if (promotionGoodsvo.getPromotionCount() <= 0 ||
+                promotionGoodsvo.getPromotionValue().compareTo(new BigDecimal(0)) < 1 ||
+        startTime.before(new Date())) {
+            result.code(HttpStatus.BAD_REQUEST.value()).message("请校验参数");
+            return result;
+        }
+        PromotionGoods promotionGoods = new PromotionGoods();
+        promotionGoods.setGoodsId(promotionGoodsvo.getGoodsId());
+        promotionGoods.setPromotionCount(promotionGoodsvo.getPromotionCount());
+        promotionGoods.setPromotionValue(promotionGoodsvo.getPromotionValue());
+        promotionGoods.setPromotionDuration(promotionGoodsvo.getPromotionDuration());
+        promotionGoods.setPromotionStartTime(startTime);
+        Integer r = goodsService.createPromotion(promotionGoods);
+        return result.code(HttpStatus.OK.value()).message("success").data(r);
+    }
+
+    @DeleteMapping("/stopPromotion")
+    public Result stopPromotion(Integer goodsId) {
+        System.out.println("stopPromotion==>"+goodsId);
+        goodsService.cancelPromotion(goodsId);
+        return Result.generateSuccessResult(goodsId,null);
+    }
 /**notice**/
     @GetMapping("/notice")
     public Result<PageInfo<Notice>> selectNotice(Notice notice,
@@ -370,8 +391,11 @@ public class AdminController {
     }
     @PostMapping("/addUser")
     public Result insertUser(@RequestBody @Valid User user,Errors errors) {
+        System.out.println("adduser in");
         Result result = new Result();
+
         if (errors.hasErrors()) {
+//            System.out.println("adduser "+errors);
             result.setCode(HttpStatus.BAD_REQUEST.value());
             result.setMessage(errors.getAllErrors().get(0).getDefaultMessage());
             return result;
@@ -468,7 +492,7 @@ public class AdminController {
     }
 
     @GetMapping("/weeklySales")
-    @ApiOperation("昨天是arr[6],前天是arr[5],类推")
+    @ApiOperation("昨天是arr[6],前天是arr[5],类推,只查询订单状态为已完成的即status=1")
     public Result<BigDecimal[]> selectWeeklySales() {
         Result<BigDecimal[]> result = new Result<>();
         BigDecimal[] arr = new BigDecimal[7];

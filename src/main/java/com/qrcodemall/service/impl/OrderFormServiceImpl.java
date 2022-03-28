@@ -1,23 +1,36 @@
 package com.qrcodemall.service.impl;
 
+import com.alibaba.fastjson.JSON;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.qrcodemall.common.Exception.GlobalException;
 import com.qrcodemall.common.PageProperty;
+import com.qrcodemall.common.Property;
+import com.qrcodemall.controller.vo.PromotionGoodsVO;
 import com.qrcodemall.dao.GoodsMapper;
 import com.qrcodemall.dao.OrderFormDetailMapper;
 import com.qrcodemall.dao.OrderFormMapper;
 import com.qrcodemall.entity.*;
+import com.qrcodemall.rabbitmq.OrderFormMessage;
+import com.qrcodemall.rabbitmq.Producer;
 import com.qrcodemall.service.OrderFormService;
 import com.qrcodemall.util.OrderFormNumberGenerator;
 import com.qrcodemall.util.PageUtil;
+import lombok.Cleanup;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * @Author: Peony
@@ -34,6 +47,10 @@ public class OrderFormServiceImpl implements OrderFormService {
 
     @Autowired
     GoodsMapper goodsMapper;
+    @Autowired
+    Producer producer;
+    @Autowired
+    JedisPool jedisPool;
 
     @Override
     public PageInfo<OrderForm> selectOrderForm(Integer userId, Date beginTime, Date endTime, Integer pageNum) {
@@ -54,6 +71,7 @@ public class OrderFormServiceImpl implements OrderFormService {
     public BigDecimal getSalesSituation(Date beginTime, Date endtime) {
         OrderForm orderForm = new OrderForm();
         orderForm.setIsDeleted(0);
+        orderForm.setOrderFormStatus(1);
         List<OrderForm> list = orderFormMapper.selectByEntityAndTime(orderForm,beginTime,endtime);
         BigDecimal res = new BigDecimal("0.0");
         for (OrderForm form : list) {
@@ -68,11 +86,14 @@ public class OrderFormServiceImpl implements OrderFormService {
         OrderFormExample.Criteria criteria = example.createCriteria();
         criteria.andIsDeletedEqualTo(0);
         criteria.andOrderFormNumberEqualTo(orderFormNumber);
-        return orderFormMapper.selectByExample(example).get(0);
+        List<OrderForm> list = orderFormMapper.selectByExample(example);
+        if (list.size() == 0) return null;
+        return list.get(0);
     }
 
     @Override
-    public OrderForm generateOrderForm(List<Goods> list, User user){
+    public String generateOrderForm(List<Goods> list, User user,Integer promotionId){
+        /*
         BigDecimal decimal = getPrice(list);
         OrderForm orderForm = new OrderForm();
         orderForm.setUserId(user.getUserId());
@@ -96,7 +117,35 @@ public class OrderFormServiceImpl implements OrderFormService {
             detail.setGoodsTypeName(goods.getGoodsTypeName());
             insertOrderFormDetail(detail);
         }
-        return orderForm2;
+
+         */
+//        return orderForm2;
+        //promotionId如果不为null，说明是促销商品，需要进行redis操作,redis有加锁写操作
+        @Cleanup Jedis jedis = jedisPool.getResource();
+        if (promotionId != null) {
+            String key = Property.promotionRedisKeyPrefix+String.valueOf(promotionId);
+            Integer count = Integer.valueOf(jedis.get(key));
+            if (count <= 0) {
+                return "sold out";
+            }
+            jedis.decr(key);
+        }
+        String orderFormId = OrderFormNumberGenerator.generate();
+        try {
+            OrderFormMessage message = new OrderFormMessage(orderFormId,list, user);
+            String uid = UUID.randomUUID().toString();
+            CorrelationData correlationId = new CorrelationData(uid);
+            String msg = JSON.toJSONString(message);
+            Message returnedMessage = MessageBuilder.withBody(msg.getBytes()).build();
+            correlationId.setReturnedMessage(returnedMessage);
+            System.out.println("Sender : " + message);
+            //convertAndSend(exchange:交换机名称,routingKey:路由关键字,object:发送的消息内容,correlationData:消息ID)
+            producer.getRabbitTemplate().convertAndSend("exchange.hello","helloKey", msg,correlationId);
+            jedis.setex(orderFormId, Property.orderFormStatusExpireTime,"0");
+        } catch (Exception e) {
+            jedis.setex(orderFormId,Property.orderFormStatusExpireTime,"2");
+        }
+        return orderFormId;
     }
 
     @Override
@@ -199,6 +248,4 @@ public class OrderFormServiceImpl implements OrderFormService {
         orderFormDetail.setGmtModified(new Date());
         return orderFormDetailMapper.updateByPrimaryKeySelective(orderFormDetail);
     }
-
-
 }

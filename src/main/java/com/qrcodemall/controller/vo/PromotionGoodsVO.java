@@ -8,10 +8,11 @@ import java.util.Date;
 
 /**
  * @Author: Peony
- * @Date: 2020/7/24 9:09
+ * @Date: 2022/3/19 13:54
  */
 @Data
-public class GoodsVO implements Serializable {
+public class PromotionGoodsVO {
+
 
     private Integer goodsId;
     private Integer goodsTypeId;
@@ -28,6 +29,11 @@ public class GoodsVO implements Serializable {
     //over
     private Integer isDeleted;
     private String goodsIntroduction;
-
+    //promotion msg
+    private Integer promotionId;
+    private String promotionStartTime;
+    private Integer promotionDuration;
+    private Integer promotionCount;
+    private BigDecimal promotionValue;
 
 }

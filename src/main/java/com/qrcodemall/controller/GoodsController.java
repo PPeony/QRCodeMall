@@ -1,15 +1,16 @@
 package com.qrcodemall.controller;
 
+import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.PageInfo;
+import com.qrcodemall.controller.vo.PromotionGoodsVO;
 import com.qrcodemall.entity.Goods;
 import com.qrcodemall.entity.GoodsType;
-import com.qrcodemall.entity.OrderFormDetail;
 import com.qrcodemall.service.GoodsService;
 import com.qrcodemall.service.GoodsTypeService;
-import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.util.CookieUtils;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.ApiOperation;
+import lombok.Cleanup;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpCookie;
@@ -17,6 +18,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseCookie;
 import org.springframework.web.bind.annotation.*;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -42,6 +45,9 @@ public class GoodsController {
 
     @Autowired
     GoodsTypeService goodsTypeService;
+
+    @Autowired
+    JedisPool jedisPool;
 
 
     @GetMapping("/allGoods")
@@ -237,4 +243,41 @@ public class GoodsController {
         result.setMessage("success");
         return result;
     }
+
+    @GetMapping("/getPromotionGoods")
+    public Result getPromotionGoods() {
+        System.out.println("getPromotionGoods ---");
+        Result result = new Result();
+        List<PromotionGoodsVO> promotionGoodsVOList = goodsService.selectPromotionGoods();
+        result.data(promotionGoodsVOList);
+        if (promotionGoodsVOList.size() == 0) {
+            return result.code(HttpStatus.OK.value()).message("目前暂时没有促销活动");
+        }
+        return result.code(HttpStatus.OK.value());
+    }
+    @GetMapping("/getPromotionGoodsByPK")
+    public Result getPromotionGoodsByPK(Integer promotionId) {
+        Result result = new Result();
+//        先查redis,redis没有再查数据库
+        @Cleanup Jedis jedis = jedisPool.getResource();
+        PromotionGoodsVO vo;
+        vo = JSONObject.parseObject(jedis.get(String.valueOf(promotionId)),PromotionGoodsVO.class);
+        List<PromotionGoodsVO> list = new ArrayList<>();
+        if (vo != null) {
+            list.add(vo);
+            return Result.generateSuccessResult(list,null);
+        }
+        vo = goodsService.getPromotionGoodsByPK(promotionId);
+        if (vo != null) {
+            list.add(vo);
+            return Result.generateSuccessResult(list,null);
+        }
+        return Result.generateSuccessResult(null,"该活动已结束");
+
+
+    }
+
+
+
+
 }

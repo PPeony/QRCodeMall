@@ -32,7 +32,7 @@ public interface OrderFormService {
 
     OrderForm selectByOrderFormNumber(String orderFormNumber);
 
-    OrderForm generateOrderForm(List<Goods> list, User user);
+    String generateOrderForm(List<Goods> list, User user,Integer promotionStatus);
 
     Integer buyingSuccessfully(String orderFormNumber);
 

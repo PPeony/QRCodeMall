@@ -1,7 +1,9 @@
 package com.qrcodemall.service;
 
 import com.github.pagehelper.PageInfo;
+import com.qrcodemall.controller.vo.PromotionGoodsVO;
 import com.qrcodemall.entity.Goods;
+import com.qrcodemall.entity.PromotionGoods;
 import com.qrcodemall.entity.GoodsType;
 
 import javax.servlet.http.Cookie;
@@ -29,4 +31,17 @@ public interface GoodsService {
     Integer insertGoods(Goods goods);
 
     PageInfo<Goods> selectGoods(Goods goods, Integer pageNum, Date beginTime, Date endTime);
+
+    List<PromotionGoodsVO> selectPromotionGoods();
+
+    Integer createPromotion(PromotionGoods promotionGoods);
+
+    Integer cancelPromotion(Integer goodsId);
+
+    PromotionGoodsVO getPromotionGoodsByPK(Integer promotionId);
+
+
+    Integer scheduleStartPromotion(Integer promotionId,Integer goodsId);
+
+    Integer scheduleStopPromotion(Integer promotionId,Integer goodsId);
 }

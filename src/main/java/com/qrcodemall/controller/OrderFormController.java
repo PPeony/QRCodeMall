@@ -11,16 +11,15 @@ import com.qrcodemall.common.Exception.GlobalException;
 import com.qrcodemall.configure.AlipayConfig;
 import com.qrcodemall.controller.vo.OrderFormVO;
 import com.qrcodemall.entity.*;
+import com.qrcodemall.entity.Test;
 import com.qrcodemall.service.AccountService;
 import com.qrcodemall.service.OrderFormService;
 import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.service.UserService;
-import com.qrcodemall.util.BeanUtil;
-import com.qrcodemall.util.CookieUtils;
-import com.qrcodemall.util.OrderFormNumberGenerator;
-import com.qrcodemall.util.Result;
+import com.qrcodemall.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import lombok.Cleanup;
 import org.apache.http.HttpResponse;
 import org.checkerframework.checker.units.qual.A;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +27,8 @@ import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
 
 import javax.annotation.Resource;
 import javax.servlet.http.Cookie;
@@ -67,6 +68,9 @@ public class OrderFormController {
 
     @Autowired
     HttpSession session;
+
+    @Autowired
+    JedisPool jedisPool;
 
 
     @GetMapping("/buyGoods")
@@ -161,10 +165,14 @@ public class OrderFormController {
 
     @GetMapping("/buyingSuccessfully")
     @ApiOperation(value = "参数为订单号orderFormNumber和总金额totalAmount")
-    public Result buyingSuccessfully(@RequestParam("orderFormNumber") String orderFormNumber,
-                                     @RequestParam("totalAmount") String totalAmount,
+//    out_trade_no and total_amount
+    public Result buyingSuccessfully(String orderFormNumber,
+                                     String totalAmount,
                                      HttpSession session) {
         System.out.println("orderFormNumber = "+orderFormNumber+" totalAmount = "+totalAmount);
+        if (orderFormNumber == null || totalAmount == null) {
+            return Result.generateSuccessResult(null,null);
+        }
         Result result = new Result();
         User user = (User) session.getAttribute("user");
         if (user == null) {
@@ -201,9 +209,12 @@ public class OrderFormController {
     @PostMapping("/generateOrderForm")
     @ApiOperation(value = "生成订单,只返回orderForm，想要返回vo再请求别的接口。" +
             "传递good类型的list。jsonExample[{},{}]")
-    public Result<OrderForm> generateOrderForm(@RequestBody List<Goods> list,HttpServletResponse response) {
-        System.out.println("generateOrderForm : "+list);
-        Result<OrderForm> result = new Result<>();
+//    提交给mq处理，前端轮询另一个接口获取状态
+    public Result<String> generateOrderForm(@RequestBody List<Goods> list,
+        @RequestParam(required = false,name = "promotionId")Integer promotionId) {
+        //每次generate成功一次，redis内的秒杀商品数量就减一
+        System.out.println("generateOrderForm : "+list+" promotionId = "+promotionId);
+        Result<String> result = new Result<>();
         if (list == null || list.size() == 0) {
             result.setCode(HttpStatus.BAD_REQUEST.value());
             result.setMessage("请选择商品");
@@ -211,18 +222,43 @@ public class OrderFormController {
         }
         HttpSession session = request.getSession();
         String id = session.getId();
-        System.out.println("generate sessionId = "+id);
+        System.out.println("generate method get sessionId = "+id);
         User user = (User)session.getAttribute("user");
         if (user == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("请登录");
             return result;
         }
-        OrderForm orderForm = orderFormService.generateOrderForm(list,user);
-        result.setData(orderForm);
+        String orderFormId = orderFormService.generateOrderForm(list,user,promotionId);
+        result.setData(orderFormId);
         result.setCode(HttpStatus.OK.value());
         return result;
+
+
     }
+
+    @GetMapping("/oneOrderForm")
+    public Result<OrderForm> selectByOrderFormId(String orderFormId) {
+        //读取redis数据，防止频繁读取数据库
+        System.out.println("id = "+orderFormId);
+        @Cleanup Jedis jedis = jedisPool.getResource();
+        Integer flag = Integer.valueOf(jedis.get(orderFormId));
+        if (flag != null || flag.equals(0)) {
+            return new Result<>().code(HttpStatus.ACCEPTED.value()).message("订单正在创建");
+        }
+        if (flag.equals(1)) {
+            OrderForm orderForm = orderFormService.selectByOrderFormNumber(orderFormId);
+            return Result.generateSuccessResult(orderForm, "订单创建成功");
+        }
+        if (flag.equals(2)) {
+            return new Result<>("订单创建失败",HttpStatus.INTERNAL_SERVER_ERROR.value(), null);
+        }
+        return Result.generateSuccessResult(null,null);
+
+
+    }
+
+
 
 
     //user用的
