@@ -3,6 +3,7 @@ package com.qrcodemall.configure;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import redis.clients.jedis.JedisPool;
 import redis.clients.jedis.JedisPoolConfig;
 
@@ -10,6 +11,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledFuture;
 
 /**
  * @Author: Peony
@@ -55,5 +57,19 @@ public class Beans {
     public Map<String,Object> getMap() {
         Map<String,Object> map = new ConcurrentHashMap<>();
         return map;
+    }
+    @Bean(name = "concurrentMap")
+    public Map<String, ScheduledFuture> getConcurrentMap() {
+        return new ConcurrentHashMap<String,ScheduledFuture>();
+    }
+
+    @Bean
+    public ThreadPoolTaskScheduler threadPoolTaskScheduler() {
+        ThreadPoolTaskScheduler executor = new ThreadPoolTaskScheduler();
+        executor.setPoolSize(20);
+        executor.setThreadNamePrefix("taskExecutor-");
+        executor.setWaitForTasksToCompleteOnShutdown(true);
+        executor.setAwaitTerminationSeconds(60);
+        return executor;
     }
 }

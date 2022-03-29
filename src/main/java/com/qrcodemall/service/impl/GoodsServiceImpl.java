@@ -3,6 +3,7 @@ package com.qrcodemall.service.impl;
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
+import com.qrcodemall.aop.annotation.RedisLock;
 import com.qrcodemall.common.PageProperty;
 import com.qrcodemall.common.Property;
 import com.qrcodemall.controller.vo.OrderFormVO;
@@ -151,12 +152,12 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public Integer createPromotion(PromotionGoods promotionGoods) {
         promotionGoods.setIsDeleted(0);
-        promotionMapper.insert(promotionGoods);
+        Integer r = promotionMapper.insert(promotionGoods);
         Goods goods = new Goods();
         goods.setGoodsStatus(1);
         goods.setGoodsId(promotionGoods.getGoodsId());
         goodsMapper.updateByPrimaryKeySelective(goods);
-        return 1;
+        return r;
     }
 
     @Override
@@ -191,6 +192,7 @@ public class GoodsServiceImpl implements GoodsService {
         return vo;
     }
 
+    @RedisLock(key = "promotion_schedule")
     @Override
     public Integer scheduleStartPromotion(Integer promotionId,Integer goodsId) {
         //设置redis
@@ -201,6 +203,7 @@ public class GoodsServiceImpl implements GoodsService {
         return 1;
     }
 
+    @RedisLock(key = "promotion_schedule")
     @Override
     public Integer scheduleStopPromotion(Integer promotionId,Integer goodsId) {
         //设置数据库促销状态,设置redis

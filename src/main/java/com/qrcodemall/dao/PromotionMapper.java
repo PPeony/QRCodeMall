@@ -13,4 +13,5 @@ public interface PromotionMapper {
     Integer insert(PromotionGoods promotionGoods);
     Integer delete(@Param("goodsId") Integer goodsId);//删除
     List<PromotionGoods> select(PromotionGoods promotionGoods);
+    PromotionGoods selectLatestPromotionByGoodsId(Integer goodsId);
 }

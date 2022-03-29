@@ -26,6 +26,9 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 * lua:setnx+expire,key是每个线程自己的uuid
 * redis2.6就提供了语句代替上面的lua脚本
 * 当然，本案例即使重复执行也没事
+*
+* 为了方便删除定时任务，增加了一个scheduleTask表，查出对应的任务id，再删除掉map中的任务
+*
 * 4.集群配置
 * 5.容器化部署
 * 6.支付宝接口完善--偶尔可用

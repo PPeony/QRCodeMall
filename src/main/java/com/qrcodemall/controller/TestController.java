@@ -8,6 +8,7 @@ import com.github.pagehelper.PageInfo;
 import com.qrcodemall.common.Property;
 import com.qrcodemall.configure.AlipayConfig;
 import com.qrcodemall.dao.NoticeMapper;
+import com.qrcodemall.dao.PromotionMapper;
 import com.qrcodemall.entity.Notice;
 import com.qrcodemall.entity.OrderForm;
 import com.qrcodemall.service.NoticeService;
@@ -51,6 +52,16 @@ public class TestController {
 
     @Resource
     OrderFormService orderFormService;
+
+    @Resource
+    PromotionMapper promotionMapper;
+
+    @GetMapping("/mysql")
+    @ResponseBody
+    public Result testMysql() {
+        Integer delete = promotionMapper.delete(2);
+        return Result.generateSuccessResult(delete,"success");
+    }
 
     @ResponseBody
     @GetMapping("/testOrderForm")

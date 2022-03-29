@@ -49,6 +49,11 @@
         </where>
     </select>
 
+    <select id="selectLatestPromotionByGoodsId" resultMap="BaseResultMap">
+        select max(promotion_id) from promotion where
+                goods_id = #{goodsId,jdbcType=INTEGER} and is_deleted = 0
+    </select>
+
     <insert id="insert" parameterType="com.qrcodemall.entity.PromotionGoods">
         insert into promotion
                 (goods_id,promotion_start_time,promotion_duration,promotion_count,promotion_value,is_deleted)

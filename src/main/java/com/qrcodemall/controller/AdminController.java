@@ -4,6 +4,7 @@ import com.github.pagehelper.PageInfo;
 import com.qrcodemall.common.Exception.GlobalException;
 import com.qrcodemall.controller.vo.*;
 import com.qrcodemall.entity.*;
+import com.qrcodemall.scheduleTask.DynamicTask;
 import com.qrcodemall.service.*;
 import com.qrcodemall.util.*;
 import io.swagger.annotations.ApiOperation;
@@ -24,10 +25,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 //delete直接在url拼id
 /**
  * @Author: Peony
@@ -65,6 +63,12 @@ public class AdminController {
 
     @Autowired
     OrderFormService orderFormService;
+
+    @Autowired
+    ScheduleTaskService scheduleTaskService;
+
+    @Autowired
+    private DynamicTask task;
 
     @Autowired
     HttpSession session;
@@ -250,14 +254,20 @@ public class AdminController {
         promotionGoods.setPromotionValue(promotionGoodsvo.getPromotionValue());
         promotionGoods.setPromotionDuration(promotionGoodsvo.getPromotionDuration());
         promotionGoods.setPromotionStartTime(startTime);
-        Integer r = goodsService.createPromotion(promotionGoods);
-        return result.code(HttpStatus.OK.value()).message("success").data(r);
+        Integer promotionId = goodsService.createPromotion(promotionGoods);
+//        添加该商品的开始和结束的定时任务
+        scheduleTaskService.createTask(promotionId,promotionGoodsvo.getGoodsId(),promotionGoodsvo.getPromotionStartTime(),
+                promotionGoodsvo.getPromotionDuration());
+
+        return result.code(HttpStatus.OK.value()).message("success").data(promotionId);
     }
 
     @DeleteMapping("/stopPromotion")
     public Result stopPromotion(Integer goodsId) {
+        //上面获取所有goods信息时返回promotionId，这里就很好写，但是上面更改很麻烦，可能出bug
         System.out.println("stopPromotion==>"+goodsId);
         goodsService.cancelPromotion(goodsId);
+        scheduleTaskService.deleteTaskByGoodsId(goodsId);
         return Result.generateSuccessResult(goodsId,null);
     }
 /**notice**/
