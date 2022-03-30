@@ -254,7 +254,8 @@ public class AdminController {
         promotionGoods.setPromotionValue(promotionGoodsvo.getPromotionValue());
         promotionGoods.setPromotionDuration(promotionGoodsvo.getPromotionDuration());
         promotionGoods.setPromotionStartTime(startTime);
-        Integer promotionId = goodsService.createPromotion(promotionGoods);
+        goodsService.createPromotion(promotionGoods);
+        Integer promotionId = promotionGoods.getPromotionId();
 //        添加该商品的开始和结束的定时任务
         scheduleTaskService.createTask(promotionId,promotionGoodsvo.getGoodsId(),promotionGoodsvo.getPromotionStartTime(),
                 promotionGoodsvo.getPromotionDuration());

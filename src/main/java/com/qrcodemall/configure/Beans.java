@@ -20,34 +20,34 @@ import java.util.concurrent.ScheduledFuture;
 //线程池，没用上
 @Configuration
 public class Beans {
-    @Bean
-    public JedisPoolConfig jedisPoolConfig(@Value("${jedis.maxTotal}") int maxActive,
-                                           @Value("${jedis.maxIdle}") int maxIdle,
-                                           @Value("${jedis.minIdle}") int minIdle,
-                                           @Value("${jedis.maxWaitMillis}") long maxWaitMillis,
-                                           @Value("${jedis.testOnBorrow}") boolean testOnBorrow) {
-        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
-        jedisPoolConfig.setMaxTotal(maxActive);
-        jedisPoolConfig.setMaxIdle(maxIdle);
-        jedisPoolConfig.setMinIdle(minIdle);
-        jedisPoolConfig.setMaxWaitMillis(maxWaitMillis);
-        jedisPoolConfig.setTestOnBorrow(testOnBorrow);
-
-        return jedisPoolConfig;
-    }
-
-    @Bean
-    public JedisPool jedisPool(@Value("${jedis.host}") String host,
-                               @Value("${jedis.password}") String password,
-                               @Value("${jedis.port}") int port,
-                               @Value("${jedis.timeout}") int timeout, JedisPoolConfig jedisPoolConfig) {
-
-        if(password != null && password.length() > 0) {
-            return new JedisPool(jedisPoolConfig, host, port, timeout, password);
-        }
-
-        return new JedisPool(jedisPoolConfig, host, port, timeout);
-    }
+//    @Bean
+//    public JedisPoolConfig jedisPoolConfig(@Value("${jedis.maxTotal}") int maxActive,
+//                                           @Value("${jedis.maxIdle}") int maxIdle,
+//                                           @Value("${jedis.minIdle}") int minIdle,
+//                                           @Value("${jedis.maxWaitMillis}") long maxWaitMillis,
+//                                           @Value("${jedis.testOnBorrow}") boolean testOnBorrow) {
+//        JedisPoolConfig jedisPoolConfig = new JedisPoolConfig();
+//        jedisPoolConfig.setMaxTotal(maxActive);
+//        jedisPoolConfig.setMaxIdle(maxIdle);
+//        jedisPoolConfig.setMinIdle(minIdle);
+//        jedisPoolConfig.setMaxWaitMillis(maxWaitMillis);
+//        jedisPoolConfig.setTestOnBorrow(testOnBorrow);
+//
+//        return jedisPoolConfig;
+//    }
+//
+//    @Bean
+//    public JedisPool jedisPool(@Value("${jedis.host}") String host,
+//                               @Value("${jedis.password}") String password,
+//                               @Value("${jedis.port}") int port,
+//                               @Value("${jedis.timeout}") int timeout, JedisPoolConfig jedisPoolConfig) {
+//
+//        if(password != null && password.length() > 0) {
+//            return new JedisPool(jedisPoolConfig, host, port, timeout, password);
+//        }
+//
+//        return new JedisPool(jedisPoolConfig, host, port, timeout);
+//    }
     @Bean
     public ExecutorService getExecutorTools(){
         ExecutorService executorService = Executors.newFixedThreadPool(8);

@@ -15,6 +15,7 @@ import com.qrcodemall.entity.*;
 import com.qrcodemall.rabbitmq.OrderFormMessage;
 import com.qrcodemall.rabbitmq.Producer;
 import com.qrcodemall.service.OrderFormService;
+import com.qrcodemall.util.JedisUtil;
 import com.qrcodemall.util.OrderFormNumberGenerator;
 import com.qrcodemall.util.PageUtil;
 import lombok.Cleanup;
@@ -50,7 +51,7 @@ public class OrderFormServiceImpl implements OrderFormService {
     @Autowired
     Producer producer;
     @Autowired
-    JedisPool jedisPool;
+    JedisUtil jedisUtil;
 
     @Override
     public PageInfo<OrderForm> selectOrderForm(Integer userId, Date beginTime, Date endTime, Integer pageNum) {
@@ -121,14 +122,21 @@ public class OrderFormServiceImpl implements OrderFormService {
          */
 //        return orderForm2;
         //promotionId如果不为null，说明是促销商品，需要进行redis操作,redis有加锁写操作
-        @Cleanup Jedis jedis = jedisPool.getResource();
-        if (promotionId != null) {
-            String key = Property.promotionRedisKeyPrefix+String.valueOf(promotionId);
-            Integer count = Integer.valueOf(jedis.get(key));
-            if (count <= 0) {
-                return "sold out";
+        Jedis jedis = null;
+        try {
+            jedis = jedisUtil.getJedis();
+            if (promotionId != null) {
+                String key = Property.promotionRedisKeyPrefix+String.valueOf(promotionId);
+                Integer count = Integer.valueOf(jedis.get(key));
+                if (count <= 0) {
+                    return "sold out";
+                }
+                jedis.decr(key);
             }
-            jedis.decr(key);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (jedis != null) jedis.close();
         }
         String orderFormId = OrderFormNumberGenerator.generate();
         try {

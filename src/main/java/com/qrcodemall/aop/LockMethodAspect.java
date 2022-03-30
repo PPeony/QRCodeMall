@@ -1,6 +1,7 @@
 package com.qrcodemall.aop;
 
 import com.qrcodemall.aop.annotation.RedisLock;
+import com.qrcodemall.util.JedisUtil;
 import com.qrcodemall.util.RedisLockUtil;
 import lombok.Cleanup;
 import lombok.extern.slf4j.Slf4j;
@@ -27,11 +28,12 @@ public class LockMethodAspect {
     @Autowired
     private RedisLockUtil redisLockHelper;
     @Autowired
-    JedisPool jedisPool;
+    JedisUtil jedisUtil;
 
     @Around("@annotation(com.qrcodemall.aop.annotation.RedisLock)")
     public Object around(ProceedingJoinPoint joinPoint) {
-        @Cleanup Jedis jedis = jedisPool.getResource();
+        Jedis jedis = jedisUtil.getJedis();
+
         MethodSignature signature = (MethodSignature) joinPoint.getSignature();
         Method method = signature.getMethod();
         RedisLock redisLock = method.getAnnotation(RedisLock.class);
@@ -47,6 +49,7 @@ public class LockMethodAspect {
             try {
                 return joinPoint.proceed();
             } catch (Throwable throwable) {
+                throwable.printStackTrace();
                 throw new RuntimeException("系统异常");
             }
         }  finally {

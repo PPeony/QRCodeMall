@@ -70,7 +70,7 @@ public class OrderFormController {
     HttpSession session;
 
     @Autowired
-    JedisPool jedisPool;
+    JedisUtil jedisUtil;
 
 
     @GetMapping("/buyGoods")
@@ -241,9 +241,19 @@ public class OrderFormController {
     public Result<OrderForm> selectByOrderFormId(String orderFormId) {
         //读取redis数据，防止频繁读取数据库
         System.out.println("id = "+orderFormId);
-        @Cleanup Jedis jedis = jedisPool.getResource();
-        Integer flag = Integer.valueOf(jedis.get(orderFormId));
-        if (flag != null || flag.equals(0)) {
+        Jedis jedis = null;
+        Integer flag = null;
+        try {
+            jedis = jedisUtil.getJedis();
+            flag = Integer.valueOf(jedis.get(orderFormId));
+            System.out.println("read orderForm status from redis=>"+flag);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (jedis != null) jedis.close();
+        }
+
+        if (flag == null || flag.equals(0)) {
             return new Result<>().code(HttpStatus.ACCEPTED.value()).message("订单正在创建");
         }
         if (flag.equals(1)) {

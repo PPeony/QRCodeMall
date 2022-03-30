@@ -8,6 +8,7 @@ import com.qrcodemall.entity.GoodsType;
 import com.qrcodemall.service.GoodsService;
 import com.qrcodemall.service.GoodsTypeService;
 import com.qrcodemall.util.CookieUtils;
+import com.qrcodemall.util.JedisUtil;
 import com.qrcodemall.util.Result;
 import io.swagger.annotations.ApiOperation;
 import lombok.Cleanup;
@@ -47,7 +48,7 @@ public class GoodsController {
     GoodsTypeService goodsTypeService;
 
     @Autowired
-    JedisPool jedisPool;
+    JedisUtil jedisUtil;
 
 
     @GetMapping("/allGoods")
@@ -257,11 +258,21 @@ public class GoodsController {
     }
     @GetMapping("/getPromotionGoodsByPK")
     public Result getPromotionGoodsByPK(Integer promotionId) {
+        System.out.println("getPromotionByPk promotionId = "+promotionId);
         Result result = new Result();
 //        先查redis,redis没有再查数据库
-        @Cleanup Jedis jedis = jedisPool.getResource();
-        PromotionGoodsVO vo;
-        vo = JSONObject.parseObject(jedis.get(String.valueOf(promotionId)),PromotionGoodsVO.class);
+        Jedis jedis = null;
+        PromotionGoodsVO vo = null;
+        try {
+            jedis = jedisUtil.getJedis();
+            vo = JSONObject.parseObject(jedis.get(String.valueOf(promotionId)),PromotionGoodsVO.class);
+            System.out.println("redis find obj = "+vo);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (jedis != null)
+            jedis.close();
+        }
         List<PromotionGoodsVO> list = new ArrayList<>();
         if (vo != null) {
             list.add(vo);

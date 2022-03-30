@@ -11,6 +11,7 @@ import com.qrcodemall.entity.OrderForm;
 import com.qrcodemall.entity.OrderFormDetail;
 import com.qrcodemall.entity.User;
 import com.qrcodemall.service.OrderFormService;
+import com.qrcodemall.util.JedisUtil;
 import com.qrcodemall.util.OrderFormNumberGenerator;
 import com.rabbitmq.client.Channel;
 import lombok.Cleanup;
@@ -48,7 +49,7 @@ public class Consumer {
     @Autowired
     GoodsMapper goodsMapper;
     @Autowired
-    JedisPool jedisPool;
+    JedisUtil jedisUtil;
 
     @RabbitHandler
     @RabbitListener(queues = "queue.hello")
@@ -88,8 +89,15 @@ public class Consumer {
         Long end = System.currentTimeMillis();
         System.out.println("consumer cost:"+(end - start));
         //todo,收到回调之后把id对应状态在redis里面更新，0-进行中，1-成功，2-失败
-        @Cleanup Jedis jedis = jedisPool.getResource();
-        jedis.setex(id, Property.orderFormStatusExpireTime,"1");
+        Jedis jedis = null;
+        try {
+            jedis = jedisUtil.getJedis();
+            jedis.setex(id, Property.orderFormStatusExpireTime,"1");
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (jedis != null) jedis.close();
+        }
     }
     private BigDecimal getPrice(List<Goods> list) {
         BigDecimal decimal = new BigDecimal("0");

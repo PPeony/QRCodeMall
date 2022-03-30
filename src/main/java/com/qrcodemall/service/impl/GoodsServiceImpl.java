@@ -11,6 +11,7 @@ import com.qrcodemall.controller.vo.PromotionGoodsVO;
 import com.qrcodemall.dao.GoodsMapper;
 import com.qrcodemall.dao.GoodsTypeMapper;
 import com.qrcodemall.dao.PromotionMapper;
+import com.qrcodemall.dao.ScheduleTaskMapper;
 import com.qrcodemall.entity.Goods;
 import com.qrcodemall.entity.GoodsExample;
 import com.qrcodemall.entity.OrderForm;
@@ -18,6 +19,7 @@ import com.qrcodemall.entity.PromotionGoods;
 import com.qrcodemall.service.GoodsService;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.DateUtil;
+import com.qrcodemall.util.JedisUtil;
 import com.qrcodemall.util.PageUtil;
 import lombok.Cleanup;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -46,7 +48,9 @@ public class GoodsServiceImpl implements GoodsService {
     @Autowired
     PromotionMapper promotionMapper;
     @Autowired
-    JedisPool jedisPool;
+    JedisUtil jedisUtil;
+    @Autowired
+    ScheduleTaskMapper scheduleTaskMapper;
 
     @Override
     public PageInfo<Goods> selectAllGoods(Integer pageNum) {
@@ -196,21 +200,38 @@ public class GoodsServiceImpl implements GoodsService {
     @Override
     public Integer scheduleStartPromotion(Integer promotionId,Integer goodsId) {
         //设置redis
-        @Cleanup Jedis jedis = jedisPool.getResource();
-        PromotionGoodsVO promotionGoodsVO = getPromotionGoodsByPK(promotionId);
-        jedis.set(String.valueOf(promotionId), JSON.toJSONString(promotionGoodsVO));
-        jedis.set(Property.promotionRedisKeyPrefix+promotionId,String.valueOf(promotionGoodsVO.getPromotionCount()));
+        Jedis jedis = null;
+        try {
+            jedis = jedisUtil.getJedis();
+            PromotionGoodsVO promotionGoodsVO = getPromotionGoodsByPK(promotionId);
+            jedis.set(String.valueOf(promotionId), JSON.toJSONString(promotionGoodsVO));
+            System.out.println("start key1 " + promotionId+" key2 "+Property.promotionRedisKeyPrefix+promotionId);
+            jedis.set(Property.promotionRedisKeyPrefix+promotionId,String.valueOf(promotionGoodsVO.getPromotionCount()));
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (jedis != null) jedis.close();
+        }
         return 1;
     }
 
     @RedisLock(key = "promotion_schedule")
     @Override
     public Integer scheduleStopPromotion(Integer promotionId,Integer goodsId) {
+        System.out.println("end promotionId = "+promotionId+" goodsId = "+goodsId);
         //设置数据库促销状态,设置redis
         cancelPromotion(goodsId);
-        @Cleanup Jedis jedis = jedisPool.getResource();
-        jedis.del(String.valueOf(promotionId));
-        jedis.del(Property.promotionRedisKeyPrefix+promotionId);
+        Jedis jedis = null;
+        try {
+            jedis = jedisUtil.getJedis();
+            jedis.del(String.valueOf(promotionId));
+            jedis.del(Property.promotionRedisKeyPrefix+promotionId);
+            scheduleTaskMapper.delete(promotionId);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (jedis != null) jedis.close();
+        }
         return 1;
     }
 }

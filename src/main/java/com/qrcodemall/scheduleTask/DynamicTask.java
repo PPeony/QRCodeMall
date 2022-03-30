@@ -25,8 +25,10 @@ public class DynamicTask {
     @Resource(name = "concurrentMap")
     Map<String, ScheduledFuture> concurrentHashMap;
 
+
     public void startCron(String cron,String name,MyTask myTask) {
         //String cron = "0/1 * * * * ?";
+        System.out.println("start cron "+cron+" "+name+" "+myTask);
         Thread.currentThread().setName(name);
         System.out.println(Thread.currentThread().getName());
         ScheduledFuture f = threadPoolTaskScheduler.schedule(myTask, new CronTrigger(cron));

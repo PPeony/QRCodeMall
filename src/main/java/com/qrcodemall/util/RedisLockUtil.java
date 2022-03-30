@@ -16,19 +16,35 @@ import java.util.Collections;
 public class RedisLockUtil {
 //    redis实现分布式锁
     @Autowired
-    JedisPool jedisPool;
+    JedisUtil jedisUtil;
 
     public boolean tryLockWithSet(String key, String UniqueId, int seconds) {
-        @Cleanup Jedis jedis = jedisPool.getResource();
-        return "OK".equals(jedis.set(key, UniqueId, "NX", "EX", seconds));
+        Jedis jedis = null;
+        String r = null;
+        try {
+            jedis = jedisUtil.getJedis();
+            r = jedis.set(key, UniqueId, "NX", "EX", seconds);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (jedis != null) jedis.close();
+        }
+        return "OK".equals(r);
     }
 
     public boolean releaseLockWithLua(String key,String value) {
 //        使用lua脚本保证原子性,解锁时，我们需要判断锁是否是自己的,再解锁
-        @Cleanup Jedis jedis = jedisPool.getResource();
-        String luaScript = "if redis.call('get',KEYS[1]) == ARGV[1] then " +
-                "return redis.call('del',KEYS[1]) else return 0 end";
-        return jedis.eval(luaScript, Collections.singletonList(key), Collections.singletonList(value)).equals(1L);
+        Jedis jedis = null;
+        try {
+            jedis = jedisUtil.getJedis();
+            String luaScript = "if redis.call('get',KEYS[1]) == ARGV[1] then " +
+                    "return redis.call('del',KEYS[1]) else return 0 end";
+            return jedis.eval(luaScript, Collections.singletonList(key), Collections.singletonList(value)).equals(1L);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (jedis != null) jedis.close();
+        }
     }
 
 }

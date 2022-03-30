@@ -29,6 +29,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 *
 * 为了方便删除定时任务，增加了一个scheduleTask表，查出对应的任务id，再删除掉map中的任务
 *
+* 有时需要配置mybatis的xml，让插入数据之后得到最新主键id
+* jedis是从连接池取出来的，所以用完需要还回去，finally里面jedis.close
 * 4.集群配置
 * 5.容器化部署
 * 6.支付宝接口完善--偶尔可用
