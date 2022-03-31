@@ -54,10 +54,11 @@ public class OrderFormServiceImpl implements OrderFormService {
     JedisUtil jedisUtil;
 
     @Override
-    public PageInfo<OrderForm> selectOrderForm(Integer userId, Date beginTime, Date endTime, Integer pageNum) {
+    public PageInfo<OrderForm> selectOrderForm(Integer userId, Date beginTime, Date endTime, Integer pageNum,
+                                               Integer orderFormStatus) {
         OrderForm orderForm = new OrderForm();
         orderForm.setUserId(userId);
-        System.out.println("select order form:"+orderForm);
+        orderForm.setOrderFormStatus(orderFormStatus);
         return PageUtil.generatePageInfoByTime(orderForm,pageNum,beginTime,endTime,orderFormMapper);
     }
 

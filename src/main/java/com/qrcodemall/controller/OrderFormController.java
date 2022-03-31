@@ -277,7 +277,8 @@ public class OrderFormController {
     public Result<PageInfo<OrderFormVO>> selectOneOrderForm(HttpSession session,
             @RequestParam(required = false,defaultValue = "1",value = "pageNum")Integer pageNum,
             @RequestParam(required = false,value = "beginTime") Date beginTime,
-            @RequestParam(required = false,value = "endTime") Date endTime) {
+            @RequestParam(required = false,value = "endTime") Date endTime,
+            Integer orderFormStatus) {
         //判断session为不为空，分页
         Result<PageInfo<OrderFormVO>> result = new Result();
         User u = (User)session.getAttribute("user");
@@ -286,7 +287,7 @@ public class OrderFormController {
             result.setMessage("未登录");
             return result;
         }
-        PageInfo<OrderForm> list = orderFormService.selectOrderForm(u.getUserId(),beginTime,endTime,pageNum);
+        PageInfo<OrderForm> list = orderFormService.selectOrderForm(u.getUserId(),beginTime,endTime,pageNum,orderFormStatus);
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         result.setData(buildOrderFormVO(list));

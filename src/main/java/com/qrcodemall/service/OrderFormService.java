@@ -18,7 +18,8 @@ public interface OrderFormService {
 
 
 
-    PageInfo<OrderForm> selectOrderForm(Integer userId, Date beginTime, Date enTime, Integer pageNum);
+    PageInfo<OrderForm> selectOrderForm(Integer userId, Date beginTime, Date enTime, Integer pageNum,
+                                        Integer orderFormStatus);
 
     PageInfo<OrderForm> selectAllOrderForms(Date beginTime, Date enTime, Integer pageNum);
 
