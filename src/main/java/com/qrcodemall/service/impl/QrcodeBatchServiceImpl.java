@@ -23,7 +23,7 @@ import java.util.List;
 
 /**
  * @Author: Peony
- * @Date: 2020/8/26 13:40
+ * @Date: 2022/3/6 13:40
  */
 @Service
 public class QrcodeBatchServiceImpl implements QrcodeBatchService {

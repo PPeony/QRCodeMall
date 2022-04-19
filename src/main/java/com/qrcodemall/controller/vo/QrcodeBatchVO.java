@@ -8,7 +8,7 @@ import java.io.Serializable;
 
 /**
  * @Author: Peony
- * @Date: 2020/8/26 16:49
+ * @Date: 2022/3/26 16:49
  */
 @Data
 public class QrcodeBatchVO implements Serializable {

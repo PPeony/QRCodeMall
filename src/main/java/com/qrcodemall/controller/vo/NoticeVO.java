@@ -7,7 +7,7 @@ import java.util.Date;
 
 /**
  * @Author: Peony
- * @Date: 2020/7/24 10:00
+ * @Date: 2022/3/24 10:00
  */
 @Data
 public class NoticeVO implements Serializable {

@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 
 /**
  * @Author: Peony
- * @Date: 2020/7/27 10:44
+ * @Date: 2022/3/3 10:44
  */
 @Data
 public class GlobalException extends RuntimeException{

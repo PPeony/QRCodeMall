@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * @Author: Peony
- * @Date: 2020/7/31 14:33
+ * @Date: 2022/3/1 14:33
  */
 @Configuration
 public class ShutdownConfig {

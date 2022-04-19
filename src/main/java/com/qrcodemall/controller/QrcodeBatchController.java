@@ -18,7 +18,7 @@ import java.util.*;
 
 /**
  * @Author: Peony
- * @Date: 2020/8/26 13:52
+ * @Date: 2022/3/6 13:52
  */
 @RestController
 @RequestMapping("/qrcodeBatch")

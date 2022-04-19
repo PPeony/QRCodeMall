@@ -2,7 +2,7 @@ package com.qrcodemall.configure;
 
 /**
  * @Author: Peony
- * @Date: 2020/7/25 16:38
+ * @Date: 2022/3/25 16:38
  */
 
 import org.springframework.context.annotation.Bean;

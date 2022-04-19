@@ -11,7 +11,7 @@ import java.util.List;
 
 /**
  * @Author: Peony
- * @Date: 2020/7/27 15:47
+ * @Date: 2022/3/7 15:47
  */
 @Service
 public class GoodsTypeServiceImpl implements GoodsTypeService {

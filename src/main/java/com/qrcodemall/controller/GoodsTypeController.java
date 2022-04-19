@@ -15,7 +15,7 @@ import java.util.List;
 
 /**
  * @Author: Peony
- * @Date: 2020/7/28 13:49
+ * @Date: 2022/3/8 13:49
  */
 @RestController
 @RequestMapping("/goodsType")

@@ -10,7 +10,7 @@ import java.util.UUID;
 
 /**
  * @Author: Peony
- * @Date: 2020/7/30 10:46
+ * @Date: 2022/3/30 10:46
  */
 public class PictureUtil {
     public static String uploadFile(MultipartFile file, HttpServletRequest request) {

@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @Author: Peony
- * @Date: 2020/7/24 9:25
+ * @Date: 2022/3/4 9:25
  */
 public class BeanUtil {
 
@@ -21,7 +21,7 @@ public class BeanUtil {
         return target;
     }
 
-    //判断list里面每个对象的value属性是否有重复的
+    //判断list里面每个对象的value属性是否有重复的；换句话说用户设置的qrcode字段不能有一样的
     public static <T> boolean checkIfRepeat(List<T> list,String value) {
         HashSet<String> set = new HashSet<>();
         try {

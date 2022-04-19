@@ -5,7 +5,7 @@ import com.qrcodemall.entity.Qrcode;
 
 /**
  * @Author: Peony
- * @Date: 2020/7/27 11:44
+ * @Date: 2022/3/7 11:44
  */
 public interface QrcodeService {
 

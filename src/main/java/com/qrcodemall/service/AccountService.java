@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * @Author: Peony
- * @Date: 2020/8/24 12:55
+ * @Date: 2022/3/4 12:55
  */
 public interface AccountService {
     List<Account> selectAccountBySelective(Account account);

@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  * @Author: Peony
- * @Date: 2020/7/27 13:42
+ * @Date: 2022/3/7 13:42
  */
 public interface GoodsTypeService {
     List<GoodsType> selectAllGoodsType();

@@ -12,7 +12,7 @@ import java.io.IOException;
 
 /**
  * @Author: Peony
- * @Date: 2020/8/31 17:49
+ * @Date: 2022/3/31 17:49
  */
 //废弃
 public class AdminLoginInterceptor implements HandlerInterceptor {

@@ -6,7 +6,7 @@ import java.util.List;
 
 /**
  * @Author: Peony
- * @Date: 2020/8/2 14:50
+ * @Date: 2022/3/2 14:50
  */
 public interface CarouselService {
 

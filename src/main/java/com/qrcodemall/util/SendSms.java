@@ -10,7 +10,7 @@ import static com.qrcodemall.common.Property.*;
 
 /**
  * @Author: Peony
- * @Date: 2020/8/1 14:56
+ * @Date: 2022/3/1 14:56
  */
 public class SendSms {
     public static String sms(String phone)
