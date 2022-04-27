@@ -1,11 +1,13 @@
 package com.qrcodemall.controller;
 
 import com.github.pagehelper.PageInfo;
+import com.qrcodemall.common.Property;
 import com.qrcodemall.controller.vo.QrcodeBatchVO;
 import com.qrcodemall.entity.*;
 import com.qrcodemall.service.*;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.Result;
+import com.qrcodemall.util.SessionUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -40,7 +42,8 @@ public class QrcodeBatchController {
     UserAddressService userAddressService;
 
     @Autowired
-    HttpSession session;
+    SessionUtil sessionUtil;
+
 
     //
     @GetMapping("/adminFind")
@@ -65,7 +68,8 @@ public class QrcodeBatchController {
         //System.out.println(qrcodeBatch+"====");
 
         Result<PageInfo<QrcodeBatchVO>> result = new Result<>();
-        User user = (User) session.getAttribute("user");
+        //User user = (User) session.getAttribute("user");
+        User user = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (user != null) {
             qrcodeBatch.setUserId(user.getUserId());
         }
@@ -100,7 +104,8 @@ public class QrcodeBatchController {
                                              HttpSession session) {
         //System.out.println(batches);
         Result<Integer> result = new Result<>();
-        User user = (User) session.getAttribute("user");
+        //User user = (User) session.getAttribute("user");
+        User user = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (errors.hasErrors()) {
             return Result.generateBadRequestResult(errors);
         }

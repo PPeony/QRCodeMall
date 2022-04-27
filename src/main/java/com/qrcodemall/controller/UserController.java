@@ -1,5 +1,6 @@
 package com.qrcodemall.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.PageInfo;
 import com.google.gson.internal.$Gson$Preconditions;
 import com.qrcodemall.common.Property;
@@ -13,9 +14,7 @@ import com.qrcodemall.entity.UserBill;
 import com.qrcodemall.service.UserAddressService;
 import com.qrcodemall.service.UserBillService;
 import com.qrcodemall.service.UserService;
-import com.qrcodemall.util.CookieUtils;
-import com.qrcodemall.util.Result;
-import com.qrcodemall.util.SendSms;
+import com.qrcodemall.util.*;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -27,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
+import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -61,6 +61,11 @@ public class UserController {
     @Autowired
     UserBillService userBillService;
 
+    @Autowired
+    JedisUtil jedisUtil;
+
+    @Autowired
+    SessionUtil sessionUtil;
     /*
     @PostMapping("/login")//密码登录，查三次
     @ApiOperation("account和password。account可以是手机号，用户名，邮箱")
@@ -133,10 +138,20 @@ public class UserController {
         if (u != null) {
             result.setCode(HttpStatus.OK.value());
             result.setMessage("success");
-            session.setAttribute("user",u);
-            session.setMaxInactiveInterval(3600);
-            //跨域处理SameSite
             String id = session.getId();
+            Jedis jedis = null;
+            try {
+                jedis = jedisUtil.getJedis();
+                jedis.setex(Property.userSessionPrefix+id, Property.sessionExpireTime, JSON.toJSONString(u));
+            } catch (Exception e) {
+                throw e;
+            } finally {
+                if (jedis != null) jedis.close();
+            }
+            //session.setAttribute("user",u);
+            //session.setMaxInactiveInterval(3600);
+            //跨域处理SameSite
+
             System.out.println("userLoginSessionId = "+id);
 
             HttpCookie cookie = CookieUtils.generateSetCookie3(request, "JSESSIONID", id, Duration.ofHours(3));
@@ -169,8 +184,18 @@ public class UserController {
     @GetMapping("/logout")//退出登录
     @ApiOperation("no param")
     public Result logout(HttpSession session,HttpServletRequest request,HttpServletResponse response) {
-        session.removeAttribute("user");
+        //session.removeAttribute("user");
         String id = session.getId();
+        System.out.println("sessionLogOutId = "+id);
+        Jedis jedis = null;
+        try {
+            jedis = jedisUtil.getJedis();
+            jedis.del(Property.userSessionPrefix+id);
+        } catch (Exception e) {
+            throw e;
+        } finally {
+            if (jedis != null) jedis.close();
+        }
         HttpCookie cookie = CookieUtils.generateSetCookie3(request, "JSESSIONID", id, Duration.ZERO);
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
         Result result = new Result();
@@ -226,7 +251,8 @@ public class UserController {
     @ApiOperation("修改个人信息")
     public Result updateMyProfile(@RequestBody User user,HttpSession session) {
         Result result = new Result();
-        User u = (User)session.getAttribute("user");
+        //User u = (User)session.getAttribute("user");
+        User u = sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (u == null) {
             return result.code(HttpStatus.UNAUTHORIZED.value()).message("未登录");
         }
@@ -280,10 +306,12 @@ public class UserController {
         String code = SendSms.sms(userPhones);
         //System.out.println("code = "+code);
         String id = session.getId();
-        session.removeAttribute("verifyCode");
+        //session.removeAttribute("verifyCode");
+        sessionUtil.removeSession(id+"-verifyCode");
         System.out.println("test get id: "+id+" verifyCode = "+code);
         VerifyCodeVO vcv = new VerifyCodeVO(userPhones,code);
-        session.setAttribute("verifyCode",vcv);
+        //session.setAttribute("verifyCode",vcv);
+        sessionUtil.setSession(id+"-verifyCode",vcv);
         //sameSite
         HttpCookie cookie = CookieUtils.generateSetCookie3(request, "JSESSIONID", id, Duration.ofHours(3));
         response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
@@ -303,9 +331,11 @@ public class UserController {
             return result.code(HttpStatus.BAD_REQUEST.value()).message("手机号或者验证码不能为空");
         }
 
-        VerifyCodeVO vcv = (VerifyCodeVO)session.getAttribute("verifyCode");
+        //VerifyCodeVO vcv = (VerifyCodeVO)session.getAttribute("verifyCode");
+        VerifyCodeVO vcv = (VerifyCodeVO)sessionUtil.getSession(session.getId()+"-verifyCode",VerifyCodeVO.class);
         System.out.println("jsessionId = "+session.getId()+"check = "+verifyCodes+" vcv = "+vcv);
-        session.removeAttribute("verifyCode");
+//        session.removeAttribute("verifyCode");
+        sessionUtil.removeSession(session.getId()+"-verifyCode");
         //System.out.println("sessionCode = "+sessionCode);
         if (vcv == null) {
             result.setCode(HttpStatus.BAD_REQUEST.value());
@@ -349,12 +379,13 @@ public class UserController {
             result.setMessage(errors.getAllErrors().get(0).getDefaultMessage());
             return result;
         }
-        if (session.getAttribute("user") == null) {
+        //User tmp = (User)session.getAttribute("user");
+        User tmp = (User)sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
+        if (tmp == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("请重新登录");
             return result;
         }
-        User tmp = (User)session.getAttribute("user");
         userAddress.setUserId(tmp.getUserId());
         Integer r = userAddressService.insertUserAddress(userAddress);
         //insert into table
@@ -402,12 +433,14 @@ public class UserController {
                                                            HttpSession session) {
         //判断session不为空,根据id看地址
         Result<List<UserAddress>> result = new Result();
+//        User user = (User)session.getAttribute("user");
+        User user = (User)sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (session.getAttribute("user") == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("请重新登录");
             return result;
         }
-        User user = (User)session.getAttribute("user");
+
 
         //不分页
         List<UserAddress> userAddressList = userAddressService.selectUserAddress(user.getUserId());
@@ -423,12 +456,15 @@ public class UserController {
     public Result<User> selectUser(HttpSession session) {
         //不暴露id
         Result<User> result = new Result();
-        if (session.getAttribute("user") == null) {
+        //User user = (User)session.getAttribute("user");
+        System.out.println("my sessionId="+session.getId());
+        User user = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
+        if (user == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("请重新登录");
             return result;
         }
-        User user = (User)session.getAttribute("user");
+
         result.setCode(HttpStatus.OK.value());
         result.setMessage("success");
         result.setData(user);
@@ -439,12 +475,8 @@ public class UserController {
     @GetMapping("/invitees")
     public Result<List<List<User>>> findInvitees(HttpSession session) {
         Result<List<List<User>>> result = new Result<>();
-        if (session == null) {
-            result.setCode(HttpStatus.UNAUTHORIZED.value());
-            result.setMessage("failure");
-            return result;
-        }
-        User user = (User)session.getAttribute("user");
+        //User user = (User)session.getAttribute("user");
+        User user = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (user == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("请登录");
@@ -467,12 +499,13 @@ public class UserController {
                                  HttpSession session) {
         //判断session不为空，分页
         Result<PageInfo<UserBill>> result = new Result<>();
-        if (session.getAttribute("user") == null) {
+        User user = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
+        if (user == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("请重新登录");
             return result;
         }
-        User user = (User)session.getAttribute("user");
+        //User user = (User)session.getAttribute("user");
         PageInfo<UserBill> pageInfo = userBillService.selectByUserId(user.getUserId(),pageNum);
 
         result.setCode(HttpStatus.OK.value());
@@ -484,7 +517,8 @@ public class UserController {
     @PostMapping("/addBill")
     public Result insertBill(@RequestBody UserBill userBill,HttpSession session) {
         Result result = new Result();
-        User u = (User)session.getAttribute("user");
+        //User u = (User)session.getAttribute("user");
+        User u = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (u == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("未登录");
@@ -514,14 +548,15 @@ public class UserController {
         result.setMessage("success");
         return result;
     }
-    //todo，积分换钱接口，同时要在上面controller增加代理时候更新积分
+    //积分换钱接口，同时要在上面controller增加代理时候更新积分
     //10积分一块钱，一级代理500积分，二级代理200积分
     @PostMapping("/usePoints")
     @ApiOperation(value = "传的是变化多少，注意兑换积分时候传负数,只有一个参数为userPoint")
     public Result usePoints(@RequestParam("userPoint") Integer userPoint,HttpSession session) {
         Result result = new Result();
         System.out.println(userPoint+" ===");
-        User u = (User) session.getAttribute("user");
+        //User u = (User) session.getAttribute("user");
+        User u = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (u == null) {
             return result.code(HttpStatus.UNAUTHORIZED.value()).message("未登录");
         }

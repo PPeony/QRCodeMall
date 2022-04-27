@@ -1,0 +1,16 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qrcodemall_server
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        project: qrcodemall_server
+    spec:
+      containers:
+        - name: qrcodemall_server
+          image: todo
+          ports:
+            - containerPort: 8090

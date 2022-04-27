@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+spec:
+  selector:
+    matchLabels:
+      project: rabbitmq
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        project: rabbitmq
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:management
+          ports:
+            - containerPort: 15672
+              name: rabbit15672
+              protocol: TCP
+            - containerPort: 5672
+              name: rabbit5672
+              protocol: TCP
+            - containerPort: 4369
+              name: rabbit4369
+              protocol: TCP
+            - containerPort: 25672
+              name: rabbit25672
+              protocol: TCP
+            - containerPort: 5671
+              name: rabbit5671
+              protocol: TCP
+            - containerPort: 15671
+              name: rabbit15671
+              protocol: TCP

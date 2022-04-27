@@ -8,6 +8,7 @@ import com.alipay.api.request.AlipayTradePagePayRequest;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageInfo;
 import com.qrcodemall.common.Exception.GlobalException;
+import com.qrcodemall.common.Property;
 import com.qrcodemall.configure.AlipayConfig;
 import com.qrcodemall.controller.vo.OrderFormVO;
 import com.qrcodemall.entity.*;
@@ -67,14 +68,14 @@ public class OrderFormController {
     HttpServletRequest request;
 
     @Autowired
-    HttpSession session;
+    JedisUtil jedisUtil;
 
     @Autowired
-    JedisUtil jedisUtil;
+    SessionUtil sessionUtil;
 
 
     @GetMapping("/buyGoods")
-    //todo,应该先生成订单，再跳转支付宝,功能应该是实现了，出问题再说
+    //应该先生成订单，再跳转支付宝,功能应该是实现了，出问题再说
     @ApiOperation(value = "传参数是orderForm信息，id，number，payType，price一定要有,payType为2为微信支付，不会跳转到支付宝。" +
             "注意此方法没有返回值，支付宝是通过response重定向，微信暂无")
     public void buyGoods(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -174,7 +175,8 @@ public class OrderFormController {
             return Result.generateSuccessResult(null,null);
         }
         Result result = new Result();
-        User user = (User) session.getAttribute("user");
+        //User user = (User) session.getAttribute("user");
+        User user = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (user == null) {
             result.code(HttpStatus.UNAUTHORIZED.value()).message("未登录");
             return result;
@@ -223,7 +225,8 @@ public class OrderFormController {
         HttpSession session = request.getSession();
         String id = session.getId();
         System.out.println("generate method get sessionId = "+id);
-        User user = (User)session.getAttribute("user");
+//        User user = (User)session.getAttribute("user");
+        User user = (User) sessionUtil.getSession(Property.userSessionPrefix+id,User.class);
         if (user == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("请登录");
@@ -281,7 +284,8 @@ public class OrderFormController {
             Integer orderFormStatus) {
         //判断session为不为空，分页
         Result<PageInfo<OrderFormVO>> result = new Result();
-        User u = (User)session.getAttribute("user");
+        //User u = (User)session.getAttribute("user");
+        User u = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (u == null) {
             result.setCode(HttpStatus.UNAUTHORIZED.value());
             result.setMessage("未登录");

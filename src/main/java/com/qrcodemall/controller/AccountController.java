@@ -1,10 +1,12 @@
 package com.qrcodemall.controller;
 
+import com.qrcodemall.common.Property;
 import com.qrcodemall.entity.Account;
 import com.qrcodemall.entity.User;
 import com.qrcodemall.service.AccountService;
 import com.qrcodemall.service.UserService;
 import com.qrcodemall.util.Result;
+import com.qrcodemall.util.SessionUtil;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,12 +29,15 @@ public class AccountController {
     @Autowired
     UserService userService;
 
+    @Autowired
+    SessionUtil sessionUtil;
 
     @GetMapping("/myAccount")
     @ApiOperation(value = "通过session的userId查询，no param")
     public Result<List<Account>> selectByUserId(HttpSession session) {
         Result<List<Account>> result = new Result<>();
-        User u = (User)session.getAttribute("user");
+        //User u = (User)session.getAttribute("user");
+        User u = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (u == null) {
             result.code(HttpStatus.UNAUTHORIZED.value())
                     .message("未登录");
@@ -67,7 +72,8 @@ public class AccountController {
                          @RequestParam("goodsTypeQrcodeQuantity") Integer goodsTypeQrcodeQuantity,
                          HttpSession session) {
         Result result = new Result();
-        User u = (User) session.getAttribute("user");
+        //User u = (User) session.getAttribute("user");
+        User u = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (u == null) {
             result.code(HttpStatus.UNAUTHORIZED.value())
                     .message("未登录");
@@ -89,7 +95,8 @@ public class AccountController {
                                 @RequestParam("goodsTypeQrcodeQuantity") Integer goodsTypeQrcodeQuantity,
                                 HttpSession session) {
         Result result = new Result();
-        User user = (User) session.getAttribute("user");
+        //User user = (User) session.getAttribute("user");
+        User user = (User) sessionUtil.getSession(Property.userSessionPrefix+session.getId(),User.class);
         if (user == null) {
             result.code(HttpStatus.UNAUTHORIZED.value())
                     .message("未登录");

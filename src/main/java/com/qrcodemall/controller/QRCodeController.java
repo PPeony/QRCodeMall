@@ -6,6 +6,7 @@ import com.qrcodemall.entity.*;
 import com.qrcodemall.service.*;
 import com.qrcodemall.util.BeanUtil;
 import com.qrcodemall.util.Result;
+import com.qrcodemall.util.SessionUtil;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +46,9 @@ public class QRCodeController {
 
     @Autowired
     HttpSession session;
+
+    @Autowired
+    SessionUtil sessionUtil;
 
 /**property**/
     @ApiOperation(value = "根据种类查出字段", notes = "参数为goodsType")
@@ -207,7 +211,8 @@ public class QRCodeController {
     public Result<PageInfo<Qrcode>> selectMyQrcode(HttpServletRequest request) {
         Result<PageInfo<Qrcode>> result = new Result<>();
         HttpSession session = request.getSession();
-        User user = (User) session.getAttribute("user");
+        //User user = (User) session.getAttribute("user");
+        User user = (User) sessionUtil.getSession(com.qrcodemall.common.Property.userSessionPrefix+session.getId(),User.class);
         if (user == null) {
             return result.code(HttpStatus.UNAUTHORIZED.value()).message("请登录");
         }
@@ -223,7 +228,8 @@ public class QRCodeController {
         if (errors.hasErrors()) {
             return Result.generateBadRequestResult(errors);
         }
-        User user = (User) session.getAttribute("user");
+        //User user = (User) session.getAttribute("user");
+        User user = (User) sessionUtil.getSession(com.qrcodemall.common.Property.userSessionPrefix+session.getId(),User.class);
         if (user == null) {
             result.code(HttpStatus.UNAUTHORIZED.value())
                     .message("请登录");

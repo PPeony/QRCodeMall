@@ -2,6 +2,7 @@ package com.qrcodemall.controller;
 
 import com.github.pagehelper.PageInfo;
 import com.qrcodemall.common.Exception.GlobalException;
+import com.qrcodemall.common.Property;
 import com.qrcodemall.controller.vo.*;
 import com.qrcodemall.entity.*;
 import com.qrcodemall.scheduleTask.DynamicTask;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import redis.clients.jedis.Jedis;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
@@ -76,6 +78,9 @@ public class AdminController {
     @Autowired
     HttpServletRequest httpServletRequest;
 
+    @Autowired
+    JedisUtil jedisUtil;
+
     @PostMapping("/login")//密码登录
     public Result login(@RequestBody @Valid AdminLoginVO admin, Errors errors,
                         HttpServletRequest request, HttpServletResponse response) {
@@ -89,8 +94,18 @@ public class AdminController {
         System.out.println(account+" *** "+password);
         Integer r = adminService.login(account,password);
         if (r == 1) {
-            session.setAttribute("admin","admin");
-            session.setMaxInactiveInterval(3600);
+            Jedis jedis = null;
+            try {
+                jedis = jedisUtil.getJedis();
+
+                jedis.setex("session-admin", Property.sessionExpireTime, "session-admin");
+            } catch (Exception e) {
+                throw e;
+            } finally {
+                if (jedis != null) jedis.close();
+            }
+            //session.setAttribute("admin","admin");
+            //session.setMaxInactiveInterval(3600);
             String id = session.getId();
             HttpCookie cookie = CookieUtils.generateSetCookie3(request, "JSESSIONID", id, Duration.ofHours(3));
             response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());

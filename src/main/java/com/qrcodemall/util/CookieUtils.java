@@ -1,8 +1,11 @@
 package com.qrcodemall.util;
 
+import com.alibaba.fastjson.JSON;
+import com.qrcodemall.common.Property;
 import org.apache.http.cookie.Cookie;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.ResponseCookie;
+import redis.clients.jedis.Jedis;
 
 import javax.servlet.http.HttpServletRequest;
 import java.time.Duration;
@@ -46,4 +49,6 @@ public class CookieUtils {
                 ;
         return cookie;
     }
+
+
 }
