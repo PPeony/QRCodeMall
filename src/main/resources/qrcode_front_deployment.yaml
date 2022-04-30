@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qrcodemall-front
+spec:
+  selector:
+    matchLabels:
+      project: qrcodemall-front
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        project: qrcodemall-front
+    spec:
+      containers:
+        - name: qrcodemall-front
+          image: cpeony/qrcode_front:1.3
+          ports:
+            - containerPort: 80

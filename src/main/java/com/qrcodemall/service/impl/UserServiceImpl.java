@@ -115,7 +115,7 @@ public class UserServiceImpl implements UserService {
         if (flag < 0) {
             return flag;
         }
-        if (!"".equals(user.getUserFatherProxyName())) {
+        if (user.getUserFatherProxyName() != null && !"".equals(user.getUserFatherProxyName())) {
             user.setIsVip(1);
             //查询父级代理
             if (user.getUserFatherProxyId() == null) {

@@ -1,16 +1,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: qrcodemall_server
+  name: qrcodemall-server
 spec:
+  selector:
+    matchLabels:
+      project: qrcodemall-server
   replicas: 3
   template:
     metadata:
       labels:
-        project: qrcodemall_server
+        project: qrcodemall-server
     spec:
       containers:
-        - name: qrcodemall_server
-          image: todo
+        - name: qrcodemall-server
+          image: cpeony/qrcodemall_backend:1.0
           ports:
-            - containerPort: 8090
+            - containerPort: 32557

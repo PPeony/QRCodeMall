@@ -213,6 +213,7 @@ public class UserController {
             result.setMessage(errors.getAllErrors().get(0).getDefaultMessage());
             return result;
         }
+        System.out.println("register user: "+user);
         Integer r = userService.addUser(user);
         //errors.getAllErrors().get(0).getDefaultMessage();
 //        if (user.getUserName().equals("zhangsan")) {

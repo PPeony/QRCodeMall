@@ -88,7 +88,7 @@ public class Consumer {
         channel.basicAck(message.getMessageProperties().getDeliveryTag(), true);
         Long end = System.currentTimeMillis();
         System.out.println("consumer cost:"+(end - start));
-        //todo,收到回调之后把id对应状态在redis里面更新，0-进行中，1-成功，2-失败
+        //收到回调之后把id对应状态在redis里面更新，0-进行中，1-成功，2-失败
         Jedis jedis = null;
         try {
             jedis = jedisUtil.getJedis();

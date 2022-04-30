@@ -1,13 +1,13 @@
 apiVersion: v1 # v1是service的apiversion
 kind: Service # 当前资源的类型为 Service。
 metadata:
-  name: mysql8-service # Service 的名字
+  name: qrcodemall-server-service # Service 的名字
 spec:
   type: NodePort
   selector: # elector 指明挑选那些 label 为 run: httpd 的 Pod 作为 Service 的后端。
-    project: mysql8
+    project: qrcodemall-server
   ports: # 将 Service 的 8080 端口映射到 Pod 的 80 端口，使用 TCP 协议。
-    - name: mysql8
-      port: 3306
-      targetPort: 3306
-
+    - name: http
+      port: 32557
+      targetPort: 32557
+      nodePort: 32557
