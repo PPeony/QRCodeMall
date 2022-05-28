@@ -5,6 +5,7 @@ package com.qrcodemall.common;
  * @Date: 2022/3/8 15:50
  */
 public class Property {
+    //todo,修改配置文件
     //积分，一级500，二级200
     public static final int firstPoint = 500;
 
@@ -48,8 +49,5 @@ public class Property {
 
 
     public static String smsSign = "";
-
-
-
 
 }

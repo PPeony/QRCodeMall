@@ -1,5 +1,6 @@
 package com.qrcodemall.controller;
 
+import com.alibaba.fastjson.JSON;
 import com.alipay.api.AlipayApiException;
 import com.alipay.api.AlipayClient;
 import com.alipay.api.DefaultAlipayClient;
@@ -12,6 +13,7 @@ import com.qrcodemall.dao.PromotionMapper;
 import com.qrcodemall.entity.Notice;
 import com.qrcodemall.entity.OrderForm;
 import com.qrcodemall.entity.PromotionGoods;
+import com.qrcodemall.rabbitmq.Producer;
 import com.qrcodemall.service.NoticeService;
 import com.qrcodemall.service.OrderFormService;
 import com.qrcodemall.util.CookieUtils;
@@ -21,6 +23,9 @@ import com.qrcodemall.util.Result;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.amqp.core.Message;
+import org.springframework.amqp.core.MessageBuilder;
+import org.springframework.amqp.rabbit.connection.CorrelationData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
@@ -85,5 +90,10 @@ public class TestController {
         String r = jedis.get(key);
         return Result.generateSuccessResult(r,"success");
     }
+
+
+
+
+
 
 }

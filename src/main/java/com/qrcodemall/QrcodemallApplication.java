@@ -34,8 +34,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 * 4.集群配置
 * 5.容器化部署
 * 6.支付宝接口完善--偶尔可用
-* 7.忘记密码发送短信
-* 8.样例体验
 * */
 public class QrcodemallApplication {
 

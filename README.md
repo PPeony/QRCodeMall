@@ -28,6 +28,19 @@
 3. 基于k8s的部署
 在resources下面写了很多deployment和svc，最外部有dockerfile。这是本人第一次尝试用k8s部署，在最开始部署k8s时就遇到很多问题，解决方式可以看[这里](https://ppeony.github.io/2022/04/23/%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AE%89%E8%A3%85kubernetes%E9%81%87%E5%88%B0%E7%9A%84%E8%8A%82%E7%82%B9%E4%B9%8B%E9%97%B4%E4%B8%8D%E4%BA%92%E9%80%9A%E9%97%AE%E9%A2%98/)
 
+# 如何运行
+1. 修改src/main/java/com/qrcodemall/common/Property.java里面的信息，主要是支付宝相关信息
+2. 修改src/main/resources/application.properties配置文件，包括数据库地址，redis地址，mq地址
+3. 如果采用localhost部署，不需要配置之后的kubernetes，直接开启redis和rabbitmq，然后运行项目即可，主方法：src/main/java/com/qrcodemall/QrcodemallApplication.java
+4. 如果采用kubernetes部署，参考云主机部署文章，[云主机部署](https://ppeony.github.io/2022/04/23/%E4%BA%91%E4%B8%BB%E6%9C%BA%E5%AE%89%E8%A3%85kubernetes%E9%81%87%E5%88%B0%E7%9A%84%E8%8A%82%E7%82%B9%E4%B9%8B%E9%97%B4%E4%B8%8D%E4%BA%92%E9%80%9A%E9%97%AE%E9%A2%98/)
+   初始化yaml在这里：src/main/resources/kube_init.yaml
+5. 这之后我说一下我的做法，感觉很繁琐，应该有更优解。首先需要制作镜像，用户端、管理员端和server端，首先```mvn clean 
+   package```命令打包jar文件，然后把Dockerfile和jar存入云服务器，再执行命令```docker 
+   build 
+   -f . 
+   tag名称```，生成镜像之后需要修改deployment和svc的yaml，把镜像名字修改成对应的，三个镜像都需要这么操作
+6. ```kubectl get pod -o wide```查看状态，都启动了就成功了。由于每个人的redis端口号，rabbitmq端口号，还有支付宝配置信息不一致，**直接copy我的镜像也不能运行**。
+
 # 一些基本功能，包括
 - 后台查看交易记录，curd商品，curd用户、通知等等curd操作，都做了分页处理
 - samesite跨域请求

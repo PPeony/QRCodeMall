@@ -2,7 +2,8 @@ FROM java:8
 
 COPY *.jar /app.jar
 
-#CMD ["--server.port=8081"]
+ENV TZ=Asia/Shanghai
+# 设置时区，保证和数据库的时区一致
 
 EXPOSE 8090
 

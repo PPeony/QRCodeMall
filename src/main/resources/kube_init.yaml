@@ -1,0 +1,15 @@
+apiVersion: kubeadm.k8s.io/v1beta2
+kind: ClusterConfiguration
+imageRepository: registry.cn-hangzhou.aliyuncs.com/google_containers
+controlPlaneEndpoint: 云主机公网ip:6443
+clusterName: kubernetes
+apiServer:
+  certSANs:
+    - 云主机公网ip
+  extraArgs:
+    authorization-mode: Node,RBAC
+    advertise-address: 云主机公网ip
+networking:
+  dnsDomain: cluster.local
+  podSubnet: 10.244.0.0/16
+  serviceSubnet: 10.96.0.0/12
